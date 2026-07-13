@@ -1,0 +1,215 @@
+# Copyright (C) 2026 RAN
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: RAN Video Cover 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/ran-video-cover\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-07-13T11:31:00+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: ran-video-cover\n"
+
+#. Plugin Name of the plugin
+#: ran-video-cover.php
+msgid "RAN Video Cover"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: ran-video-cover.php
+msgid "https://github.com/RocketsAreNostalgic/ran-video-cover"
+msgstr ""
+
+#. Description of the plugin
+#: ran-video-cover.php
+msgid "A Cover-style block with background video, a poster fallback, and motion-sensitive pause/play controls."
+msgstr ""
+
+#. Author of the plugin
+#: ran-video-cover.php
+msgid "RAN"
+msgstr ""
+
+#. Author URI of the plugin
+#: ran-video-cover.php
+msgid "https://github.com/RocketsAreNostalgic/"
+msgstr ""
+
+#: blocks/media/video-cover/render.php:197
+#: blocks/media/video-cover/index.js:689
+msgid "Play animation"
+msgstr ""
+
+#: blocks/media/video-cover/render.php:198
+#: blocks/media/video-cover/index.js:690
+msgid "Pause animation"
+msgstr ""
+
+#. translators: %s: comma-separated generated asset paths.
+#: includes/Blocks.php:67
+#, php-format
+msgid "RAN Video Cover could not register because its compiled build assets are missing: %s. Reinstall the release ZIP or rebuild the plugin with <code>pnpm build</code>."
+msgstr ""
+
+#: blocks/media/video-cover/index.js:46
+msgid "Banner heading"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:52
+msgid "Optional hook text"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:139
+msgid "Custom numeric value"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:159
+msgid "Spacing preset"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:183
+msgid "Unit"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:314
+msgid "No file selected"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:436
+msgid "Media"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:440
+#: blocks/media/video-cover/index.js:454
+msgid "Replace"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:441
+#: blocks/media/video-cover/index.js:455
+msgid "Select"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:442
+#: blocks/media/video-cover/index.js:456
+msgid "Clear"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:443
+msgid "Video"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:457
+msgid "Poster image"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:467
+msgid "Focal point"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:478
+msgid "Layout"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:482
+msgid "Minimum height"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:491
+msgid "Minimum height unit"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:504
+msgid "Content position"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:508
+#: blocks/media/video-cover/index.js:602
+msgid "Top left"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:512
+#: blocks/media/video-cover/index.js:610
+msgid "Top center"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:516
+#: blocks/media/video-cover/index.js:598
+msgid "Top right"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:520
+msgid "Center left"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:524
+msgid "Center"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:528
+msgid "Center right"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:532
+#: blocks/media/video-cover/index.js:594
+msgid "Bottom left"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:536
+#: blocks/media/video-cover/index.js:606
+msgid "Bottom center"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:540
+#: blocks/media/video-cover/index.js:590
+msgid "Bottom right"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:552
+msgid "Colour wash"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:558
+msgid "Wash colour"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:563
+msgid "Wash opacity"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:575
+msgid "Pause/play control"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:579
+msgid "Show pause/play control"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:586
+msgid "Control position"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:620
+msgid "Block-axis inset"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:627
+msgid "Inline-axis inset"
+msgstr ""
+
+#: blocks/media/video-cover/index.js:664
+msgid "Select a video and poster image."
+msgstr ""
+
+#: blocks/media/video-cover/block.json
+msgctxt "block title"
+msgid "RAN Video Cover"
+msgstr ""
+
+#: blocks/media/video-cover/block.json
+msgctxt "block description"
+msgid "Cover-style background video with a poster fallback, colour wash, reduced-motion handling, and a pause/play control."
+msgstr ""

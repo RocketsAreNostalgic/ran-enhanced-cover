@@ -104,8 +104,8 @@ if ( empty( $overlay_value ) ) {
 	$overlay_value = '#121212';
 }
 
-$block_inset      = $sanitize_inset( $attributes['pauseControlInsetBlock'] ?? '1rem' );
-$inline_inset     = $sanitize_inset( $attributes['pauseControlInsetInline'] ?? '1rem' );
+$block_inset       = $sanitize_inset( $attributes['pauseControlInsetBlock'] ?? '1rem' );
+$inline_inset      = $sanitize_inset( $attributes['pauseControlInsetInline'] ?? '1rem' );
 $control_positions = array(
 	'top left',
 	'top center',
@@ -114,7 +114,7 @@ $control_positions = array(
 	'bottom center',
 	'bottom right',
 );
-$control_position = in_array( $attributes['pauseControlPosition'], $control_positions, true ) ? $attributes['pauseControlPosition'] : 'bottom right';
+$control_position  = in_array( $attributes['pauseControlPosition'], $control_positions, true ) ? $attributes['pauseControlPosition'] : 'bottom right';
 
 $toggle_block_start  = 'auto';
 $toggle_block_end    = 'auto';
@@ -176,15 +176,15 @@ echo '<section ' . $wrapper_attributes . '>'; // phpcs:ignore WordPress.Security
 if ( $video_url ) {
 	printf(
 		'<video class="ran-video-cover__media" muted loop playsinline preload="metadata" aria-hidden="true" src="%1$s"%2$s style="object-position:%3$s"></video>',
-		$video_url,
-		$poster_url ? ' poster="' . $poster_url . '"' : '',
-		$object_position
+		esc_url( $video_url ),
+		$poster_url ? ' poster="' . esc_url( $poster_url ) . '"' : '',
+		esc_attr( $object_position )
 	);
 } elseif ( $poster_url ) {
 	printf(
 		'<img class="ran-video-cover__media" src="%1$s" alt="" style="object-position:%2$s">',
-		$poster_url,
-		$object_position
+		esc_url( $poster_url ),
+		esc_attr( $object_position )
 	);
 }
 

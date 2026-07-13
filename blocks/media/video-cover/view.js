@@ -73,7 +73,9 @@
 	}
 
 	function setSiteMotionState( isPaused, persist ) {
-		const banners = document.querySelectorAll( '.wp-block-ran-video-cover' );
+		const banners = document.querySelectorAll(
+			'.wp-block-ran-video-cover'
+		);
 
 		if ( persist ) {
 			setStoredPausePreference( isPaused );
@@ -114,11 +116,12 @@
 		root.dataset.ranVideoCoverReady = 'true';
 
 		const video = root.querySelector( '.ran-video-cover__media' );
-		const button = root.querySelector( '.ran-video-cover__toggle' );
 
 		if ( ! video || 'VIDEO' !== video.tagName ) {
 			return;
 		}
+
+		const button = root.querySelector( '.ran-video-cover__toggle' );
 
 		if ( isPaused ) {
 			pauseVideo( root, video, true );
@@ -137,7 +140,9 @@
 			window.matchMedia( '(prefers-reduced-motion: reduce)' );
 		const prefersReducedMotion = !! ( mediaQuery && mediaQuery.matches );
 		const isPaused = prefersReducedMotion || getStoredPausePreference();
-		const banners = document.querySelectorAll( '.wp-block-ran-video-cover' );
+		const banners = document.querySelectorAll(
+			'.wp-block-ran-video-cover'
+		);
 
 		for ( let index = 0; index < banners.length; index++ ) {
 			initBanner( banners[ index ], isPaused );

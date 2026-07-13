@@ -26,7 +26,7 @@ svn copy https://plugins.svn.wordpress.org/ran-video-cover/trunk \
 	-m "Tag 1.0.0"
 ```
 
-The public directory artwork lives outside the release ZIP. Put approved
-icons, banner images, and screenshots in `wordpress-org/assets/`, then upload
-them to the directory's `/assets/` SVN path after their licensing and final
-dimensions are confirmed. No raster artwork is included in this repository yet.
+The public directory artwork lives outside the release ZIP. Review the staged
+icons and banners in `wordpress-org/assets/`, then upload only the
+licence-cleared final files to the directory's `/assets/` SVN path. Do not copy
+them into the plugin release ZIP.

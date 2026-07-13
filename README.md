@@ -6,17 +6,17 @@ canonical block name is `ran/video-cover`.
 
 ## Features
 
-- Provides background video or poster-image media with focal point controls.
-- Supports content placement, minimum height, colour wash, and nested content.
-- Starts without autoplay and starts playback only when JavaScript confirms
-  that the visitor has not requested reduced motion.
-- A visitor can pause all Video Cover blocks on a site. That non-identifying
-  pause preference is stored in local storage when available; no cookie is set.
+-   Provides background video or poster-image media with focal point controls.
+-   Supports content placement, minimum height, colour wash, and nested content.
+-   Starts without autoplay and starts playback only when JavaScript confirms
+    that the visitor has not requested reduced motion.
+-   A visitor can pause all Video Cover blocks on a site. That non-identifying
+    pause preference is stored in local storage when available; no cookie is set.
 
 ## Requirements
 
-- WordPress 6.5 or newer.
-- PHP 8.0 or newer.
+-   WordPress 6.5 or newer.
+-   PHP 8.0 or newer.
 
 ## Installation
 
@@ -84,10 +84,14 @@ composer phpcs
 pnpm pot
 pnpm release
 pnpm release:verify
+pnpm release:plugin-check
 ```
 
 `composer test` runs WordPress integration tests when `WP_TESTS_DIR` points to
 an installed WordPress test library. See `tests/README.md` for setup details.
+`pnpm release:plugin-check` runs the official WordPress Plugin Check command
+against the generated ZIP after Plugin Check has been installed in the target
+WordPress environment.
 
 ## License
 

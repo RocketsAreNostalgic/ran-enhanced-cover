@@ -20,6 +20,17 @@
 	<exclude-pattern>*/build/*</exclude-pattern>
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<!-- CLI packaging and one-off migration tools are linted, not WordPress-runtime code. -->
+	<exclude-pattern>*/scripts/*</exclude-pattern>
+	<exclude-pattern>*/blocks/media/video-cover/*.asset.php</exclude-pattern>
+
+	<!-- These legacy/runtime filenames are dictated by WordPress metadata. -->
+	<rule ref="WordPress.Files.FileName.NotHyphenatedLowercase">
+		<exclude-pattern>*/includes/Blocks.php</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.Files.FileName.InvalidClassFileName">
+		<exclude-pattern>*/includes/Blocks.php</exclude-pattern>
+	</rule>
 
 	<rule ref="WordPress"/>
 	<rule ref="PHPCompatibility"/>

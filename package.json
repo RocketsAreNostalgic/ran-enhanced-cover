@@ -22,22 +22,26 @@
 		"url": "https://github.com/RocketsAreNostalgic/ran-video-cover"
 	},
 	"devDependencies": {
+		"@playwright/test": "^1.61.1",
+		"@wordpress/env": "^11.10.0",
 		"@wordpress/scripts": "^30.25.0"
 	},
 	"scripts": {
 		"start": "wp-scripts start --source-path=blocks --output-path=build/blocks",
 		"build": "wp-scripts build --source-path=blocks --output-path=build/blocks",
-		"format": "wp-scripts format && prettier --write \"**/*.{css,md}\"",
-		"format:check": "wp-scripts lint-js && prettier --check \"**/*.{css,md}\"",
+		"format": "prettier --write --ignore-path .prettierignore --ignore-unknown .",
+		"format:check": "prettier --check --ignore-path .prettierignore --ignore-unknown .",
 		"lint:js": "wp-scripts lint-js",
 		"lint:css": "wp-scripts lint-style",
 		"lint:pkg-json": "wp-scripts lint-pkg-json",
 		"lint:php": "bash scripts/lint-php.sh",
 		"pot": "wp i18n make-pot . languages/ran-video-cover.pot --exclude=build,node_modules,vendor,tests,dist,wordpress-org",
-		"check": "wp-scripts lint-pkg-json && wp-scripts lint-js && wp-scripts lint-style && prettier --check \"**/*.{css,md}\"",
+		"check": "wp-scripts lint-pkg-json && wp-scripts lint-js && wp-scripts lint-style && pnpm format:check",
 		"check:build": "pnpm build && git diff --exit-code -- build",
 		"release": "php scripts/build-release.php",
-		"release:verify": "php scripts/verify-release.php"
+		"release:verify": "php scripts/verify-release.php",
+		"release:plugin-check": "bash scripts/plugin-check.sh",
+		"test:browser": "playwright test --config=tests/browser/playwright.config.js"
 	},
 	"prettier": "@wordpress/prettier-config",
 	"packageManager": "pnpm@11.5.2"

@@ -36,6 +36,7 @@ if ( true !== $archive->open( $archive_path ) ) {
 
 $entries = array();
 
+// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- ZipArchive API property.
 for ( $index = 0; $index < $archive->numFiles; $index++ ) {
 	$entries[] = $archive->getNameIndex( $index );
 }

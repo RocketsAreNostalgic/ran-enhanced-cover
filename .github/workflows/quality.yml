@@ -1,0 +1,107 @@
+name: Quality
+
+on:
+    pull_request:
+    push:
+        branches:
+            - main
+
+jobs:
+    quality:
+        name: Quality (PHP ${{ matrix.php }})
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                php: ['8.0', '8.3']
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+            - uses: pnpm/action-setup@v4
+              with:
+                  version: 11.5.2
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php }}
+                  extensions: zip
+                  tools: composer:v2
+            - run: pnpm install --frozen-lockfile
+            - run: composer install --no-interaction --prefer-dist
+            - run: pnpm check
+            - run: pnpm check:build
+            - run: composer lint
+            - run: composer phpcs
+            - run: pnpm release
+            - run: pnpm release:verify
+
+    wordpress-integration:
+        name: WordPress ${{ matrix.wordpress }} / PHP ${{ matrix.php }}
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - wordpress: '6.5'
+                      php: '8.0'
+                    - wordpress: latest
+                      php: '8.3'
+        services:
+            mysql:
+                image: mysql:8.0
+                env:
+                    MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+                ports:
+                    - 3306:3306
+                options: >-
+                    --health-cmd="mysqladmin ping"
+                    --health-interval=10s
+                    --health-timeout=5s
+                    --health-retries=5
+        steps:
+            - uses: actions/checkout@v4
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php }}
+                  extensions: mysqli, zip
+                  tools: composer:v2, wp-cli
+            - run: composer install --no-interaction --prefer-dist
+            - run: bash scripts/install-wp-tests.sh wordpress_test root '' 127.0.0.1 ${{ matrix.wordpress }}
+            - run: composer test
+              env:
+                  WP_TESTS_DIR: /tmp/wordpress-tests-lib
+            - name: Install and activate the release ZIP in fresh WordPress
+              run: |
+                  php scripts/build-release.php /tmp/ran-video-cover-release
+                  fresh_root=/tmp/ran-video-cover-release-wordpress
+                  wp_version='${{ matrix.wordpress }}'
+                  if [ "$wp_version" = 'latest' ]; then
+                    wp core download --path="$fresh_root"
+                  else
+                    wp core download --path="$fresh_root" --version="$wp_version"
+                  fi
+                  wp config create --path="$fresh_root" --dbname=ran_video_cover_release --dbuser=root --dbpass='' --dbhost=127.0.0.1 --skip-check
+                  wp db create --path="$fresh_root"
+                  wp core install --path="$fresh_root" --url=http://localhost --title='RAN release test' --admin_user=admin --admin_password=release-test-password --admin_email=admin@example.test
+                  wp plugin install /tmp/ran-video-cover-release/ran-video-cover-1.0.0.zip --path="$fresh_root" --activate
+                  wp plugin is-active ran-video-cover --path="$fresh_root"
+
+    plugin-check:
+        name: Plugin Check
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+            - uses: pnpm/action-setup@v4
+              with:
+                  version: 11.5.2
+            - run: pnpm install --frozen-lockfile
+            - run: pnpm build
+            - run: pnpm exec wp-env start
+            - run: pnpm exec wp-env run cli wp plugin install plugin-check --activate
+            - run: pnpm exec wp-env run cli wp plugin check /var/www/html/wp-content/plugins/ran-video-cover
+            - if: always()
+              run: pnpm exec wp-env destroy

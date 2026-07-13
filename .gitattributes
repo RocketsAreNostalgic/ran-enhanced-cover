@@ -1,0 +1,17 @@
+/.github export-ignore
+/composer.json export-ignore
+/phpcs.xml.dist export-ignore
+/phpunit.xml.dist export-ignore
+/scripts export-ignore
+/tests export-ignore
+/wordpress-org export-ignore
+/.editorconfig export-ignore
+/.eslintrc.json export-ignore
+/.gitignore export-ignore
+/.prettierignore export-ignore
+/.stylelintrc.json export-ignore
+/.wp-env.json export-ignore
+/package.json export-ignore
+/pnpm-lock.yaml export-ignore
+/pnpm-workspace.yaml export-ignore
+/release-include.txt export-ignore

@@ -1,5 +1,6 @@
 {
-  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "$schema": "https://schemas.wp.org/wp/6.5/block.json",
+  "version": "1.0.0",
   "apiVersion": 3,
   "name": "ran/video-cover",
   "title": "RAN Video Cover",
@@ -44,7 +45,7 @@
     },
     "overlayColor": {
       "type": "string",
-      "default": "background"
+      "default": ""
     },
     "customOverlayColor": {
       "type": "string",

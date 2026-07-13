@@ -48,6 +48,10 @@ final class Blocks {
 			return;
 		}
 
+		if ( \WP_Block_Type_Registry::get_instance()->is_registered( 'ran/video-cover' ) ) {
+			return;
+		}
+
 		register_block_type( self::block_directory() );
 	}
 
