@@ -53,4 +53,20 @@ class VideoCoverRenderTest extends \WP_UnitTestCase {
 		$this->assertStringContainsString( '--ran-video-cover-toggle-inline-end:var(--wp--preset--spacing--40);', $rendered );
 		$this->assertStringNotContainsString( 'expression(', $rendered );
 	}
+
+	/**
+	 * Saved blocks using the legacy palette slug must retain that explicit wash.
+	 *
+	 * @return void
+	 */
+	public function test_legacy_palette_overlay_is_not_overridden_by_the_default_custom_colour() {
+		$rendered = do_blocks(
+			'<!-- wp:ran/video-cover {"overlayColor":"brand-purple","overlayOpacity":80} --><p>Example content</p><!-- /wp:ran/video-cover -->'
+		);
+
+		$this->assertStringContainsString(
+			'--ran-video-cover-wash:var(--wp--preset--color--brand-purple, #121212);',
+			$rendered
+		);
+	}
 }

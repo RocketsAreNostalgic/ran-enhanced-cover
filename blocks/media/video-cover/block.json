@@ -49,7 +49,7 @@
 		},
 		"customOverlayColor": {
 			"type": "string",
-			"default": "#121212"
+			"default": ""
 		},
 		"overlayOpacity": {
 			"type": "number",
