@@ -68,7 +68,8 @@
 }
 
 .ran-video-cover__wash {
-	background: var(--ran-video-cover-wash, transparent);
+	background: #121212;
+	background: var(--ran-video-cover-wash, #121212);
 	opacity: var(--ran-video-cover-wash-opacity, 0);
 	pointer-events: none;
 	z-index: 1;
@@ -87,6 +88,7 @@
 }
 
 .ran-video-cover__toggle {
+	background: rgb(0 0 0 / 0.72);
 	background: color-mix(
 		in srgb,
 		var(--wp--preset--color--background, #000) 72%,
@@ -111,6 +113,7 @@
 }
 
 .ran-video-cover__toggle:is(:hover, :focus-visible) {
+	background: rgb(0 0 0 / 0.88);
 	background: color-mix(
 		in srgb,
 		var(--wp--preset--color--background, #000) 88%,

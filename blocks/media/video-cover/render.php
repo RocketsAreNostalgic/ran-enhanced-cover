@@ -19,8 +19,8 @@ $defaults   = array(
 	'minHeight'               => 80,
 	'minHeightUnit'           => 'vh',
 	'contentPosition'         => 'center left',
-	'overlayColor'            => 'background',
-	'customOverlayColor'      => '',
+	'overlayColor'            => '',
+	'customOverlayColor'      => '#121212',
 	'overlayOpacity'          => 70,
 	'pauseControl'            => true,
 	'pauseControlPosition'    => 'bottom right',
@@ -28,6 +28,41 @@ $defaults   = array(
 	'pauseControlInsetInline' => '1rem',
 );
 $attributes = wp_parse_args( $attributes, $defaults );
+
+/**
+ * Keep generated CSS custom-property values to a small, intentional grammar.
+ *
+ * This accepts persisted block values from the unit-aware editor controls plus
+ * WordPress spacing-preset variables. All other values use the safe default.
+ *
+ * @param mixed $value Candidate inset value.
+ * @return string
+ */
+$sanitize_inset = static function ( $value ) {
+	if ( ! is_string( $value ) && ! is_numeric( $value ) ) {
+		return '1rem';
+	}
+
+	$value = strtolower( trim( (string) $value ) );
+
+	if ( '0' === $value ) {
+		return '0';
+	}
+
+	if ( preg_match( '/^var:preset\|spacing\|([a-z0-9-]+)$/', $value, $matches ) ) {
+		return 'var(--wp--preset--spacing--' . $matches[1] . ')';
+	}
+
+	if ( preg_match( '/^var\(--wp--preset--spacing--[a-z0-9-]+\)$/', $value ) ) {
+		return $value;
+	}
+
+	if ( preg_match( '/^[-+]?(?:\d+|\d*\.\d+)(?:px|rem|em|%|vw|vh)$/', $value ) ) {
+		return $value;
+	}
+
+	return '1rem';
+};
 
 $allowed_content_positions = array(
 	'top left',
@@ -60,18 +95,26 @@ if ( ! empty( $attributes['customOverlayColor'] ) ) {
 	$overlay_value = sanitize_hex_color( $attributes['customOverlayColor'] );
 } elseif ( ! empty( $attributes['overlayColor'] ) ) {
 	$overlay_slug  = sanitize_title( $attributes['overlayColor'] );
-	$overlay_value = 'var(--wp--preset--color--' . $overlay_slug . ')';
+	$overlay_value = 'var(--wp--preset--color--' . $overlay_slug . ', #121212)';
 } else {
-	$overlay_value = 'transparent';
+	$overlay_value = '#121212';
 }
 
 if ( empty( $overlay_value ) ) {
-	$overlay_value = 'transparent';
+	$overlay_value = '#121212';
 }
 
-$block_inset      = ! empty( $attributes['pauseControlInsetBlock'] ) ? sanitize_text_field( $attributes['pauseControlInsetBlock'] ) : '1rem';
-$inline_inset     = ! empty( $attributes['pauseControlInsetInline'] ) ? sanitize_text_field( $attributes['pauseControlInsetInline'] ) : '1rem';
-$control_position = ! empty( $attributes['pauseControlPosition'] ) ? sanitize_text_field( $attributes['pauseControlPosition'] ) : 'bottom right';
+$block_inset      = $sanitize_inset( $attributes['pauseControlInsetBlock'] ?? '1rem' );
+$inline_inset     = $sanitize_inset( $attributes['pauseControlInsetInline'] ?? '1rem' );
+$control_positions = array(
+	'top left',
+	'top center',
+	'top right',
+	'bottom left',
+	'bottom center',
+	'bottom right',
+);
+$control_position = in_array( $attributes['pauseControlPosition'], $control_positions, true ) ? $attributes['pauseControlPosition'] : 'bottom right';
 
 $toggle_block_start  = 'auto';
 $toggle_block_end    = 'auto';
@@ -116,6 +159,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 			array(
 				'ran-video-cover',
 				'has-custom-content-position',
+				'is-paused',
 				$position_class,
 			)
 		),
@@ -131,7 +175,7 @@ echo '<section ' . $wrapper_attributes . '>'; // phpcs:ignore WordPress.Security
 
 if ( $video_url ) {
 	printf(
-		'<video class="ran-video-cover__media" autoplay muted loop playsinline src="%1$s"%2$s style="object-position:%3$s"></video>',
+		'<video class="ran-video-cover__media" muted loop playsinline preload="metadata" aria-hidden="true" src="%1$s"%2$s style="object-position:%3$s"></video>',
 		$video_url,
 		$poster_url ? ' poster="' . $poster_url . '"' : '',
 		$object_position
@@ -149,7 +193,7 @@ echo '<div class="ran-video-cover__content">' . $content . '</div>'; // phpcs:ig
 
 if ( $video_url && ! empty( $attributes['pauseControl'] ) ) {
 	printf(
-		'<button class="ran-video-cover__toggle" type="button" aria-pressed="false" data-play-label="%1$s" data-pause-label="%2$s"><span class="ran-video-cover__toggle-label">%2$s</span></button>',
+		'<button class="ran-video-cover__toggle" type="button" aria-label="%1$s" data-play-label="%1$s" data-pause-label="%2$s"><span class="ran-video-cover__toggle-label">%1$s</span></button>',
 		esc_attr__( 'Play animation', 'ran-video-cover' ),
 		esc_attr__( 'Pause animation', 'ran-video-cover' )
 	);

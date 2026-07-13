@@ -8,14 +8,15 @@ canonical block name is `ran/video-cover`.
 
 - Provides background video or poster-image media with focal point controls.
 - Supports content placement, minimum height, colour wash, and nested content.
-- Stores a site-wide pause/play preference for each visitor.
-- Starts paused for `prefers-reduced-motion: reduce` unless a visitor chooses
-  to play the video.
+- Starts without autoplay and starts playback only when JavaScript confirms
+  that the visitor has not requested reduced motion.
+- A visitor can pause all Video Cover blocks on a site. That non-identifying
+  pause preference is stored in local storage when available; no cookie is set.
 
 ## Requirements
 
 - WordPress 6.5 or newer.
-- PHP 7.4 or newer.
+- PHP 8.0 or newer.
 
 ## Installation
 
@@ -28,7 +29,7 @@ compiled `build/blocks/` assets in production.
 
 ## Usage
 
-Insert **Video Cover** from the `PNS Blocks` category. Choose a background
+Insert **Video Cover** from the standard **Media** category. Choose a background
 video or poster image, then configure focal point, minimum height, content
 placement, and colour wash. Add headings, body copy, and buttons as nested
 content.
@@ -55,15 +56,38 @@ content. It owns its registration, assets, editor UI, rendering, and styles;
 it depends only on WordPress APIs and standard `theme.json` presets.
 
 Rendered markup uses `.ran-video-cover*` classes and
-`--ran-video-cover-*` presentation variables. The frontend stores a visitor's
-motion preference under `ranVideoCoverMotion`.
+`--ran-video-cover-*` presentation variables. The frontend stores an optional
+non-identifying pause preference under `ranVideoCoverPaused` in local storage.
+It does not set or read cookies.
 
 ## Accessibility and security
 
 Provide a useful poster image or first visible frame so content remains
-understandable when video cannot play. The block honours reduced-motion
-preferences and exposes pause/play control. Use only media URLs suitable for
-public delivery and preserve WordPress media-library permissions.
+understandable when video cannot play or JavaScript is unavailable. The block
+honours reduced-motion preferences, exposes a native pause/play control, and
+keeps the background video out of the accessibility tree. Use only media URLs
+suitable for public delivery and preserve WordPress media-library permissions.
+
+## Releases
+
+The plugin directory contains a WordPress.org-compatible `readme.txt`, POT
+template, clean archive allowlist, and SVN hand-off notes. Before a release:
+
+```sh
+pnpm install --frozen-lockfile
+pnpm check
+pnpm build
+pnpm check:build
+composer install
+composer lint
+composer phpcs
+pnpm pot
+pnpm release
+pnpm release:verify
+```
+
+`composer test` runs WordPress integration tests when `WP_TESTS_DIR` points to
+an installed WordPress test library. See `tests/README.md` for setup details.
 
 ## License
 

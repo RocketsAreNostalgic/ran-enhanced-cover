@@ -1,0 +1,28 @@
+{
+    "name": "rocketsarenostalgic/ran-video-cover",
+    "description": "Development quality tooling for the RAN Video Cover WordPress plugin.",
+    "type": "project",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=8.0"
+    },
+    "require-dev": {
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.1",
+        "phpcompatibility/php-compatibility": "^9.3",
+        "phpunit/phpunit": "^9.6",
+        "squizlabs/php_codesniffer": "^3.11",
+        "wp-coding-standards/wpcs": "^3.1"
+    },
+    "scripts": {
+        "lint": "bash scripts/lint-php.sh",
+        "phpcs": "phpcs --standard=phpcs.xml.dist",
+        "phpcbf": "phpcbf --standard=phpcs.xml.dist",
+        "test": "phpunit --configuration phpunit.xml.dist"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "sort-packages": true
+    }
+}

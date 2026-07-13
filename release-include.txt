@@ -1,0 +1,9 @@
+# Files and directories shipped in the WordPress.org upload archive.
+LICENSE
+README.md
+readme.txt
+ran-video-cover.php
+blocks
+build
+includes
+languages

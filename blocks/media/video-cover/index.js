@@ -54,6 +54,17 @@ const TEMPLATE = [
 	],
 ];
 
+const CONTROL_POSITIONS = [
+	'top left',
+	'top center',
+	'top right',
+	'bottom left',
+	'bottom center',
+	'bottom right',
+];
+
+const INSET_UNITS = [ 'px', 'rem', 'em', '%', 'vw', 'vh' ];
+
 function positionClass( contentPosition ) {
 	return (
 		'is-position-' +
@@ -70,7 +81,117 @@ function overlayValue( attributes ) {
 		return 'var(--wp--preset--color--' + attributes.overlayColor + ')';
 	}
 
-	return 'transparent';
+	return '#121212';
+}
+
+function controlPosition( value ) {
+	return CONTROL_POSITIONS.includes( value ) ? value : 'bottom right';
+}
+
+function spacingPresetSlug( value ) {
+	const match = String( value || '' ).match(
+		/^var\(--wp--preset--spacing--([a-z0-9-]+)\)$/
+	);
+
+	return match ? match[ 1 ] : '';
+}
+
+function insetParts( value ) {
+	const match = String( value || '' ).match(
+		/^([-+]?(?:\d+|\d*\.\d+))(px|rem|em|%|vw|vh)$/
+	);
+
+	if ( match ) {
+		return { value: match[ 1 ], unit: match[ 2 ] };
+	}
+
+	if ( '0' === String( value ) ) {
+		return { value: '0', unit: 'rem' };
+	}
+
+	return { value: '1', unit: 'rem' };
+}
+
+function insetValue( value ) {
+	const preset = spacingPresetSlug( value );
+
+	if ( preset ) {
+		return 'var(--wp--preset--spacing--' + preset + ')';
+	}
+
+	const parts = insetParts( value );
+
+	return parts.value + parts.unit;
+}
+
+function InsetControl( {
+	attribute,
+	label,
+	setAttributes,
+	spacingSizes,
+	value,
+} ) {
+	const preset = spacingPresetSlug( value );
+	const parts = insetParts( value );
+	const presets = Array.isArray( spacingSizes ) ? spacingSizes : [];
+	const presetOptions = [
+		{
+			label: __( 'Custom numeric value', 'ran-video-cover' ),
+			value: '',
+		},
+	].concat(
+		presets
+			.filter( function ( size ) {
+				return size && size.slug && size.name;
+			} )
+			.map( function ( size ) {
+				return {
+					label: size.name,
+					value: size.slug,
+				};
+			} )
+	);
+
+	return el(
+		'div',
+		{ className: 'ran-video-cover-inset-control' },
+		el( SelectControl, {
+			label: __( 'Spacing preset', 'ran-video-cover' ) + ': ' + label,
+			value: preset,
+			options: presetOptions,
+			onChange( slug ) {
+				setAttributes( {
+					[ attribute ]: slug
+						? 'var(--wp--preset--spacing--' + slug + ')'
+						: insetValue( value ),
+				} );
+			},
+		} ),
+		! preset &&
+			el( TextControl, {
+				label,
+				type: 'number',
+				value: parts.value,
+				onChange( amount ) {
+					setAttributes( {
+						[ attribute ]: amount ? amount + parts.unit : '',
+					} );
+				},
+			} ),
+		! preset &&
+			el( SelectControl, {
+				label: __( 'Unit', 'ran-video-cover' ),
+				value: parts.unit,
+				options: INSET_UNITS.map( function ( unit ) {
+					return { label: unit, value: unit };
+				} ),
+				onChange( unit ) {
+					setAttributes( {
+						[ attribute ]: parts.value + unit,
+					} );
+				},
+			} )
+	);
 }
 
 function focalPoint( attributes ) {
@@ -89,9 +210,9 @@ function wrapperStyle( attributes ) {
 	const point = focalPoint( attributes );
 	const minHeight = attributes.minHeight || 80;
 	const minHeightUnit = attributes.minHeightUnit || 'vh';
-	const blockInset = attributes.pauseControlInsetBlock || '1rem';
-	const inlineInset = attributes.pauseControlInsetInline || '1rem';
-	const controlPosition = attributes.pauseControlPosition || 'bottom right';
+	const blockInset = insetValue( attributes.pauseControlInsetBlock );
+	const inlineInset = insetValue( attributes.pauseControlInsetInline );
+	const togglePosition = controlPosition( attributes.pauseControlPosition );
 	const style = {
 		'--ran-video-cover-min-height': minHeight + minHeightUnit,
 		'--ran-video-cover-focal-x': point.x * 100 + '%',
@@ -106,15 +227,15 @@ function wrapperStyle( attributes ) {
 		'--ran-video-cover-toggle-transform': 'none',
 	};
 
-	if ( controlPosition.indexOf( 'top' ) !== -1 ) {
+	if ( togglePosition.indexOf( 'top' ) !== -1 ) {
 		style[ '--ran-video-cover-toggle-block-start' ] = blockInset;
 	} else {
 		style[ '--ran-video-cover-toggle-block-end' ] = blockInset;
 	}
 
-	if ( controlPosition.indexOf( 'left' ) !== -1 ) {
+	if ( togglePosition.indexOf( 'left' ) !== -1 ) {
 		style[ '--ran-video-cover-toggle-inline-start' ] = inlineInset;
-	} else if ( controlPosition.indexOf( 'center' ) !== -1 ) {
+	} else if ( togglePosition.indexOf( 'center' ) !== -1 ) {
 		style[ '--ran-video-cover-toggle-inline-start' ] = '50%';
 		style[ '--ran-video-cover-toggle-transform' ] = 'translateX(-50%)';
 	} else {
@@ -233,11 +354,13 @@ function VideoBannerEdit( props ) {
 	const attributes = props.attributes;
 	const setAttributes = props.setAttributes;
 	const videoRef = useRef();
-	const editorPausedState = useState( false );
+	const editorPausedState = useState( true );
 	const isEditorPaused = editorPausedState[ 0 ];
 	const setIsEditorPaused = editorPausedState[ 1 ];
 	const settings = useSettings( 'color.palette' );
 	const colors = settings[ 0 ] || [];
+	const spacingSettings = useSettings( 'spacing.spacingSizes' );
+	const spacingSizes = spacingSettings[ 0 ] || [];
 	const blockProps = useBlockProps( {
 		className: wrapperClassName( attributes ),
 		style: wrapperStyle( attributes ),
@@ -287,7 +410,6 @@ function VideoBannerEdit( props ) {
 		}
 
 		if ( isEditorPaused ) {
-			video.setAttribute( 'autoplay', '' );
 			const playAttempt = video.play();
 
 			setIsEditorPaused( false );
@@ -298,7 +420,6 @@ function VideoBannerEdit( props ) {
 				} );
 			}
 		} else {
-			video.removeAttribute( 'autoplay' );
 			video.pause();
 			setIsEditorPaused( true );
 		}
@@ -494,26 +615,26 @@ function VideoBannerEdit( props ) {
 						setAttributes( { pauseControlPosition: value } );
 					},
 				} ),
-				el( TextControl, {
+				el( InsetControl, {
+					attribute: 'pauseControlInsetBlock',
 					label: __( 'Block-axis inset', 'ran-video-cover' ),
+					setAttributes,
+					spacingSizes,
 					value: attributes.pauseControlInsetBlock,
-					onChange( value ) {
-						setAttributes( { pauseControlInsetBlock: value } );
-					},
 				} ),
-				el( TextControl, {
+				el( InsetControl, {
+					attribute: 'pauseControlInsetInline',
 					label: __( 'Inline-axis inset', 'ran-video-cover' ),
+					setAttributes,
+					spacingSizes,
 					value: attributes.pauseControlInsetInline,
-					onChange( value ) {
-						setAttributes( { pauseControlInsetInline: value } );
-					},
 				} )
 			)
 		),
 		attributes.videoUrl &&
 			el( 'video', {
 				className: 'ran-video-cover__media',
-				autoPlay: ! isEditorPaused,
+				autoPlay: false,
 				muted: true,
 				loop: true,
 				playsInline: true,

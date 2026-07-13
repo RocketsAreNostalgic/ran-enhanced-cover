@@ -1,6 +1,6 @@
 {
 	"name": "ran-video-cover",
-	"version": "0.1.0",
+	"version": "1.0.0",
 	"private": true,
 	"description": "Standalone motion-sensitive video Cover block for WordPress.",
 	"author": "bnjmnrsh",
@@ -13,7 +13,7 @@
 		"cover",
 		"accessibility"
 	],
-	"homepage": "https://protestsandsuffragettes.com/",
+	"homepage": "https://github.com/RocketsAreNostalgic/ran-video-cover",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/RocketsAreNostalgic/ran-video-cover.git"
@@ -32,7 +32,12 @@
 		"lint:js": "wp-scripts lint-js",
 		"lint:css": "wp-scripts lint-style",
 		"lint:pkg-json": "wp-scripts lint-pkg-json",
-		"check": "wp-scripts lint-pkg-json && wp-scripts lint-js && wp-scripts lint-style && prettier --check \"**/*.{css,md}\" && wp-scripts build --source-path=blocks --output-path=build/blocks"
+		"lint:php": "bash scripts/lint-php.sh",
+		"pot": "wp i18n make-pot . languages/ran-video-cover.pot --exclude=build,node_modules,vendor,tests,dist,wordpress-org",
+		"check": "wp-scripts lint-pkg-json && wp-scripts lint-js && wp-scripts lint-style && prettier --check \"**/*.{css,md}\"",
+		"check:build": "pnpm build && git diff --exit-code -- build",
+		"release": "php scripts/build-release.php",
+		"release:verify": "php scripts/verify-release.php"
 	},
 	"prettier": "@wordpress/prettier-config",
 	"packageManager": "pnpm@11.5.2"
