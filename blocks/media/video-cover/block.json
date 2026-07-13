@@ -1,0 +1,115 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "ran/video-cover",
+	"title": "RAN Video Cover",
+	"category": "media",
+	"description": "Cover-style background video with a poster fallback, colour wash, reduced-motion handling, and a pause/play control.",
+	"textdomain": "ran-video-cover",
+	"attributes": {
+		"videoId": {
+			"type": "number",
+			"default": 0
+		},
+		"videoUrl": {
+			"type": "string",
+			"default": ""
+		},
+		"posterId": {
+			"type": "number",
+			"default": 0
+		},
+		"posterUrl": {
+			"type": "string",
+			"default": ""
+		},
+		"focalPoint": {
+			"type": "object",
+			"default": {
+				"x": 0.5,
+				"y": 0.5
+			}
+		},
+		"minHeight": {
+			"type": "number",
+			"default": 80
+		},
+		"minHeightUnit": {
+			"type": "string",
+			"default": "vh"
+		},
+		"contentPosition": {
+			"type": "string",
+			"default": "center left"
+		},
+		"overlayColor": {
+			"type": "string",
+			"default": "background"
+		},
+		"customOverlayColor": {
+			"type": "string",
+			"default": ""
+		},
+		"overlayOpacity": {
+			"type": "number",
+			"default": 70
+		},
+		"pauseControl": {
+			"type": "boolean",
+			"default": true
+		},
+		"pauseControlPosition": {
+			"type": "string",
+			"default": "bottom right"
+		},
+		"pauseControlInsetBlock": {
+			"type": "string",
+			"default": "1rem"
+		},
+		"pauseControlInsetInline": {
+			"type": "string",
+			"default": "1rem"
+		}
+	},
+	"supports": {
+		"align": ["wide", "full"],
+		"anchor": true,
+		"html": false,
+		"spacing": {
+			"margin": true,
+			"padding": true
+		}
+	},
+	"example": {
+		"attributes": {
+			"minHeight": 60,
+			"minHeightUnit": "vh",
+			"contentPosition": "center left",
+			"overlayColor": "background",
+			"customOverlayColor": "",
+			"overlayOpacity": 70,
+			"pauseControl": true,
+			"pauseControlPosition": "bottom right"
+		},
+		"innerBlocks": [
+			{
+				"name": "core/heading",
+				"attributes": {
+					"level": 1,
+					"content": "Video cover"
+				}
+			},
+			{
+				"name": "core/paragraph",
+				"attributes": {
+					"content": "Add heading or hook text over background media."
+				}
+			}
+		]
+	},
+	"editorScript": "file:./index.js",
+	"viewScript": "file:./view.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"render": "file:./render.php"
+}
