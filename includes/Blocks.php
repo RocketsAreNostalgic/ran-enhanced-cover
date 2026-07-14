@@ -16,6 +16,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 final class Blocks {
 	/**
+	 * Handle for the frontend video player runtime.
+	 *
+	 * The dynamic renderer enqueues this only for blocks with a selected video.
+	 *
+	 * @var string
+	 */
+	public const VIEW_SCRIPT_HANDLE = 'ran-video-cover-view';
+
+	/**
 	 * Relative paths required by the metadata registered at runtime.
 	 *
 	 * Source files are intentionally not a production fallback: they contain
@@ -48,11 +57,34 @@ final class Blocks {
 			return;
 		}
 
+		self::register_view_script();
+
 		if ( \WP_Block_Type_Registry::get_instance()->is_registered( 'ran/video-cover' ) ) {
 			return;
 		}
 
 		register_block_type( self::block_directory() );
+	}
+
+	/**
+	 * Register the compiled video player runtime without enqueueing it.
+	 *
+	 * Dynamic block rendering chooses whether the script is needed once it knows
+	 * whether a video URL has been selected. Keep the generated asset manifest as
+	 * the source of truth for dependencies and cache-busting version.
+	 *
+	 * @return void
+	 */
+	private static function register_view_script() {
+		$asset = require self::block_directory() . '/view.asset.php';
+
+		wp_register_script(
+			self::VIEW_SCRIPT_HANDLE,
+			RAN_VIDEO_COVER_PLUGIN_URL . 'build/blocks/media/video-cover/view.js',
+			isset( $asset['dependencies'] ) && is_array( $asset['dependencies'] ) ? $asset['dependencies'] : array(),
+			isset( $asset['version'] ) ? $asset['version'] : RAN_VIDEO_COVER_VERSION,
+			true
+		);
 	}
 
 	/**

@@ -12,9 +12,9 @@ An accessible Cover-style block with background video, a poster fallback, and vi
 
 == Description ==
 
-RAN Video Cover adds the `ran/video-cover` block to the Media category. It combines a background video or poster image with nested WordPress blocks, focal-point controls, a colour wash, and a native pause/play button.
+RAN Video Cover adds the `ran/video-cover` block to the Media category. It combines a background video or poster image with nested WordPress blocks, focal-point controls, a background surface colour, an independent colour wash, and a native pause/play button.
 
-The block deliberately starts without autoplay in its HTML. Its small frontend script starts playback only when the visitor has not requested reduced motion. A visitor can pause every Video Cover block on the site; that preference is stored only in browser local storage when available. The plugin does not set or read cookies and does not send data to a third-party service.
+The block deliberately starts without autoplay in its HTML. Its small frontend script is loaded only for blocks with a selected video, and starts playback only when the visitor has not requested reduced motion. A visitor can pause every Video Cover block on the site; that preference is stored only in browser local storage when available. The plugin does not set or read cookies and does not send data to a third-party service.
 
 == Installation ==
 

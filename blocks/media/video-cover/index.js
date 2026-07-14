@@ -84,6 +84,22 @@ function overlayValue( attributes ) {
 	return '#121212';
 }
 
+function backgroundValue( attributes ) {
+	if ( attributes.customBackgroundColor ) {
+		return attributes.customBackgroundColor;
+	}
+
+	if ( attributes.backgroundColor ) {
+		return (
+			'var(--wp--preset--color--' +
+			attributes.backgroundColor +
+			', transparent)'
+		);
+	}
+
+	return 'transparent';
+}
+
 function controlPosition( value ) {
 	return CONTROL_POSITIONS.includes( value ) ? value : 'bottom right';
 }
@@ -217,6 +233,7 @@ function wrapperStyle( attributes ) {
 		'--ran-video-cover-min-height': minHeight + minHeightUnit,
 		'--ran-video-cover-focal-x': point.x * 100 + '%',
 		'--ran-video-cover-focal-y': point.y * 100 + '%',
+		'--ran-video-cover-background': backgroundValue( attributes ),
 		'--ran-video-cover-wash': overlayValue( attributes ),
 		'--ran-video-cover-wash-opacity':
 			( attributes.overlayOpacity || 0 ) / 100,
@@ -259,13 +276,13 @@ function matchingPaletteColor( palette, color ) {
 	} );
 }
 
-function selectedOverlayColor( palette, attributes ) {
-	if ( attributes.customOverlayColor ) {
-		return attributes.customOverlayColor;
+function selectedColor( palette, colorSlug, customColor ) {
+	if ( customColor ) {
+		return customColor;
 	}
 
 	const match = palette.find( function ( paletteColor ) {
-		return paletteColor.slug === attributes.overlayColor;
+		return paletteColor.slug === colorSlug;
 	} );
 
 	return match ? match.color : '';
@@ -396,6 +413,23 @@ function VideoBannerEdit( props ) {
 		setAttributes( {
 			overlayColor: '',
 			customOverlayColor: color || '',
+		} );
+	}
+
+	function setBackgroundColor( color ) {
+		const match = matchingPaletteColor( colors, color );
+
+		if ( match ) {
+			setAttributes( {
+				backgroundColor: match.slug,
+				customBackgroundColor: '',
+			} );
+			return;
+		}
+
+		setAttributes( {
+			backgroundColor: '',
+			customBackgroundColor: color || '',
 		} );
 	}
 
@@ -546,6 +580,21 @@ function VideoBannerEdit( props ) {
 					},
 				} )
 			),
+			el( PanelColorSettings, {
+				title: __( 'Background colour', 'ran-video-cover' ),
+				initialOpen: false,
+				colorSettings: [
+					{
+						value: selectedColor(
+							colors,
+							attributes.backgroundColor,
+							attributes.customBackgroundColor
+						),
+						onChange: setBackgroundColor,
+						label: __( 'Background colour', 'ran-video-cover' ),
+					},
+				],
+			} ),
 			el(
 				PanelColorSettings,
 				{
@@ -553,7 +602,11 @@ function VideoBannerEdit( props ) {
 					initialOpen: false,
 					colorSettings: [
 						{
-							value: selectedOverlayColor( colors, attributes ),
+							value: selectedColor(
+								colors,
+								attributes.overlayColor,
+								attributes.customOverlayColor
+							),
 							onChange: setOverlayColor,
 							label: __( 'Wash colour', 'ran-video-cover' ),
 						},

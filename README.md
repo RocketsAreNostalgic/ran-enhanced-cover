@@ -7,7 +7,8 @@ canonical block name is `ran/video-cover`.
 ## Features
 
 -   Provides background video or poster-image media with focal point controls.
--   Supports content placement, minimum height, colour wash, and nested content.
+-   Supports content placement, minimum height, a transparent-media surface
+    colour, an independent colour wash, and nested content.
 -   Starts without autoplay and starts playback only when JavaScript confirms
     that the visitor has not requested reduced motion.
 -   A visitor can pause all Video Cover blocks on a site. That non-identifying
@@ -31,8 +32,10 @@ compiled `build/blocks/` assets in production.
 
 Insert **Video Cover** from the standard **Media** category. Choose a background
 video or poster image, then configure focal point, minimum height, content
-placement, and colour wash. Add headings, body copy, and buttons as nested
-content.
+placement, **Background colour**, and **Colour wash**. The selected background
+colour sits beneath the media, so it is visible through transparent video or
+poster pixels; the wash remains a separate layer. Add headings, body copy, and
+buttons as nested content.
 
 ## Development
 
@@ -56,9 +59,11 @@ content. It owns its registration, assets, editor UI, rendering, and styles;
 it depends only on WordPress APIs and standard `theme.json` presets.
 
 Rendered markup uses `.ran-video-cover*` classes and
-`--ran-video-cover-*` presentation variables. The frontend stores an optional
-non-identifying pause preference under `ranVideoCoverPaused` in local storage.
-It does not set or read cookies.
+`--ran-video-cover-*` presentation variables. The frontend player is enqueued
+only when a block has a selected video; poster-only and empty blocks keep their
+shared presentation CSS without player JavaScript or controls. The frontend
+stores an optional non-identifying pause preference under
+`ranVideoCoverPaused` in local storage. It does not set or read cookies.
 
 ## Accessibility and security
 

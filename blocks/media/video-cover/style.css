@@ -1,5 +1,6 @@
 .wp-block-ran-video-cover {
 	align-items: center;
+	background-color: var(--ran-video-cover-background, transparent);
 	box-sizing: border-box;
 	color: var(--wp--preset--color--foreground, #fff);
 	display: flex;
