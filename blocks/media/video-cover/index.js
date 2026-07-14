@@ -6,6 +6,7 @@ import {
 	PanelColorSettings,
 	useBlockProps,
 	useSettings,
+	__experimentalUnitControl as BlockEditorUnitControl,
 } from '@wordpress/block-editor';
 import { registerBlockType } from '@wordpress/blocks';
 import {
@@ -15,8 +16,8 @@ import {
 	PanelBody,
 	RangeControl,
 	SelectControl,
-	TextControl,
 	ToggleControl,
+	__experimentalUnitControl as ComponentsUnitControl,
 } from '@wordpress/components';
 import { createElement as el, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -63,7 +64,16 @@ const CONTROL_POSITIONS = [
 	'bottom right',
 ];
 
-const INSET_UNITS = [ 'px', 'rem', 'em', '%', 'vw', 'vh' ];
+const UnitControl = BlockEditorUnitControl || ComponentsUnitControl;
+
+const INSET_UNITS = [
+	{ value: 'px', label: 'px', default: 16 },
+	{ value: 'rem', label: 'rem', default: 1 },
+	{ value: 'em', label: 'em', default: 1 },
+	{ value: '%', label: '%', default: 5 },
+	{ value: 'vw', label: 'vw', default: 5 },
+	{ value: 'vh', label: 'vh', default: 5 },
+];
 
 function positionClass( contentPosition ) {
 	return (
@@ -105,6 +115,14 @@ function controlPosition( value ) {
 }
 
 function spacingPresetSlug( value ) {
+	const presetToken = String( value || '' ).match(
+		/^var:preset\|spacing\|([a-z0-9-]+)$/
+	);
+
+	if ( presetToken ) {
+		return presetToken[ 1 ];
+	}
+
 	const match = String( value || '' ).match(
 		/^var\(--wp--preset--spacing--([a-z0-9-]+)\)$/
 	);
@@ -112,7 +130,21 @@ function spacingPresetSlug( value ) {
 	return match ? match[ 1 ] : '';
 }
 
-function insetParts( value ) {
+function insetParts( value, spacingSizes ) {
+	const preset = spacingPresetSlug( value );
+
+	if ( preset ) {
+		const matchingPreset = (
+			Array.isArray( spacingSizes ) ? spacingSizes : []
+		).find( function ( size ) {
+			return size && size.slug === preset && size.size;
+		} );
+
+		if ( matchingPreset ) {
+			return insetParts( matchingPreset.size );
+		}
+	}
+
 	const match = String( value || '' ).match(
 		/^([-+]?(?:\d+|\d*\.\d+))(px|rem|em|%|vw|vh)$/
 	);
@@ -128,16 +160,36 @@ function insetParts( value ) {
 	return { value: '1', unit: 'rem' };
 }
 
-function insetValue( value ) {
+function insetValue( value, spacingSizes ) {
 	const preset = spacingPresetSlug( value );
 
 	if ( preset ) {
-		return 'var(--wp--preset--spacing--' + preset + ')';
+		const hasPreset = (
+			Array.isArray( spacingSizes ) ? spacingSizes : []
+		).some( function ( size ) {
+			return size && size.slug === preset && size.size;
+		} );
+
+		return hasPreset
+			? 'var(--wp--preset--spacing--' + preset + ')'
+			: '1rem';
 	}
 
 	const parts = insetParts( value );
 
 	return parts.value + parts.unit;
+}
+
+function insetRangeConfig( unit ) {
+	if ( 'rem' === unit || 'em' === unit ) {
+		return { max: 8, step: 0.1 };
+	}
+
+	if ( '%' === unit || 'vw' === unit || 'vh' === unit ) {
+		return { max: 100, step: 1 };
+	}
+
+	return { max: 128, step: 1 };
 }
 
 function InsetControl( {
@@ -147,30 +199,35 @@ function InsetControl( {
 	spacingSizes,
 	value,
 } ) {
-	const preset = spacingPresetSlug( value );
-	const parts = insetParts( value );
-	const presets = Array.isArray( spacingSizes ) ? spacingSizes : [];
+	const requestedPreset = spacingPresetSlug( value );
+	const preset = ( Array.isArray( spacingSizes ) ? spacingSizes : [] ).some(
+		function ( size ) {
+			return size && size.slug === requestedPreset && size.size;
+		}
+	)
+		? requestedPreset
+		: '';
+	const parts = insetParts( value, spacingSizes );
+	const rangeConfig = insetRangeConfig( parts.unit );
 	const presetOptions = [
 		{
 			label: __( 'Custom numeric value', 'ran-video-cover' ),
 			value: '',
 		},
 	].concat(
-		presets
+		( Array.isArray( spacingSizes ) ? spacingSizes : [] )
 			.filter( function ( size ) {
 				return size && size.slug && size.name;
 			} )
 			.map( function ( size ) {
-				return {
-					label: size.name,
-					value: size.slug,
-				};
+				return { label: size.name, value: size.slug };
 			} )
 	);
 
 	return el(
 		'div',
 		{ className: 'ran-video-cover-inset-control' },
+		el( 'p', { className: 'components-base-control__label' }, label ),
 		el( SelectControl, {
 			label: __( 'Spacing preset', 'ran-video-cover' ) + ': ' + label,
 			value: preset,
@@ -178,35 +235,48 @@ function InsetControl( {
 			onChange( slug ) {
 				setAttributes( {
 					[ attribute ]: slug
-						? 'var(--wp--preset--spacing--' + slug + ')'
-						: insetValue( value ),
+						? 'var:preset|spacing|' + slug
+						: parts.value + parts.unit,
 				} );
 			},
 		} ),
 		! preset &&
-			el( TextControl, {
-				label,
-				type: 'number',
-				value: parts.value,
-				onChange( amount ) {
-					setAttributes( {
-						[ attribute ]: amount ? amount + parts.unit : '',
-					} );
-				},
-			} ),
-		! preset &&
-			el( SelectControl, {
-				label: __( 'Unit', 'ran-video-cover' ),
-				value: parts.unit,
-				options: INSET_UNITS.map( function ( unit ) {
-					return { label: unit, value: unit };
+			el(
+				'div',
+				{ className: 'ran-video-cover-inset-control__inputs' },
+				el( UnitControl, {
+					__next40pxDefaultSize: true,
+					__unstableInputWidth: '88px',
+					hideLabelFromVision: true,
+					label,
+					min: 0,
+					units: INSET_UNITS,
+					value: parts.value + parts.unit,
+					onChange( nextValue ) {
+						setAttributes( {
+							[ attribute ]: nextValue || '',
+						} );
+					},
 				} ),
-				onChange( unit ) {
-					setAttributes( {
-						[ attribute ]: parts.value + unit,
-					} );
-				},
-			} )
+				el( RangeControl, {
+					__next40pxDefaultSize: true,
+					hideLabelFromVision: true,
+					label,
+					max: rangeConfig.max,
+					min: 0,
+					step: rangeConfig.step,
+					value: Number( parts.value ),
+					withInputField: false,
+					onChange( nextValue ) {
+						setAttributes( {
+							[ attribute ]:
+								nextValue === undefined
+									? ''
+									: nextValue + parts.unit,
+						} );
+					},
+				} )
+			)
 	);
 }
 
@@ -222,12 +292,18 @@ function mediaPositionStyle( attributes ) {
 	};
 }
 
-function wrapperStyle( attributes ) {
+function wrapperStyle( attributes, spacingSizes ) {
 	const point = focalPoint( attributes );
 	const minHeight = attributes.minHeight || 80;
 	const minHeightUnit = attributes.minHeightUnit || 'vh';
-	const blockInset = insetValue( attributes.pauseControlInsetBlock );
-	const inlineInset = insetValue( attributes.pauseControlInsetInline );
+	const blockInset = insetValue(
+		attributes.pauseControlInsetBlock,
+		spacingSizes
+	);
+	const inlineInset = insetValue(
+		attributes.pauseControlInsetInline,
+		spacingSizes
+	);
 	const togglePosition = controlPosition( attributes.pauseControlPosition );
 	const style = {
 		'--ran-video-cover-min-height': minHeight + minHeightUnit,
@@ -380,7 +456,7 @@ function VideoBannerEdit( props ) {
 	const spacingSizes = spacingSettings[ 0 ] || [];
 	const blockProps = useBlockProps( {
 		className: wrapperClassName( attributes ),
-		style: wrapperStyle( attributes ),
+		style: wrapperStyle( attributes, spacingSizes ),
 	} );
 	const hasMedia = !! ( attributes.videoUrl || attributes.posterUrl );
 	const showGenericPreview = ! hasMedia && ! props.isSelected;

@@ -31,6 +31,23 @@ $defaults   = array(
 );
 $attributes = wp_parse_args( $attributes, $defaults );
 
+$spacing_size_groups = wp_get_global_settings( array( 'spacing', 'spacingSizes' ) );
+$spacing_size_slugs  = array();
+
+if ( is_array( $spacing_size_groups ) ) {
+	foreach ( $spacing_size_groups as $spacing_sizes ) {
+		if ( ! is_array( $spacing_sizes ) ) {
+			continue;
+		}
+
+		foreach ( $spacing_sizes as $spacing_size ) {
+			if ( is_array( $spacing_size ) && ! empty( $spacing_size['slug'] ) && ! empty( $spacing_size['size'] ) ) {
+				$spacing_size_slugs[ $spacing_size['slug'] ] = true;
+			}
+		}
+	}
+}
+
 /**
  * Keep generated CSS custom-property values to a small, intentional grammar.
  *
@@ -40,7 +57,7 @@ $attributes = wp_parse_args( $attributes, $defaults );
  * @param mixed $value Candidate inset value.
  * @return string
  */
-$sanitize_inset = static function ( $value ) {
+$sanitize_inset = static function ( $value ) use ( $spacing_size_slugs ) {
 	if ( ! is_string( $value ) && ! is_numeric( $value ) ) {
 		return '1rem';
 	}
@@ -52,11 +69,15 @@ $sanitize_inset = static function ( $value ) {
 	}
 
 	if ( preg_match( '/^var:preset\|spacing\|([a-z0-9-]+)$/', $value, $matches ) ) {
-		return 'var(--wp--preset--spacing--' . $matches[1] . ')';
+		return isset( $spacing_size_slugs[ $matches[1] ] )
+			? 'var(--wp--preset--spacing--' . $matches[1] . ')'
+			: '1rem';
 	}
 
-	if ( preg_match( '/^var\(--wp--preset--spacing--[a-z0-9-]+\)$/', $value ) ) {
-		return $value;
+	if ( preg_match( '/^var\(--wp--preset--spacing--([a-z0-9-]+)\)$/', $value, $matches ) ) {
+		return isset( $spacing_size_slugs[ $matches[1] ] )
+			? 'var(--wp--preset--spacing--' . $matches[1] . ')'
+			: '1rem';
 	}
 
 	if ( preg_match( '/^[-+]?(?:\d+|\d*\.\d+)(?:px|rem|em|%|vw|vh)$/', $value ) ) {

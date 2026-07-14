@@ -64,11 +64,11 @@ class VideoCoverRenderTest extends \WP_UnitTestCase {
 	 */
 	public function test_renderer_uses_safe_fallbacks_for_invalid_control_values() {
 		$rendered = do_blocks(
-			'<!-- wp:ran/video-cover {"videoUrl":"https://example.com/video.mp4","pauseControlPosition":"middle middle","pauseControlInsetBlock":"expression(alert(1))","pauseControlInsetInline":"var:preset|spacing|40"} --><p>Example content</p><!-- /wp:ran/video-cover -->'
+			'<!-- wp:ran/video-cover {"videoUrl":"https://example.com/video.mp4","pauseControlPosition":"middle middle","pauseControlInsetBlock":"expression(alert(1))","pauseControlInsetInline":"var:preset|spacing|missing-scale"} --><p>Example content</p><!-- /wp:ran-video-cover -->'
 		);
 
 		$this->assertStringContainsString( '--ran-video-cover-toggle-block-end:1rem;', $rendered );
-		$this->assertStringContainsString( '--ran-video-cover-toggle-inline-end:var(--wp--preset--spacing--40);', $rendered );
+		$this->assertStringContainsString( '--ran-video-cover-toggle-inline-end:1rem;', $rendered );
 		$this->assertStringNotContainsString( 'expression(', $rendered );
 	}
 
