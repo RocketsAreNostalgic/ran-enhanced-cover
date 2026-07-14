@@ -5,7 +5,7 @@
 	color: var(--wp--preset--color--foreground, #fff);
 	display: flex;
 	justify-content: flex-start;
-	min-block-size: var(--ran-video-cover-min-height, 80vh);
+	min-block-size: var(--ran-video-cover-min-height, 0);
 	overflow: hidden;
 	padding: 1em;
 	position: relative;
@@ -69,11 +69,17 @@
 }
 
 .ran-video-cover__wash {
+	margin: 0;
 	background: #121212;
 	background: var(--ran-video-cover-wash, #121212);
 	opacity: var(--ran-video-cover-wash-opacity, 0);
 	pointer-events: none;
 	z-index: 1;
+}
+
+/* Layout support adds a block gap to direct children; the wash must remain flush. */
+.wp-block-ran-video-cover > .ran-video-cover__wash {
+	margin-block: 0;
 }
 
 .ran-video-cover__content {

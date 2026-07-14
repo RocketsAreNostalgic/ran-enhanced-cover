@@ -1,11 +1,16 @@
 import {
+	BlockControls,
 	InnerBlocks,
 	InspectorControls,
 	MediaUpload,
 	MediaUploadCheck,
-	PanelColorSettings,
+	MediaReplaceFlow,
+	store as blockEditorStore,
 	useBlockProps,
 	useSettings,
+	__experimentalBlockAlignmentMatrixControl as BlockAlignmentMatrixControl,
+	__experimentalBlockFullHeightAligmentControl as BlockFullHeightAlignmentControl,
+	__experimentalColorGradientSettingsDropdown as ColorGradientSettingsDropdown,
 	__experimentalUnitControl as BlockEditorUnitControl,
 } from '@wordpress/block-editor';
 import { registerBlockType } from '@wordpress/blocks';
@@ -17,9 +22,11 @@ import {
 	RangeControl,
 	SelectControl,
 	ToggleControl,
+	__experimentalToolsPanelItem as ToolsPanelItem,
 	__experimentalUnitControl as ComponentsUnitControl,
 } from '@wordpress/components';
 import { createElement as el, useRef, useState } from '@wordpress/element';
+import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 
 import './editor.css';
@@ -75,6 +82,15 @@ const INSET_UNITS = [
 	{ value: 'vh', label: 'vh', default: 5 },
 ];
 
+const MIN_HEIGHT_UNITS = [
+	{ value: 'px', label: 'px', default: 430 },
+	{ value: '%', label: '%', default: 20 },
+	{ value: 'em', label: 'em', default: 20 },
+	{ value: 'rem', label: 'rem', default: 20 },
+	{ value: 'vw', label: 'vw', default: 20 },
+	{ value: 'vh', label: 'vh', default: 50 },
+];
+
 function positionClass( contentPosition ) {
 	return (
 		'is-position-' +
@@ -112,6 +128,45 @@ function backgroundValue( attributes ) {
 
 function controlPosition( value ) {
 	return CONTROL_POSITIONS.includes( value ) ? value : 'bottom right';
+}
+
+function minHeightValue( attributes ) {
+	const value = Number.isFinite( Number( attributes.minHeight ) )
+		? attributes.minHeight
+		: 80;
+	const unit = MIN_HEIGHT_UNITS.some( function ( item ) {
+		return item.value === attributes.minHeightUnit;
+	} )
+		? attributes.minHeightUnit
+		: 'vh';
+
+	return value + unit;
+}
+
+function minHeightParts( value ) {
+	const match = String( value || '' )
+		.trim()
+		.match( /^([-+]?(?:\d+|\d*\.\d+))(px|%|em|rem|vw|vh)$/ );
+
+	if ( ! match ) {
+		return null;
+	}
+
+	return { value: Number( match[ 1 ] ), unit: match[ 2 ] };
+}
+
+function styleWithoutAspectRatio( style ) {
+	if ( ! style || ! style.dimensions || ! style.dimensions.aspectRatio ) {
+		return style;
+	}
+
+	const dimensions = { ...style.dimensions };
+	delete dimensions.aspectRatio;
+
+	return {
+		...style,
+		dimensions,
+	};
 }
 
 function spacingPresetSlug( value ) {
@@ -305,8 +360,15 @@ function wrapperStyle( attributes, spacingSizes ) {
 		spacingSizes
 	);
 	const togglePosition = controlPosition( attributes.pauseControlPosition );
+	const hasAspectRatio = !! (
+		attributes.style &&
+		attributes.style.dimensions &&
+		attributes.style.dimensions.aspectRatio
+	);
 	const style = {
-		'--ran-video-cover-min-height': minHeight + minHeightUnit,
+		'--ran-video-cover-min-height': hasAspectRatio
+			? undefined
+			: minHeight + minHeightUnit,
 		'--ran-video-cover-focal-x': point.x * 100 + '%',
 		'--ran-video-cover-focal-y': point.y * 100 + '%',
 		'--ran-video-cover-background': backgroundValue( attributes ),
@@ -454,6 +516,20 @@ function VideoBannerEdit( props ) {
 	const colors = settings[ 0 ] || [];
 	const spacingSettings = useSettings( 'spacing.spacingSizes' );
 	const spacingSizes = spacingSettings[ 0 ] || [];
+	const previousHeightState = useState( {
+		value: attributes.minHeight,
+		unit: attributes.minHeightUnit,
+	} );
+	const previousHeight = previousHeightState[ 0 ];
+	const setPreviousHeight = previousHeightState[ 1 ];
+	const hasInnerBlocks = useSelect(
+		function ( select ) {
+			const block = select( blockEditorStore ).getBlock( props.clientId );
+
+			return !! ( block && block.innerBlocks.length );
+		},
+		[ props.clientId ]
+	);
 	const blockProps = useBlockProps( {
 		className: wrapperClassName( attributes ),
 		style: wrapperStyle( attributes, spacingSizes ),
@@ -472,6 +548,49 @@ function VideoBannerEdit( props ) {
 		setAttributes( {
 			posterId: media && media.id ? media.id : 0,
 			posterUrl: media && media.url ? media.url : '',
+		} );
+	}
+
+	function setMinimumHeight( value ) {
+		const parts = minHeightParts( value );
+
+		if ( ! parts ) {
+			return;
+		}
+
+		setAttributes( {
+			minHeight: parts.value,
+			minHeightUnit: parts.unit,
+			style: styleWithoutAspectRatio( attributes.style ),
+		} );
+	}
+
+	function toggleFullHeight() {
+		const isFullHeight =
+			'vh' === attributes.minHeightUnit &&
+			100 === attributes.minHeight &&
+			! (
+				attributes.style &&
+				attributes.style.dimensions &&
+				attributes.style.dimensions.aspectRatio
+			);
+
+		if ( isFullHeight ) {
+			setAttributes( {
+				minHeight: previousHeight.value || 80,
+				minHeightUnit: previousHeight.unit || 'vh',
+			} );
+			return;
+		}
+
+		setPreviousHeight( {
+			value: attributes.minHeight,
+			unit: attributes.minHeightUnit,
+		} );
+		setAttributes( {
+			minHeight: 100,
+			minHeightUnit: 'vh',
+			style: styleWithoutAspectRatio( attributes.style ),
 		} );
 	}
 
@@ -539,25 +658,52 @@ function VideoBannerEdit( props ) {
 		'section',
 		blockProps,
 		el(
+			BlockControls,
+			{ group: 'block' },
+			el( BlockAlignmentMatrixControl, {
+				label: __( 'Change content position', 'ran-video-cover' ),
+				value: attributes.contentPosition,
+				onChange( value ) {
+					setAttributes( { contentPosition: value } );
+				},
+				isDisabled: ! hasInnerBlocks,
+			} ),
+			el( BlockFullHeightAlignmentControl, {
+				isActive:
+					'vh' === attributes.minHeightUnit &&
+					100 === attributes.minHeight &&
+					! (
+						attributes.style &&
+						attributes.style.dimensions &&
+						attributes.style.dimensions.aspectRatio
+					),
+				onToggle: toggleFullHeight,
+				isDisabled: ! hasInnerBlocks,
+			} )
+		),
+		el(
+			BlockControls,
+			{ group: 'other' },
+			el( MediaReplaceFlow, {
+				allowedTypes: [ 'video' ],
+				mediaId: attributes.videoId,
+				mediaURL: attributes.videoUrl,
+				name: attributes.videoUrl
+					? __( 'Replace video', 'ran-video-cover' )
+					: __( 'Add video', 'ran-video-cover' ),
+				onReset() {
+					setVideo( null );
+				},
+				onSelect: setVideo,
+				variant: 'toolbar',
+			} )
+		),
+		el(
 			InspectorControls,
-			null,
+			{ group: 'settings' },
 			el(
 				PanelBody,
 				{ title: __( 'Media', 'ran-video-cover' ), initialOpen: true },
-				el( MediaSelector, {
-					allowedTypes: [ 'video' ],
-					buttonLabel: attributes.videoUrl
-						? __( 'Replace', 'ran-video-cover' )
-						: __( 'Select', 'ran-video-cover' ),
-					clearLabel: __( 'Clear', 'ran-video-cover' ),
-					label: __( 'Video', 'ran-video-cover' ),
-					onClear() {
-						setVideo( null );
-					},
-					onSelect: setVideo,
-					url: attributes.videoUrl,
-					value: attributes.videoId,
-				} ),
 				el( MediaSelector, {
 					allowedTypes: [ 'image' ],
 					buttonLabel: attributes.posterUrl
@@ -572,131 +718,15 @@ function VideoBannerEdit( props ) {
 					url: attributes.posterUrl,
 					value: attributes.posterId,
 				} ),
-				attributes.posterUrl &&
+				hasMedia &&
 					el( FocalPointPicker, {
 						label: __( 'Focal point', 'ran-video-cover' ),
-						url: attributes.posterUrl,
+						url: attributes.posterUrl || attributes.videoUrl,
 						value: focalPoint( attributes ),
 						onChange( value ) {
 							setAttributes( { focalPoint: value } );
 						},
 					} )
-			),
-			el(
-				PanelBody,
-				{
-					title: __( 'Layout', 'ran-video-cover' ),
-					initialOpen: false,
-				},
-				el( RangeControl, {
-					label: __( 'Minimum height', 'ran-video-cover' ),
-					value: attributes.minHeight,
-					onChange( value ) {
-						setAttributes( { minHeight: value || 0 } );
-					},
-					min: 20,
-					max: 100,
-				} ),
-				el( SelectControl, {
-					label: __( 'Minimum height unit', 'ran-video-cover' ),
-					value: attributes.minHeightUnit,
-					options: [
-						{ label: 'vh', value: 'vh' },
-						{ label: '%', value: '%' },
-						{ label: 'px', value: 'px' },
-						{ label: 'rem', value: 'rem' },
-					],
-					onChange( value ) {
-						setAttributes( { minHeightUnit: value } );
-					},
-				} ),
-				el( SelectControl, {
-					label: __( 'Content position', 'ran-video-cover' ),
-					value: attributes.contentPosition,
-					options: [
-						{
-							label: __( 'Top left', 'ran-video-cover' ),
-							value: 'top left',
-						},
-						{
-							label: __( 'Top center', 'ran-video-cover' ),
-							value: 'top center',
-						},
-						{
-							label: __( 'Top right', 'ran-video-cover' ),
-							value: 'top right',
-						},
-						{
-							label: __( 'Center left', 'ran-video-cover' ),
-							value: 'center left',
-						},
-						{
-							label: __( 'Center', 'ran-video-cover' ),
-							value: 'center center',
-						},
-						{
-							label: __( 'Center right', 'ran-video-cover' ),
-							value: 'center right',
-						},
-						{
-							label: __( 'Bottom left', 'ran-video-cover' ),
-							value: 'bottom left',
-						},
-						{
-							label: __( 'Bottom center', 'ran-video-cover' ),
-							value: 'bottom center',
-						},
-						{
-							label: __( 'Bottom right', 'ran-video-cover' ),
-							value: 'bottom right',
-						},
-					],
-					onChange( value ) {
-						setAttributes( { contentPosition: value } );
-					},
-				} )
-			),
-			el( PanelColorSettings, {
-				title: __( 'Background colour', 'ran-video-cover' ),
-				initialOpen: false,
-				colorSettings: [
-					{
-						value: selectedColor(
-							colors,
-							attributes.backgroundColor,
-							attributes.customBackgroundColor
-						),
-						onChange: setBackgroundColor,
-						label: __( 'Background colour', 'ran-video-cover' ),
-					},
-				],
-			} ),
-			el(
-				PanelColorSettings,
-				{
-					title: __( 'Colour wash', 'ran-video-cover' ),
-					initialOpen: false,
-					colorSettings: [
-						{
-							value: selectedColor(
-								colors,
-								attributes.overlayColor,
-								attributes.customOverlayColor
-							),
-							onChange: setOverlayColor,
-							label: __( 'Wash colour', 'ran-video-cover' ),
-						},
-					],
-				},
-				el( RangeControl, {
-					label: __( 'Wash opacity', 'ran-video-cover' ),
-					value: attributes.overlayOpacity,
-					onChange( value ) {
-						setAttributes( { overlayOpacity: value || 0 } );
-					},
-					min: 0,
-					max: 100,
-				} )
 			),
 			el(
 				PanelBody,
@@ -711,52 +741,168 @@ function VideoBannerEdit( props ) {
 						setAttributes( { pauseControl: value } );
 					},
 				} ),
-				el( SelectControl, {
-					label: __( 'Control position', 'ran-video-cover' ),
-					value: attributes.pauseControlPosition,
-					options: [
-						{
-							label: __( 'Bottom right', 'ran-video-cover' ),
-							value: 'bottom right',
+				attributes.pauseControl &&
+					el( SelectControl, {
+						label: __( 'Control position', 'ran-video-cover' ),
+						value: attributes.pauseControlPosition,
+						options: [
+							{
+								label: __( 'Bottom right', 'ran-video-cover' ),
+								value: 'bottom right',
+							},
+							{
+								label: __( 'Bottom left', 'ran-video-cover' ),
+								value: 'bottom left',
+							},
+							{
+								label: __( 'Top right', 'ran-video-cover' ),
+								value: 'top right',
+							},
+							{
+								label: __( 'Top left', 'ran-video-cover' ),
+								value: 'top left',
+							},
+							{
+								label: __( 'Bottom center', 'ran-video-cover' ),
+								value: 'bottom center',
+							},
+							{
+								label: __( 'Top center', 'ran-video-cover' ),
+								value: 'top center',
+							},
+						],
+						onChange( value ) {
+							setAttributes( { pauseControlPosition: value } );
 						},
-						{
-							label: __( 'Bottom left', 'ran-video-cover' ),
-							value: 'bottom left',
-						},
-						{
-							label: __( 'Top right', 'ran-video-cover' ),
-							value: 'top right',
-						},
-						{
-							label: __( 'Top left', 'ran-video-cover' ),
-							value: 'top left',
-						},
-						{
-							label: __( 'Bottom center', 'ran-video-cover' ),
-							value: 'bottom center',
-						},
-						{
-							label: __( 'Top center', 'ran-video-cover' ),
-							value: 'top center',
-						},
-					],
-					onChange( value ) {
-						setAttributes( { pauseControlPosition: value } );
+					} ),
+				attributes.pauseControl &&
+					el( InsetControl, {
+						attribute: 'pauseControlInsetBlock',
+						label: __( 'Block-axis inset', 'ran-video-cover' ),
+						setAttributes,
+						spacingSizes,
+						value: attributes.pauseControlInsetBlock,
+					} ),
+				attributes.pauseControl &&
+					el( InsetControl, {
+						attribute: 'pauseControlInsetInline',
+						label: __( 'Inline-axis inset', 'ran-video-cover' ),
+						setAttributes,
+						spacingSizes,
+						value: attributes.pauseControlInsetInline,
+					} )
+			)
+		),
+		el(
+			InspectorControls,
+			{ group: 'dimensions' },
+			el(
+				ToolsPanelItem,
+				{
+					className: 'single-column',
+					hasValue() {
+						return (
+							80 !== attributes.minHeight ||
+							'vh' !== attributes.minHeightUnit
+						);
 					},
-				} ),
-				el( InsetControl, {
-					attribute: 'pauseControlInsetBlock',
-					label: __( 'Block-axis inset', 'ran-video-cover' ),
-					setAttributes,
-					spacingSizes,
-					value: attributes.pauseControlInsetBlock,
-				} ),
-				el( InsetControl, {
-					attribute: 'pauseControlInsetInline',
-					label: __( 'Inline-axis inset', 'ran-video-cover' ),
-					setAttributes,
-					spacingSizes,
-					value: attributes.pauseControlInsetInline,
+					label: __( 'Minimum height', 'ran-video-cover' ),
+					onDeselect() {
+						setAttributes( {
+							minHeight: undefined,
+							minHeightUnit: undefined,
+						} );
+					},
+					resetAllFilter() {
+						return {
+							minHeight: undefined,
+							minHeightUnit: undefined,
+						};
+					},
+					isShownByDefault: true,
+					panelId: props.clientId,
+				},
+				el( UnitControl, {
+					__next40pxDefaultSize: true,
+					label: __( 'Minimum height', 'ran-video-cover' ),
+					min: 0,
+					units: MIN_HEIGHT_UNITS,
+					value: minHeightValue( attributes ),
+					onChange: setMinimumHeight,
+				} )
+			)
+		),
+		el(
+			InspectorControls,
+			{ group: 'color' },
+			el( ColorGradientSettingsDropdown, {
+				__experimentalIsRenderedInSidebar: true,
+				colors,
+				gradients: [],
+				disableCustomGradients: true,
+				panelId: props.clientId,
+				settings: [
+					{
+						colorValue: selectedColor(
+							colors,
+							attributes.backgroundColor,
+							attributes.customBackgroundColor
+						),
+						onColorChange: setBackgroundColor,
+						label: __( 'Background colour', 'ran-video-cover' ),
+						isShownByDefault: true,
+						resetAllFilter() {
+							return {
+								backgroundColor: undefined,
+								customBackgroundColor: undefined,
+							};
+						},
+						clearable: true,
+					},
+					{
+						colorValue: selectedColor(
+							colors,
+							attributes.overlayColor,
+							attributes.customOverlayColor
+						),
+						onColorChange: setOverlayColor,
+						label: __( 'Colour wash', 'ran-video-cover' ),
+						isShownByDefault: true,
+						resetAllFilter() {
+							return {
+								overlayColor: undefined,
+								customOverlayColor: undefined,
+							};
+						},
+						clearable: true,
+					},
+				],
+			} ),
+			el(
+				ToolsPanelItem,
+				{
+					className: 'single-column',
+					hasValue() {
+						return 70 !== attributes.overlayOpacity;
+					},
+					label: __( 'Wash opacity', 'ran-video-cover' ),
+					onDeselect() {
+						setAttributes( { overlayOpacity: 70 } );
+					},
+					resetAllFilter() {
+						return { overlayOpacity: 70 };
+					},
+					isShownByDefault: true,
+					panelId: props.clientId,
+				},
+				el( RangeControl, {
+					label: __( 'Wash opacity', 'ran-video-cover' ),
+					value: attributes.overlayOpacity,
+					onChange( value ) {
+						setAttributes( { overlayOpacity: value || 0 } );
+					},
+					min: 0,
+					max: 100,
 				} )
 			)
 		),

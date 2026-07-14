@@ -81,15 +81,67 @@
     }
   },
   "supports": {
-    "align": [
-      "wide",
-      "full"
-    ],
+    "align": true,
     "anchor": true,
     "html": false,
+    "shadow": true,
     "spacing": {
       "margin": true,
-      "padding": true
+      "padding": true,
+      "blockGap": true,
+      "__experimentalDefaultControls": {
+        "padding": true,
+        "blockGap": true
+      }
+    },
+    "__experimentalBorder": {
+      "color": true,
+      "radius": true,
+      "style": true,
+      "width": true,
+      "__experimentalDefaultControls": {
+        "color": true,
+        "radius": true,
+        "style": true,
+        "width": true
+      }
+    },
+    "color": {
+      "heading": true,
+      "text": true,
+      "background": false,
+      "__experimentalSkipSerialization": [
+        "gradients"
+      ],
+      "enableContrastChecker": false
+    },
+    "dimensions": {
+      "aspectRatio": true
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true,
+      "__experimentalFontFamily": true,
+      "__experimentalFontWeight": true,
+      "__experimentalFontStyle": true,
+      "__experimentalTextTransform": true,
+      "__experimentalTextDecoration": true,
+      "__experimentalLetterSpacing": true,
+      "__experimentalDefaultControls": {
+        "fontSize": true
+      }
+    },
+    "layout": {
+      "allowJustification": false
+    },
+    "filter": {
+      "duotone": true
+    },
+    "allowedBlocks": true
+  },
+  "selectors": {
+    "filter": {
+      "duotone": ".wp-block-ran-video-cover > .ran-video-cover__media"
     }
   },
   "example": {

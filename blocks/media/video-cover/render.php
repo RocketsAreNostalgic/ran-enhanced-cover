@@ -108,8 +108,9 @@ $focal_x     = min( 1, max( 0, $focal_x ) );
 $focal_y     = min( 1, max( 0, $focal_y ) );
 
 $min_height       = isset( $attributes['minHeight'] ) ? (float) $attributes['minHeight'] : 80;
-$min_height_units = array( 'vh', '%', 'px', 'rem' );
+$min_height_units = array( 'px', '%', 'em', 'rem', 'vw', 'vh' );
 $min_height_unit  = in_array( $attributes['minHeightUnit'], $min_height_units, true ) ? $attributes['minHeightUnit'] : 'vh';
+$has_aspect_ratio = ! empty( $attributes['style']['dimensions']['aspectRatio'] );
 
 $overlay_opacity = isset( $attributes['overlayOpacity'] ) ? (int) $attributes['overlayOpacity'] : 70;
 $overlay_opacity = min( 100, max( 0, $overlay_opacity ) );
@@ -171,21 +172,27 @@ if ( str_contains( $control_position, 'left' ) ) {
 	$toggle_inline_end = $inline_inset;
 }
 
-$style = sprintf(
-	'--ran-video-cover-min-height:%1$s%2$s;--ran-video-cover-focal-x:%3$s%%;--ran-video-cover-focal-y:%4$s%%;--ran-video-cover-wash:%5$s;--ran-video-cover-wash-opacity:%6$s;--ran-video-cover-toggle-block-start:%7$s;--ran-video-cover-toggle-block-end:%8$s;--ran-video-cover-toggle-inline-start:%9$s;--ran-video-cover-toggle-inline-end:%10$s;--ran-video-cover-toggle-transform:%11$s;--ran-video-cover-background:%12$s;',
-	esc_attr( $min_height ),
-	esc_attr( $min_height_unit ),
-	esc_attr( $focal_x * 100 ),
-	esc_attr( $focal_y * 100 ),
-	esc_attr( $overlay_value ),
-	esc_attr( $overlay_opacity / 100 ),
-	esc_attr( $toggle_block_start ),
-	esc_attr( $toggle_block_end ),
-	esc_attr( $toggle_inline_start ),
-	esc_attr( $toggle_inline_end ),
-	esc_attr( $toggle_transform ),
-	esc_attr( $background_value )
+$style_parts = array(
+	'--ran-video-cover-focal-x:' . esc_attr( $focal_x * 100 ) . '%;',
+	'--ran-video-cover-focal-y:' . esc_attr( $focal_y * 100 ) . '%;',
+	'--ran-video-cover-wash:' . esc_attr( $overlay_value ) . ';',
+	'--ran-video-cover-wash-opacity:' . esc_attr( $overlay_opacity / 100 ) . ';',
+	'--ran-video-cover-toggle-block-start:' . esc_attr( $toggle_block_start ) . ';',
+	'--ran-video-cover-toggle-block-end:' . esc_attr( $toggle_block_end ) . ';',
+	'--ran-video-cover-toggle-inline-start:' . esc_attr( $toggle_inline_start ) . ';',
+	'--ran-video-cover-toggle-inline-end:' . esc_attr( $toggle_inline_end ) . ';',
+	'--ran-video-cover-toggle-transform:' . esc_attr( $toggle_transform ) . ';',
+	'--ran-video-cover-background:' . esc_attr( $background_value ) . ';',
 );
+
+if ( ! $has_aspect_ratio ) {
+	array_unshift(
+		$style_parts,
+		'--ran-video-cover-min-height:' . esc_attr( $min_height ) . esc_attr( $min_height_unit ) . ';'
+	);
+}
+
+$style = implode( '', $style_parts );
 
 $wrapper_attributes = get_block_wrapper_attributes(
 	array(
