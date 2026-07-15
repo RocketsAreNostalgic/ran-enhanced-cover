@@ -1,6 +1,6 @@
 <?php
 /**
- * Render callback for ran/video-cover.
+ * Render callback for ran/enhanced-cover.
  *
  * @package RAN_Video_Cover
  */

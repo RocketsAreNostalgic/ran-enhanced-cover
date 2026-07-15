@@ -59,7 +59,7 @@ final class Blocks {
 
 		self::register_view_script();
 
-		if ( \WP_Block_Type_Registry::get_instance()->is_registered( 'ran/video-cover' ) ) {
+		if ( \WP_Block_Type_Registry::get_instance()->is_registered( 'ran/enhanced-cover' ) ) {
 			return;
 		}
 

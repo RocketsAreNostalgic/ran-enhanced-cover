@@ -15,7 +15,7 @@ test( 'a reduced-motion visitor receives a paused, labelled video control', asyn
 	await page.emulateMedia( { reducedMotion: 'reduce' } );
 	await page.goto( fixtureUrl );
 
-	const cover = page.locator( '.wp-block-ran-video-cover' ).first();
+	const cover = page.locator( '.wp-block-ran-enhanced-cover' ).first();
 	const video = cover.locator( 'video.ran-video-cover__media' );
 	const control = cover.getByRole( 'button', { name: 'Play animation' } );
 
@@ -43,7 +43,7 @@ test( 'the no-JavaScript response remains understandable and paused', async ( {
 
 	await page.goto( fixtureUrl );
 
-	const cover = page.locator( '.wp-block-ran-video-cover' ).first();
+	const cover = page.locator( '.wp-block-ran-enhanced-cover' ).first();
 	const video = cover.locator( 'video.ran-video-cover__media' );
 
 	await expect( cover ).toHaveClass( /is-paused/ );
@@ -76,7 +76,9 @@ test( 'a video cover requests the player runtime', async ( { page } ) => {
 
 	await expect(
 		page
-			.locator( '.wp-block-ran-video-cover video.ran-video-cover__media' )
+			.locator(
+				'.wp-block-ran-enhanced-cover video.ran-video-cover__media'
+			)
 			.first()
 	).toBeVisible();
 	expect( runtimeRequests ).toHaveLength( 1 );
@@ -103,7 +105,7 @@ test( 'a poster-only or empty cover omits player controls and runtime', async ( 
 
 	await page.goto( staticFixtureUrl, { waitUntil: 'load' } );
 
-	const cover = page.locator( '.wp-block-ran-video-cover' ).first();
+	const cover = page.locator( '.wp-block-ran-enhanced-cover' ).first();
 	await expect( cover.locator( 'video.ran-video-cover__media' ) ).toHaveCount(
 		0
 	);
@@ -123,7 +125,7 @@ test( 'a transparent-media cover retains its independent brand-purple surface', 
 
 	await page.goto( surfaceFixtureUrl, { waitUntil: 'load' } );
 
-	const cover = page.locator( '.wp-block-ran-video-cover' ).first();
+	const cover = page.locator( '.wp-block-ran-enhanced-cover' ).first();
 	const style = await cover.getAttribute( 'style' );
 
 	expect( style ).toContain(

@@ -1,4 +1,4 @@
-.wp-block-ran-video-cover {
+.wp-block-ran-enhanced-cover {
 	align-items: center;
 	background-color: var(--ran-video-cover-background, transparent);
 	box-sizing: border-box;
@@ -11,39 +11,39 @@
 	position: relative;
 }
 
-.wp-block-ran-video-cover.is-position-top-left,
-.wp-block-ran-video-cover.is-position-top-center,
-.wp-block-ran-video-cover.is-position-top-right {
+.wp-block-ran-enhanced-cover.is-position-top-left,
+.wp-block-ran-enhanced-cover.is-position-top-center,
+.wp-block-ran-enhanced-cover.is-position-top-right {
 	align-items: flex-start;
 }
 
-.wp-block-ran-video-cover.is-position-center-left,
-.wp-block-ran-video-cover.is-position-center-center,
-.wp-block-ran-video-cover.is-position-center-right {
+.wp-block-ran-enhanced-cover.is-position-center-left,
+.wp-block-ran-enhanced-cover.is-position-center-center,
+.wp-block-ran-enhanced-cover.is-position-center-right {
 	align-items: center;
 }
 
-.wp-block-ran-video-cover.is-position-bottom-left,
-.wp-block-ran-video-cover.is-position-bottom-center,
-.wp-block-ran-video-cover.is-position-bottom-right {
+.wp-block-ran-enhanced-cover.is-position-bottom-left,
+.wp-block-ran-enhanced-cover.is-position-bottom-center,
+.wp-block-ran-enhanced-cover.is-position-bottom-right {
 	align-items: flex-end;
 }
 
-.wp-block-ran-video-cover.is-position-top-left,
-.wp-block-ran-video-cover.is-position-center-left,
-.wp-block-ran-video-cover.is-position-bottom-left {
+.wp-block-ran-enhanced-cover.is-position-top-left,
+.wp-block-ran-enhanced-cover.is-position-center-left,
+.wp-block-ran-enhanced-cover.is-position-bottom-left {
 	justify-content: flex-start;
 }
 
-.wp-block-ran-video-cover.is-position-top-center,
-.wp-block-ran-video-cover.is-position-center-center,
-.wp-block-ran-video-cover.is-position-bottom-center {
+.wp-block-ran-enhanced-cover.is-position-top-center,
+.wp-block-ran-enhanced-cover.is-position-center-center,
+.wp-block-ran-enhanced-cover.is-position-bottom-center {
 	justify-content: center;
 }
 
-.wp-block-ran-video-cover.is-position-top-right,
-.wp-block-ran-video-cover.is-position-center-right,
-.wp-block-ran-video-cover.is-position-bottom-right {
+.wp-block-ran-enhanced-cover.is-position-top-right,
+.wp-block-ran-enhanced-cover.is-position-center-right,
+.wp-block-ran-enhanced-cover.is-position-bottom-right {
 	justify-content: flex-end;
 }
 
@@ -78,7 +78,7 @@
 }
 
 /* Layout support adds a block gap to direct children; the wash must remain flush. */
-.wp-block-ran-video-cover > .ran-video-cover__wash {
+.wp-block-ran-enhanced-cover > .ran-video-cover__wash {
 	margin-block: 0;
 }
 

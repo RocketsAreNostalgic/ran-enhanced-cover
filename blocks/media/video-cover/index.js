@@ -1233,7 +1233,7 @@ function VideoBannerEdit( props ) {
 	);
 }
 
-registerBlockType( 'ran/video-cover', {
+registerBlockType( 'ran/enhanced-cover', {
 	edit: VideoBannerEdit,
 	icon: ICON,
 

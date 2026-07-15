@@ -1,4 +1,4 @@
-=== RAN Video Cover ===
+=== Ran Enhanced Cover ===
 Contributors: rocketsarenostalgic
 Tags: block, video, cover, accessibility, reduced-motion
 Requires at least: 6.5
@@ -12,15 +12,15 @@ An accessible Cover-style block with background video, a poster fallback, and vi
 
 == Description ==
 
-RAN Video Cover adds the `ran/video-cover` block to the Media category. It combines a background video or poster image with nested WordPress blocks, focal-point controls, a background surface colour, an independent colour wash, and a native pause/play button.
+Ran Enhanced Cover adds the `ran/enhanced-cover` block to the Media category. It combines a background video or poster image with nested WordPress blocks, focal-point controls, a background surface colour, an independent colour wash, and a native pause/play button.
 
 The block deliberately starts without autoplay in its HTML. Its small frontend script is loaded only for blocks with a selected video, and starts playback only when the visitor has not requested reduced motion. A visitor can pause every Video Cover block on the site; that preference is stored only in browser local storage when available. The plugin does not set or read cookies and does not send data to a third-party service.
 
 == Installation ==
 
 1. Upload the `ran-video-cover` folder to `/wp-content/plugins/`, or install the plugin through the WordPress Plugins screen.
-2. Activate RAN Video Cover through the Plugins screen.
-3. Insert Video Cover from the Media block category and select a video or poster image.
+2. Activate Ran Enhanced Cover through the Plugins screen.
+3. Insert Ran Enhanced Cover from the Media block category and select a video or poster image.
 
 == Frequently Asked Questions ==
 

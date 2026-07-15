@@ -1,8 +1,8 @@
-# RAN Video Cover
+# Ran Enhanced Cover
 
-RAN Video Cover is a standalone Cover-style WordPress block for background
+Ran Enhanced Cover is a standalone Cover-style WordPress block for background
 video, a poster fallback, and a visitor-controlled motion preference. Its
-canonical block name is `ran/video-cover`.
+canonical block name is `ran/enhanced-cover`.
 
 ## Features
 
@@ -22,7 +22,7 @@ canonical block name is `ran/video-cover`.
 ## Installation
 
 1. Install the plugin in `wp-content/plugins/ran-video-cover`.
-2. Activate **RAN Video Cover** in WordPress administration.
+2. Activate **Ran Enhanced Cover** in WordPress administration.
 3. Deploy the committed `build/blocks/` runtime assets with the plugin.
 
 The source `blocks/` directory is for development. WordPress loads the
@@ -30,7 +30,7 @@ compiled `build/blocks/` assets in production.
 
 ## Usage
 
-Insert **Video Cover** from the standard **Media** category. Choose a background
+Insert **Ran Enhanced Cover** from the standard **Media** category. Choose a background
 video or poster image, then configure focal point, minimum height, content
 placement, **Background colour**, and **Colour wash**. The selected background
 colour sits beneath the media, so it is visible through transparent video or

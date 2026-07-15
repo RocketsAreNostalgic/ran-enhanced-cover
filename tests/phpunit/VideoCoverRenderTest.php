@@ -48,7 +48,7 @@ class VideoCoverRenderTest extends \WP_UnitTestCase {
 	 */
 	public function test_video_markup_starts_paused_without_autoplay() {
 		$rendered = do_blocks(
-			'<!-- wp:ran/video-cover {"videoUrl":"https://example.com/video.mp4"} --><p>Example content</p><!-- /wp:ran/video-cover -->'
+			'<!-- wp:ran/enhanced-cover {"videoUrl":"https://example.com/video.mp4"} --><p>Example content</p><!-- /wp:ran/enhanced-cover -->'
 		);
 
 		$this->assertStringContainsString( 'is-paused', $rendered );
@@ -65,7 +65,7 @@ class VideoCoverRenderTest extends \WP_UnitTestCase {
 	 */
 	public function test_legacy_video_url_renders_a_single_video_source() {
 		$rendered = do_blocks(
-			'<!-- wp:ran/video-cover {"videoUrl":"https://example.com/legacy-video.mp4"} --><p>Example content</p><!-- /wp:ran/video-cover -->'
+			'<!-- wp:ran/enhanced-cover {"videoUrl":"https://example.com/legacy-video.mp4"} --><p>Example content</p><!-- /wp:ran/enhanced-cover -->'
 		);
 
 		$this->assertSame( 1, substr_count( $rendered, '<source ' ) );
@@ -81,7 +81,7 @@ class VideoCoverRenderTest extends \WP_UnitTestCase {
 	 */
 	public function test_video_sources_render_ordered_source_tags_with_inferred_types() {
 		$rendered = do_blocks(
-			'<!-- wp:ran/video-cover {"videoSources":[{"id":101,"url":"https://example.com/animation-alpha.mp4"},{"id":102,"url":"https://example.com/animation-alpha.webm"},{"id":103,"url":"https://example.com/animation-fallback.mp4"}]} --><p>Example content</p><!-- /wp:ran/video-cover -->'
+			'<!-- wp:ran/enhanced-cover {"videoSources":[{"id":101,"url":"https://example.com/animation-alpha.mp4"},{"id":102,"url":"https://example.com/animation-alpha.webm"},{"id":103,"url":"https://example.com/animation-fallback.mp4"}]} --><p>Example content</p><!-- /wp:ran/enhanced-cover -->'
 		);
 
 		$first_mp4_source  = '<source src="https://example.com/animation-alpha.mp4" type="video/mp4">';
@@ -104,7 +104,7 @@ class VideoCoverRenderTest extends \WP_UnitTestCase {
 	 */
 	public function test_renderer_uses_safe_fallbacks_for_invalid_control_values() {
 		$rendered = do_blocks(
-			'<!-- wp:ran/video-cover {"videoUrl":"https://example.com/video.mp4","pauseControlPosition":"middle middle","pauseControlInsetBlock":"expression(alert(1))","pauseControlInsetInline":"var:preset|spacing|missing-scale"} --><p>Example content</p><!-- /wp:ran-video-cover -->'
+			'<!-- wp:ran/enhanced-cover {"videoUrl":"https://example.com/video.mp4","pauseControlPosition":"middle middle","pauseControlInsetBlock":"expression(alert(1))","pauseControlInsetInline":"var:preset|spacing|missing-scale"} --><p>Example content</p><!-- /wp:ran/enhanced-cover -->'
 		);
 
 		$this->assertStringContainsString( '--ran-video-cover-toggle-block-end:1rem;', $rendered );
@@ -119,7 +119,7 @@ class VideoCoverRenderTest extends \WP_UnitTestCase {
 	 */
 	public function test_legacy_palette_overlay_is_not_overridden_by_the_default_custom_colour() {
 		$rendered = do_blocks(
-			'<!-- wp:ran/video-cover {"overlayColor":"brand-purple","overlayOpacity":80} --><p>Example content</p><!-- /wp:ran/video-cover -->'
+			'<!-- wp:ran/enhanced-cover {"overlayColor":"brand-purple","overlayOpacity":80} --><p>Example content</p><!-- /wp:ran/enhanced-cover -->'
 		);
 
 		$this->assertStringContainsString(
@@ -135,7 +135,7 @@ class VideoCoverRenderTest extends \WP_UnitTestCase {
 	 */
 	public function test_renderer_exposes_named_surface_background_variable() {
 		$rendered = do_blocks(
-			'<!-- wp:ran/video-cover {"backgroundColor":"brand-purple"} --><p>Example content</p><!-- /wp:ran/video-cover -->'
+			'<!-- wp:ran/enhanced-cover {"backgroundColor":"brand-purple"} --><p>Example content</p><!-- /wp:ran/enhanced-cover -->'
 		);
 
 		$this->assertStringContainsString(
@@ -151,7 +151,7 @@ class VideoCoverRenderTest extends \WP_UnitTestCase {
 	 */
 	public function test_renderer_exposes_custom_surface_background_value() {
 		$rendered = do_blocks(
-			'<!-- wp:ran/video-cover {"customBackgroundColor":"#123456"} --><p>Example content</p><!-- /wp:ran/video-cover -->'
+			'<!-- wp:ran/enhanced-cover {"customBackgroundColor":"#123456"} --><p>Example content</p><!-- /wp:ran/enhanced-cover -->'
 		);
 
 		$this->assertStringContainsString(
@@ -167,7 +167,7 @@ class VideoCoverRenderTest extends \WP_UnitTestCase {
 	 */
 	public function test_renderer_uses_transparent_surface_background_fallback() {
 		$rendered = do_blocks(
-			'<!-- wp:ran/video-cover --><p>Example content</p><!-- /wp:ran/video-cover -->'
+			'<!-- wp:ran/enhanced-cover --><p>Example content</p><!-- /wp:ran/enhanced-cover -->'
 		);
 
 		$this->assertStringContainsString(
@@ -183,7 +183,7 @@ class VideoCoverRenderTest extends \WP_UnitTestCase {
 	 */
 	public function test_no_media_block_omits_media_toggle_and_runtime_handle() {
 		$rendered = do_blocks(
-			'<!-- wp:ran/video-cover {"videoSources":[],"pauseControl":true} --><p>Example content</p><!-- /wp:ran/video-cover -->'
+			'<!-- wp:ran/enhanced-cover {"videoSources":[],"pauseControl":true} --><p>Example content</p><!-- /wp:ran/enhanced-cover -->'
 		);
 
 		$this->assertStringNotContainsString( 'ran-video-cover__media', $rendered );
@@ -200,7 +200,7 @@ class VideoCoverRenderTest extends \WP_UnitTestCase {
 	 */
 	public function test_poster_only_block_omits_toggle_and_runtime_handle() {
 		$rendered = do_blocks(
-			'<!-- wp:ran/video-cover {"posterUrl":"https://example.com/poster.jpg","pauseControl":true} --><p>Example content</p><!-- /wp:ran/video-cover -->'
+			'<!-- wp:ran/enhanced-cover {"posterUrl":"https://example.com/poster.jpg","pauseControl":true} --><p>Example content</p><!-- /wp:ran/enhanced-cover -->'
 		);
 
 		$this->assertStringContainsString( '<img class="ran-video-cover__media"', $rendered );
@@ -216,7 +216,7 @@ class VideoCoverRenderTest extends \WP_UnitTestCase {
 	 */
 	public function test_video_block_enqueues_runtime_handle_and_renders_toggle() {
 		$rendered = do_blocks(
-			'<!-- wp:ran/video-cover {"videoUrl":"https://example.com/video.mp4","pauseControl":true} --><p>Example content</p><!-- /wp:ran/video-cover -->'
+			'<!-- wp:ran/enhanced-cover {"videoUrl":"https://example.com/video.mp4","pauseControl":true} --><p>Example content</p><!-- /wp:ran/enhanced-cover -->'
 		);
 
 		$this->assertStringContainsString( '<video class="ran-video-cover__media"', $rendered );

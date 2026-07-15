@@ -1,5 +1,5 @@
-.wp-block-ran-video-cover .block-editor-inner-blocks,
-.wp-block-ran-video-cover .block-editor-block-list__layout {
+.wp-block-ran-enhanced-cover .block-editor-inner-blocks,
+.wp-block-ran-enhanced-cover .block-editor-block-list__layout {
 	position: relative;
 	z-index: 2;
 }

@@ -211,7 +211,7 @@ msgstr ""
 
 #: blocks/media/video-cover/block.json
 msgctxt "block title"
-msgid "RAN Video Cover"
+msgid "Ran Enhanced Cover"
 msgstr ""
 
 #: blocks/media/video-cover/block.json

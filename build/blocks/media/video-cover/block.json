@@ -2,8 +2,8 @@
   "$schema": "https://schemas.wp.org/wp/6.5/block.json",
   "version": "1.0.0",
   "apiVersion": 3,
-  "name": "ran/video-cover",
-  "title": "RAN Video Cover",
+  "name": "ran/enhanced-cover",
+  "title": "Ran Enhanced Cover",
   "category": "media",
   "description": "Cover-style background video with a poster fallback, colour wash, reduced-motion handling, and a pause/play control.",
   "textdomain": "ran-video-cover",
@@ -145,7 +145,7 @@
   },
   "selectors": {
     "filter": {
-      "duotone": ".wp-block-ran-video-cover > .ran-video-cover__media"
+      "duotone": ".wp-block-ran-enhanced-cover > .ran-video-cover__media"
     }
   },
   "example": {

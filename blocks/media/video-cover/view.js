@@ -74,7 +74,7 @@
 
 	function setSiteMotionState( isPaused, persist ) {
 		const banners = document.querySelectorAll(
-			'.wp-block-ran-video-cover'
+			'.wp-block-ran-enhanced-cover'
 		);
 
 		if ( persist ) {
@@ -99,7 +99,7 @@
 
 	function toggleBanner( event ) {
 		const button = event.currentTarget;
-		const root = button.closest( '.wp-block-ran-video-cover' );
+		const root = button.closest( '.wp-block-ran-enhanced-cover' );
 
 		if ( ! root ) {
 			return;
@@ -141,7 +141,7 @@
 		const prefersReducedMotion = !! ( mediaQuery && mediaQuery.matches );
 		const isPaused = prefersReducedMotion || getStoredPausePreference();
 		const banners = document.querySelectorAll(
-			'.wp-block-ran-video-cover'
+			'.wp-block-ran-enhanced-cover'
 		);
 
 		for ( let index = 0; index < banners.length; index++ ) {
