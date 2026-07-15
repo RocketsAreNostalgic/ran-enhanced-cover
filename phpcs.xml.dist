@@ -9,9 +9,9 @@
 
 	<config name="minimum_supported_wp_version" value="6.5"/>
 	<config name="testVersion" value="8.0-"/>
-	<config name="text_domain" value="ran-video-cover"/>
+	<config name="text_domain" value="ran-enhanced-cover"/>
 
-	<file>ran-video-cover.php</file>
+	<file>ran-enhanced-cover.php</file>
 	<file>includes</file>
 	<file>blocks</file>
 	<file>scripts</file>

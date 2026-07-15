@@ -21,7 +21,7 @@ canonical block name is `ran/enhanced-cover`.
 
 ## Installation
 
-1. Install the plugin in `wp-content/plugins/ran-video-cover`.
+1. Install the plugin in `wp-content/plugins/ran-enhanced-cover`.
 2. Activate **Ran Enhanced Cover** in WordPress administration.
 3. Deploy the committed `build/blocks/` runtime assets with the plugin.
 
@@ -100,11 +100,11 @@ WordPress environment.
 
 ## License
 
-RAN Video Cover is licensed under the [GNU General Public License v2.0 or
+RAN Enhanced Cover is licensed under the [GNU General Public License v2.0 or
 later](LICENSE) (`GPL-2.0-or-later`).
 
 ## Support and contributing
 
 Report reproducible issues at
-[RocketsAreNostalgic/ran-video-cover](https://github.com/RocketsAreNostalgic/ran-video-cover/issues).
+[RocketsAreNostalgic/ran-enhanced-cover](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/issues).
 Include the relevant lint and build output with changes.

@@ -1,15 +1,15 @@
 const { expect, test } = require( '@playwright/test' );
 
-const fixtureUrl = process.env.RAN_VIDEO_COVER_E2E_URL;
-const staticFixtureUrl = process.env.RAN_VIDEO_COVER_STATIC_E2E_URL;
-const surfaceFixtureUrl = process.env.RAN_VIDEO_COVER_SURFACE_E2E_URL;
+const fixtureUrl = process.env.RAN_ENHANCED_COVER_E2E_URL;
+const staticFixtureUrl = process.env.RAN_ENHANCED_COVER_STATIC_E2E_URL;
+const surfaceFixtureUrl = process.env.RAN_ENHANCED_COVER_SURFACE_E2E_URL;
 
 test( 'a reduced-motion visitor receives a paused, labelled video control', async ( {
 	page,
 } ) => {
 	test.skip(
 		! fixtureUrl,
-		'Set RAN_VIDEO_COVER_E2E_URL to a published post containing a video Video Cover block.'
+		'Set RAN_ENHANCED_COVER_E2E_URL to a published post containing a video Video Cover block.'
 	);
 
 	await page.emulateMedia( { reducedMotion: 'reduce' } );
@@ -17,7 +17,7 @@ test( 'a reduced-motion visitor receives a paused, labelled video control', asyn
 
 	const cover = page.locator( '.wp-block-ran-enhanced-cover' ).first();
 	const video = cover.locator( 'video.ran-video-cover__media' );
-	const control = cover.getByRole( 'button', { name: 'Play animation' } );
+	const control = cover.getByRole( 'button', { name: 'Play' } );
 
 	await expect( cover ).toHaveClass( /is-paused/ );
 	await expect( video ).not.toHaveAttribute( 'autoplay', '' );
@@ -35,7 +35,7 @@ test( 'the no-JavaScript response remains understandable and paused', async ( {
 } ) => {
 	test.skip(
 		! fixtureUrl,
-		'Set RAN_VIDEO_COVER_E2E_URL to a published post containing a video Video Cover block.'
+		'Set RAN_ENHANCED_COVER_E2E_URL to a published post containing a video Video Cover block.'
 	);
 
 	const context = await browser.newContext( { javaScriptEnabled: false } );
@@ -48,9 +48,7 @@ test( 'the no-JavaScript response remains understandable and paused', async ( {
 
 	await expect( cover ).toHaveClass( /is-paused/ );
 	await expect( video ).not.toHaveAttribute( 'autoplay', '' );
-	await expect(
-		cover.getByRole( 'button', { name: 'Play animation' } )
-	).toBeVisible();
+	await expect( cover.getByRole( 'button', { name: 'Play' } ) ).toBeVisible();
 
 	await context.close();
 } );
@@ -58,7 +56,7 @@ test( 'the no-JavaScript response remains understandable and paused', async ( {
 test( 'a video cover requests the player runtime', async ( { page } ) => {
 	test.skip(
 		! fixtureUrl,
-		'Set RAN_VIDEO_COVER_E2E_URL to a published post containing a video Video Cover block.'
+		'Set RAN_ENHANCED_COVER_E2E_URL to a published post containing a video Video Cover block.'
 	);
 
 	const runtimeRequests = [];
@@ -89,7 +87,7 @@ test( 'a poster-only or empty cover omits player controls and runtime', async ( 
 } ) => {
 	test.skip(
 		! staticFixtureUrl,
-		'Set RAN_VIDEO_COVER_STATIC_E2E_URL to a published post containing a poster-only or empty Video Cover block.'
+		'Set RAN_ENHANCED_COVER_STATIC_E2E_URL to a published post containing a poster-only or empty Video Cover block.'
 	);
 
 	const runtimeRequests = [];
@@ -120,7 +118,7 @@ test( 'a transparent-media cover retains its independent brand-purple surface', 
 } ) => {
 	test.skip(
 		! surfaceFixtureUrl,
-		'Set RAN_VIDEO_COVER_SURFACE_E2E_URL to a transparent-media Video Cover with the brand-purple background colour.'
+		'Set RAN_ENHANCED_COVER_SURFACE_E2E_URL to a transparent-media Video Cover with the brand-purple background colour.'
 	);
 
 	await page.goto( surfaceFixtureUrl, { waitUntil: 'load' } );

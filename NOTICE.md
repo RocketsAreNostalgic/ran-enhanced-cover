@@ -2,7 +2,7 @@
 
 Copyright (C) 2026 RAN contributors.
 
-RAN Video Cover is distributed under the GNU General Public License version 2
+RAN Enhanced Cover is distributed under the GNU General Public License version 2
 or later (`GPL-2.0-or-later`). The runtime archive contains authored PHP, CSS,
 JavaScript, translation templates, and generated block assets only. WordPress
 and its browser-provided APIs are not bundled with the plugin.

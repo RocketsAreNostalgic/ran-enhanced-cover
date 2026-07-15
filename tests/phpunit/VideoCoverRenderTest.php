@@ -54,7 +54,7 @@ class VideoCoverRenderTest extends \WP_UnitTestCase {
 		$this->assertStringContainsString( 'is-paused', $rendered );
 		$this->assertStringContainsString( 'preload="metadata"', $rendered );
 		$this->assertStringContainsString( '<source src="https://example.com/video.mp4" type="video/mp4">', $rendered );
-		$this->assertStringContainsString( '>Play animation<', $rendered );
+		$this->assertStringContainsString( '>Play<', $rendered );
 		$this->assertStringNotContainsString( ' autoplay', $rendered );
 	}
 
@@ -221,7 +221,7 @@ class VideoCoverRenderTest extends \WP_UnitTestCase {
 
 		$this->assertStringContainsString( '<video class="ran-video-cover__media"', $rendered );
 		$this->assertStringContainsString( 'ran-video-cover__toggle', $rendered );
-		$this->assertStringContainsString( '>Play animation<', $rendered );
+		$this->assertStringContainsString( '>Play<', $rendered );
 		$this->assertTrue( wp_script_is( self::RUNTIME_HANDLE, 'enqueued' ) );
 	}
 }

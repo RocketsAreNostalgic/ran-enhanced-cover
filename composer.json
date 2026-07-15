@@ -1,6 +1,6 @@
 {
-	"name": "rocketsarenostalgic/ran-video-cover",
-	"description": "Development quality tooling for the RAN Video Cover WordPress plugin.",
+	"name": "rocketsarenostalgic/ran-enhanced-cover",
+	"description": "Development quality tooling for the RAN Enhanced Cover WordPress plugin.",
 	"type": "project",
 	"license": "GPL-2.0-or-later",
 	"require": {

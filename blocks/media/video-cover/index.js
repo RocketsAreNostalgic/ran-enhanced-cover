@@ -53,13 +53,13 @@ const TEMPLATE = [
 		'core/heading',
 		{
 			level: 1,
-			placeholder: __( 'Banner heading', 'ran-video-cover' ),
+			placeholder: __( 'Banner heading', 'ran-enhanced-cover' ),
 		},
 	],
 	[
 		'core/paragraph',
 		{
-			placeholder: __( 'Optional hook text', 'ran-video-cover' ),
+			placeholder: __( 'Optional hook text', 'ran-enhanced-cover' ),
 		},
 	],
 ];
@@ -268,7 +268,7 @@ function InsetControl( {
 	const rangeConfig = insetRangeConfig( parts.unit );
 	const presetOptions = [
 		{
-			label: __( 'Custom numeric value', 'ran-video-cover' ),
+			label: __( 'Custom numeric value', 'ran-enhanced-cover' ),
 			value: '',
 		},
 	].concat(
@@ -286,7 +286,7 @@ function InsetControl( {
 		{ className: 'ran-video-cover-inset-control' },
 		el( 'p', { className: 'components-base-control__label' }, label ),
 		el( SelectControl, {
-			label: __( 'Spacing preset', 'ran-video-cover' ) + ': ' + label,
+			label: __( 'Spacing preset', 'ran-enhanced-cover' ) + ': ' + label,
 			value: preset,
 			options: presetOptions,
 			onChange( slug ) {
@@ -404,7 +404,7 @@ function wrapperStyle( attributes, spacingSizes ) {
 
 function wrapperClassName( attributes ) {
 	return [
-		'ran-video-cover',
+		'ran-enhanced-cover',
 		'has-custom-content-position',
 		positionClass( attributes.contentPosition ),
 	].join( ' ' );
@@ -503,13 +503,13 @@ function VideoSourcesPanel( {
 	return el(
 		'div',
 		{ className: 'ran-video-cover-video-sources-popover' },
-		el( 'h2', null, __( 'Video sources', 'ran-video-cover' ) ),
+		el( 'h2', null, __( 'Video sources', 'ran-enhanced-cover' ) ),
 		el(
 			'p',
 			null,
 			__(
 				'Browsers try these files from top to bottom.',
-				'ran-video-cover'
+				'ran-enhanced-cover'
 			)
 		),
 		sources.map( function ( source, index ) {
@@ -536,7 +536,7 @@ function VideoSourcesPanel( {
 						el( Button, {
 							disabled: 0 === index,
 							icon: 'arrow-up-alt2',
-							label: __( 'Move up', 'ran-video-cover' ),
+							label: __( 'Move up', 'ran-enhanced-cover' ),
 							onClick() {
 								onMove( index, -1 );
 							},
@@ -547,7 +547,7 @@ function VideoSourcesPanel( {
 						el( Button, {
 							disabled: index === sources.length - 1,
 							icon: 'arrow-down-alt2',
-							label: __( 'Move down', 'ran-video-cover' ),
+							label: __( 'Move down', 'ran-enhanced-cover' ),
 							onClick() {
 								onMove( index, 1 );
 							},
@@ -577,7 +577,7 @@ function VideoSourcesPanel( {
 										icon: 'update',
 										label: __(
 											'Replace video',
-											'ran-video-cover'
+											'ran-enhanced-cover'
 										),
 										onClick() {
 											openMediaLibrary( mediaUpload );
@@ -592,7 +592,7 @@ function VideoSourcesPanel( {
 						el( Button, {
 							icon: 'trash',
 							isDestructive: true,
-							label: __( 'Remove video', 'ran-video-cover' ),
+							label: __( 'Remove video', 'ran-enhanced-cover' ),
 							onClick() {
 								onRemove( index );
 							},
@@ -625,7 +625,7 @@ function VideoSourcesPanel( {
 							},
 							variant: 'primary',
 						},
-						__( 'Add sources', 'ran-video-cover' )
+						__( 'Add sources', 'ran-enhanced-cover' )
 					);
 				},
 			} )
@@ -654,7 +654,7 @@ function MediaSelector( {
 				{ className: 'ran-video-cover-media-control__filename' },
 				url
 					? fileNameFromUrl( url )
-					: __( 'No file selected', 'ran-video-cover' )
+					: __( 'No file selected', 'ran-enhanced-cover' )
 			),
 			el(
 				'div',
@@ -897,7 +897,7 @@ function VideoBannerEdit( props ) {
 			BlockControls,
 			{ group: 'block' },
 			el( BlockAlignmentMatrixControl, {
-				label: __( 'Change content position', 'ran-video-cover' ),
+				label: __( 'Change content position', 'ran-enhanced-cover' ),
 				value: attributes.contentPosition,
 				onChange( value ) {
 					setAttributes( { contentPosition: value } );
@@ -925,8 +925,8 @@ function VideoBannerEdit( props ) {
 				mediaId: primaryVideo ? primaryVideo.id : 0,
 				mediaURL: primaryVideo ? primaryVideo.url : '',
 				name: hasVideo
-					? __( 'Replace video', 'ran-video-cover' )
-					: __( 'Add video', 'ran-video-cover' ),
+					? __( 'Replace video', 'ran-enhanced-cover' )
+					: __( 'Add video', 'ran-enhanced-cover' ),
 				onReset() {
 					setVideo( null );
 				},
@@ -938,7 +938,7 @@ function VideoBannerEdit( props ) {
 					renderToggle( { onToggle } ) {
 						return el( ToolbarButton, {
 							icon: 'format-video',
-							label: __( 'Video sources', 'ran-video-cover' ),
+							label: __( 'Video sources', 'ran-enhanced-cover' ),
 							onClick: onToggle,
 						} );
 					},
@@ -959,14 +959,17 @@ function VideoBannerEdit( props ) {
 			{ group: 'settings' },
 			el(
 				PanelBody,
-				{ title: __( 'Media', 'ran-video-cover' ), initialOpen: true },
+				{
+					title: __( 'Media', 'ran-enhanced-cover' ),
+					initialOpen: true,
+				},
 				el( MediaSelector, {
 					allowedTypes: [ 'image' ],
 					buttonLabel: attributes.posterUrl
-						? __( 'Replace', 'ran-video-cover' )
-						: __( 'Select', 'ran-video-cover' ),
-					clearLabel: __( 'Clear', 'ran-video-cover' ),
-					label: __( 'Poster image', 'ran-video-cover' ),
+						? __( 'Replace', 'ran-enhanced-cover' )
+						: __( 'Select', 'ran-enhanced-cover' ),
+					clearLabel: __( 'Clear', 'ran-enhanced-cover' ),
+					label: __( 'Poster image', 'ran-enhanced-cover' ),
 					onClear() {
 						setPoster( null );
 					},
@@ -976,7 +979,7 @@ function VideoBannerEdit( props ) {
 				} ),
 				hasMedia &&
 					el( FocalPointPicker, {
-						label: __( 'Focal point', 'ran-video-cover' ),
+						label: __( 'Focal point', 'ran-enhanced-cover' ),
 						url:
 							attributes.posterUrl ||
 							( primaryVideo && primaryVideo.url ),
@@ -989,11 +992,14 @@ function VideoBannerEdit( props ) {
 			el(
 				PanelBody,
 				{
-					title: __( 'Pause/play control', 'ran-video-cover' ),
+					title: __( 'Pause/play control', 'ran-enhanced-cover' ),
 					initialOpen: false,
 				},
 				el( ToggleControl, {
-					label: __( 'Show pause/play control', 'ran-video-cover' ),
+					label: __(
+						'Show pause/play control',
+						'ran-enhanced-cover'
+					),
 					checked: attributes.pauseControl,
 					onChange( value ) {
 						setAttributes( { pauseControl: value } );
@@ -1001,31 +1007,40 @@ function VideoBannerEdit( props ) {
 				} ),
 				attributes.pauseControl &&
 					el( SelectControl, {
-						label: __( 'Control position', 'ran-video-cover' ),
+						label: __( 'Control position', 'ran-enhanced-cover' ),
 						value: attributes.pauseControlPosition,
 						options: [
 							{
-								label: __( 'Bottom right', 'ran-video-cover' ),
+								label: __(
+									'Bottom right',
+									'ran-enhanced-cover'
+								),
 								value: 'bottom right',
 							},
 							{
-								label: __( 'Bottom left', 'ran-video-cover' ),
+								label: __(
+									'Bottom left',
+									'ran-enhanced-cover'
+								),
 								value: 'bottom left',
 							},
 							{
-								label: __( 'Top right', 'ran-video-cover' ),
+								label: __( 'Top right', 'ran-enhanced-cover' ),
 								value: 'top right',
 							},
 							{
-								label: __( 'Top left', 'ran-video-cover' ),
+								label: __( 'Top left', 'ran-enhanced-cover' ),
 								value: 'top left',
 							},
 							{
-								label: __( 'Bottom center', 'ran-video-cover' ),
+								label: __(
+									'Bottom center',
+									'ran-enhanced-cover'
+								),
 								value: 'bottom center',
 							},
 							{
-								label: __( 'Top center', 'ran-video-cover' ),
+								label: __( 'Top center', 'ran-enhanced-cover' ),
 								value: 'top center',
 							},
 						],
@@ -1036,7 +1051,7 @@ function VideoBannerEdit( props ) {
 				attributes.pauseControl &&
 					el( InsetControl, {
 						attribute: 'pauseControlInsetBlock',
-						label: __( 'Block-axis inset', 'ran-video-cover' ),
+						label: __( 'Block-axis inset', 'ran-enhanced-cover' ),
 						setAttributes,
 						spacingSizes,
 						value: attributes.pauseControlInsetBlock,
@@ -1044,7 +1059,7 @@ function VideoBannerEdit( props ) {
 				attributes.pauseControl &&
 					el( InsetControl, {
 						attribute: 'pauseControlInsetInline',
-						label: __( 'Inline-axis inset', 'ran-video-cover' ),
+						label: __( 'Inline-axis inset', 'ran-enhanced-cover' ),
 						setAttributes,
 						spacingSizes,
 						value: attributes.pauseControlInsetInline,
@@ -1064,7 +1079,7 @@ function VideoBannerEdit( props ) {
 							'vh' !== attributes.minHeightUnit
 						);
 					},
-					label: __( 'Minimum height', 'ran-video-cover' ),
+					label: __( 'Minimum height', 'ran-enhanced-cover' ),
 					onDeselect() {
 						setAttributes( {
 							minHeight: undefined,
@@ -1082,7 +1097,7 @@ function VideoBannerEdit( props ) {
 				},
 				el( UnitControl, {
 					__next40pxDefaultSize: true,
-					label: __( 'Minimum height', 'ran-video-cover' ),
+					label: __( 'Minimum height', 'ran-enhanced-cover' ),
 					min: 0,
 					units: MIN_HEIGHT_UNITS,
 					value: minHeightValue( attributes ),
@@ -1107,7 +1122,7 @@ function VideoBannerEdit( props ) {
 							attributes.customBackgroundColor
 						),
 						onColorChange: setBackgroundColor,
-						label: __( 'Background colour', 'ran-video-cover' ),
+						label: __( 'Background colour', 'ran-enhanced-cover' ),
 						isShownByDefault: true,
 						resetAllFilter() {
 							return {
@@ -1124,7 +1139,7 @@ function VideoBannerEdit( props ) {
 							attributes.customOverlayColor
 						),
 						onColorChange: setOverlayColor,
-						label: __( 'Colour wash', 'ran-video-cover' ),
+						label: __( 'Colour wash', 'ran-enhanced-cover' ),
 						isShownByDefault: true,
 						resetAllFilter() {
 							return {
@@ -1143,7 +1158,7 @@ function VideoBannerEdit( props ) {
 					hasValue() {
 						return 70 !== attributes.overlayOpacity;
 					},
-					label: __( 'Wash opacity', 'ran-video-cover' ),
+					label: __( 'Wash opacity', 'ran-enhanced-cover' ),
 					onDeselect() {
 						setAttributes( { overlayOpacity: 70 } );
 					},
@@ -1154,7 +1169,7 @@ function VideoBannerEdit( props ) {
 					panelId: props.clientId,
 				},
 				el( RangeControl, {
-					label: __( 'Wash opacity', 'ran-video-cover' ),
+					label: __( 'Wash opacity', 'ran-enhanced-cover' ),
 					value: attributes.overlayOpacity,
 					onChange( value ) {
 						setAttributes( { overlayOpacity: value || 0 } );
@@ -1204,7 +1219,7 @@ function VideoBannerEdit( props ) {
 					? el( 'span', { 'aria-hidden': true } )
 					: __(
 							'Select a video and poster image.',
-							'ran-video-cover'
+							'ran-enhanced-cover'
 					  )
 			),
 		el( 'span', {
@@ -1227,8 +1242,8 @@ function VideoBannerEdit( props ) {
 					onClick: toggleEditorVideo,
 				},
 				isEditorPaused
-					? __( 'Play animation', 'ran-video-cover' )
-					: __( 'Pause animation', 'ran-video-cover' )
+					? __( 'Play', 'ran-enhanced-cover' )
+					: __( 'Pause', 'ran-enhanced-cover' )
 			)
 	);
 }

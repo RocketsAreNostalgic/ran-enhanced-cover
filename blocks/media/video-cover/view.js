@@ -30,10 +30,8 @@
 		}
 
 		const label = button.querySelector( '.ran-video-cover__toggle-label' );
-		const playLabel =
-			button.getAttribute( 'data-play-label' ) || 'Play animation';
-		const pauseLabel =
-			button.getAttribute( 'data-pause-label' ) || 'Pause animation';
+		const playLabel = button.getAttribute( 'data-play-label' ) || 'Play';
+		const pauseLabel = button.getAttribute( 'data-pause-label' ) || 'Pause';
 		const nextLabel = isPaused ? playLabel : pauseLabel;
 
 		button.setAttribute( 'aria-label', nextLabel );

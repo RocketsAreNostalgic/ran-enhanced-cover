@@ -1,6 +1,6 @@
 # Third-party notices
 
-RAN Video Cover does not bundle third-party runtime libraries, fonts, images,
+RAN Enhanced Cover does not bundle third-party runtime libraries, fonts, images,
 or remote services. The compiled block assets use WordPress-provided package
 handles and browser platform APIs.
 

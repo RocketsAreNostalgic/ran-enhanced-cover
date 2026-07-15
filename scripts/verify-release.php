@@ -12,7 +12,7 @@ if ( PHP_SAPI !== 'cli' ) {
 }
 
 $plugin_root = dirname( __DIR__ );
-$plugin_file = file_get_contents( $plugin_root . '/ran-video-cover.php' );
+$plugin_file = file_get_contents( $plugin_root . '/ran-enhanced-cover.php' );
 
 if ( false === $plugin_file || ! preg_match( '/^ \* Version:\s*([^\r\n]+)$/m', $plugin_file, $matches ) ) {
 	fwrite( STDERR, "Unable to determine the plugin version.\n" );
@@ -20,7 +20,7 @@ if ( false === $plugin_file || ! preg_match( '/^ \* Version:\s*([^\r\n]+)$/m', $
 }
 
 $version      = trim( $matches[1] );
-$archive_path = $argv[1] ?? $plugin_root . '/dist/ran-video-cover-' . $version . '.zip';
+$archive_path = $argv[1] ?? $plugin_root . '/dist/ran-enhanced-cover-' . $version . '.zip';
 
 if ( ! class_exists( 'ZipArchive' ) || ! is_readable( $archive_path ) ) {
 	fwrite( STDERR, "A readable release ZIP and the PHP ZipArchive extension are required.\n" );
@@ -44,24 +44,24 @@ for ( $index = 0; $index < $archive->numFiles; $index++ ) {
 $archive->close();
 
 $required_entries = array(
-	'ran-video-cover/ran-video-cover.php',
-	'ran-video-cover/readme.txt',
-	'ran-video-cover/LICENSE',
-	'ran-video-cover/blocks/media/video-cover/block.json',
-	'ran-video-cover/build/blocks/media/video-cover/block.json',
-	'ran-video-cover/build/blocks/media/video-cover/index.js',
-	'ran-video-cover/build/blocks/media/video-cover/style-index.css',
-	'ran-video-cover/build/blocks/media/video-cover/view.js',
+	'ran-enhanced-cover/ran-enhanced-cover.php',
+	'ran-enhanced-cover/readme.txt',
+	'ran-enhanced-cover/LICENSE',
+	'ran-enhanced-cover/blocks/media/video-cover/block.json',
+	'ran-enhanced-cover/build/blocks/media/video-cover/block.json',
+	'ran-enhanced-cover/build/blocks/media/video-cover/index.js',
+	'ran-enhanced-cover/build/blocks/media/video-cover/style-index.css',
+	'ran-enhanced-cover/build/blocks/media/video-cover/view.js',
 );
 
 $forbidden_prefixes = array(
-	'ran-video-cover/.git/',
-	'ran-video-cover/.github/',
-	'ran-video-cover/node_modules/',
-	'ran-video-cover/vendor/',
-	'ran-video-cover/tests/',
-	'ran-video-cover/scripts/',
-	'ran-video-cover/wordpress-org/',
+	'ran-enhanced-cover/.git/',
+	'ran-enhanced-cover/.github/',
+	'ran-enhanced-cover/node_modules/',
+	'ran-enhanced-cover/vendor/',
+	'ran-enhanced-cover/tests/',
+	'ran-enhanced-cover/scripts/',
+	'ran-enhanced-cover/wordpress-org/',
 );
 
 foreach ( $required_entries as $entry ) {

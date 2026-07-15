@@ -15,14 +15,14 @@ After the final directory slug, contributor accounts, trademark review, and
 legal approval are confirmed, use a clean SVN checkout:
 
 ```sh
-svn checkout https://plugins.svn.wordpress.org/ran-video-cover/ ran-video-cover-svn
-unzip -q dist/ran-video-cover-1.0.0.zip -d /tmp/ran-video-cover-release
-rsync -a --delete /tmp/ran-video-cover-release/ran-video-cover/ ran-video-cover-svn/trunk/
-svn -q add --force ran-video-cover-svn/trunk
-svn status ran-video-cover-svn
-svn commit ran-video-cover-svn -m "Release 1.0.0"
-svn copy https://plugins.svn.wordpress.org/ran-video-cover/trunk \
-	https://plugins.svn.wordpress.org/ran-video-cover/tags/1.0.0 \
+svn checkout https://plugins.svn.wordpress.org/ran-enhanced-cover/ ran-enhanced-cover-svn
+unzip -q dist/ran-enhanced-cover-1.0.0.zip -d /tmp/ran-enhanced-cover-release
+rsync -a --delete /tmp/ran-enhanced-cover-release/ran-enhanced-cover/ ran-enhanced-cover-svn/trunk/
+svn -q add --force ran-enhanced-cover-svn/trunk
+svn status ran-enhanced-cover-svn
+svn commit ran-enhanced-cover-svn -m "Release 1.0.0"
+svn copy https://plugins.svn.wordpress.org/ran-enhanced-cover/trunk \
+	https://plugins.svn.wordpress.org/ran-enhanced-cover/tags/1.0.0 \
 	-m "Tag 1.0.0"
 ```
 

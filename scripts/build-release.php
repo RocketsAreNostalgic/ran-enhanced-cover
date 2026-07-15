@@ -28,7 +28,7 @@ $allowlist = array_values(
 	)
 );
 
-$plugin_file = file_get_contents( $plugin_root . '/ran-video-cover.php' );
+$plugin_file = file_get_contents( $plugin_root . '/ran-enhanced-cover.php' );
 
 if ( false === $plugin_file || ! preg_match( '/^ \* Version:\s*([^\r\n]+)$/m', $plugin_file, $matches ) ) {
 	fwrite( STDERR, "Unable to determine the plugin version.\n" );
@@ -37,7 +37,7 @@ if ( false === $plugin_file || ! preg_match( '/^ \* Version:\s*([^\r\n]+)$/m', $
 
 $version     = trim( $matches[1] );
 $output_dir  = isset( $argv[1] ) ? rtrim( $argv[1], DIRECTORY_SEPARATOR ) : $plugin_root . '/dist';
-$output_file = $output_dir . '/ran-video-cover-' . $version . '.zip';
+$output_file = $output_dir . '/ran-enhanced-cover-' . $version . '.zip';
 
 if ( ! class_exists( 'ZipArchive' ) ) {
 	fwrite( STDERR, "The PHP ZipArchive extension is required to build a release.\n" );
@@ -87,7 +87,7 @@ foreach ( $iterator as $file ) {
 		continue;
 	}
 
-	if ( ! $archive->addFile( $file->getPathname(), 'ran-video-cover/' . $relative_path ) ) {
+	if ( ! $archive->addFile( $file->getPathname(), 'ran-enhanced-cover/' . $relative_path ) ) {
 		$archive->close();
 		fwrite( STDERR, "Unable to add {$relative_path} to the release archive.\n" );
 		exit( 1 );

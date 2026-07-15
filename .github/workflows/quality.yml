@@ -73,8 +73,8 @@ jobs:
                   WP_TESTS_DIR: /tmp/wordpress-tests-lib
             - name: Install and activate the release ZIP in fresh WordPress
               run: |
-                  php scripts/build-release.php /tmp/ran-video-cover-release
-                  fresh_root=/tmp/ran-video-cover-release-wordpress
+                  php scripts/build-release.php /tmp/ran-enhanced-cover-release
+                  fresh_root=/tmp/ran-enhanced-cover-release-wordpress
                   wp_version='${{ matrix.wordpress }}'
                   if [ "$wp_version" = 'latest' ]; then
                     wp core download --path="$fresh_root"
@@ -84,8 +84,9 @@ jobs:
                   wp config create --path="$fresh_root" --dbname=ran_video_cover_release --dbuser=root --dbpass='' --dbhost=127.0.0.1 --skip-check
                   wp db create --path="$fresh_root"
                   wp core install --path="$fresh_root" --url=http://localhost --title='RAN release test' --admin_user=admin --admin_password=release-test-password --admin_email=admin@example.test
-                  wp plugin install /tmp/ran-video-cover-release/ran-video-cover-1.0.0.zip --path="$fresh_root" --activate
-                  wp plugin is-active ran-video-cover --path="$fresh_root"
+                  plugin_version="$(php -r '$plugin_file = file_get_contents($argv[1]); if (false === $plugin_file || ! preg_match("/^ \\* Version:\\s*([^\\r\\n]+)$/m", $plugin_file, $matches)) { fwrite(STDERR, "Unable to determine the plugin version.\\n"); exit(1); } echo trim($matches[1]);' ran-enhanced-cover.php)"
+                  wp plugin install "/tmp/ran-enhanced-cover-release/ran-enhanced-cover-${plugin_version}.zip" --path="$fresh_root" --activate
+                  wp plugin is-active ran-enhanced-cover --path="$fresh_root"
 
     plugin-check:
         name: Plugin Check
@@ -102,6 +103,6 @@ jobs:
             - run: pnpm build
             - run: pnpm exec wp-env start
             - run: pnpm exec wp-env run cli wp plugin install plugin-check --activate
-            - run: pnpm exec wp-env run cli wp plugin check /var/www/html/wp-content/plugins/ran-video-cover
+            - run: pnpm exec wp-env run cli wp plugin check /var/www/html/wp-content/plugins/ran-enhanced-cover
             - if: always()
               run: pnpm exec wp-env destroy

@@ -100,7 +100,7 @@ final class Blocks {
 		$missing_files = implode( ', ', self::missing_build_files() );
 		$message       = sprintf(
 			/* translators: %s: comma-separated generated asset paths. */
-			__( 'RAN Video Cover could not register because its compiled build assets are missing: %s. Reinstall the release ZIP or rebuild the plugin with <code>pnpm build</code>.', 'ran-video-cover' ),
+			__( 'RAN Enhanced Cover could not register because its compiled build assets are missing: %s. Reinstall the release ZIP or rebuild the plugin with <code>pnpm build</code>.', 'ran-enhanced-cover' ),
 			$missing_files
 		);
 

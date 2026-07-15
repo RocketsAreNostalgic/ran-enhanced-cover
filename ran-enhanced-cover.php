@@ -1,12 +1,14 @@
 <?php
 /**
- * Plugin Name: RAN Video Cover
- * Plugin URI: https://github.com/RocketsAreNostalgic/ran-video-cover
- * Description: A Cover-style block with background video, a poster fallback, and motion-sensitive pause/play controls.
+ * Plugin Name: RAN Enhanced Cover
+ * Plugin URI: https://github.com/RocketsAreNostalgic/ran-enhanced-cover
+ * Description: An enhanced Cover-style block with background video, a poster fallback, and motion-sensitive pause/play controls.
+ * x-release-please-start-version
  * Version: 1.0.0
+ * x-release-please-end
  * Author: RAN
  * Author URI: https://github.com/RocketsAreNostalgic/
- * Text Domain: ran-video-cover
+ * Text Domain: ran-enhanced-cover
  * Domain Path: /languages
  * Requires at least: 6.5
  * Requires PHP: 8.0
@@ -20,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'RAN_VIDEO_COVER_VERSION', '1.0.0' );
+define( 'RAN_VIDEO_COVER_VERSION', '1.0.0' ); // x-release-please-version
 define( 'RAN_VIDEO_COVER_PLUGIN_FILE', __FILE__ );
 define( 'RAN_VIDEO_COVER_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RAN_VIDEO_COVER_PLUGIN_URL', plugin_dir_url( __FILE__ ) );

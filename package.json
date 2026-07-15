@@ -1,8 +1,8 @@
 {
-	"name": "ran-video-cover",
+	"name": "ran-enhanced-cover",
 	"version": "1.0.0",
 	"private": true,
-	"description": "Standalone motion-sensitive video Cover block for WordPress.",
+	"description": "Standalone motion-sensitive enhanced Cover block for WordPress.",
 	"author": "bnjmnrsh",
 	"license": "GPL-2.0-or-later",
 	"keywords": [
@@ -13,18 +13,20 @@
 		"cover",
 		"accessibility"
 	],
-	"homepage": "https://github.com/RocketsAreNostalgic/ran-video-cover",
+	"homepage": "https://github.com/RocketsAreNostalgic/ran-enhanced-cover",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/RocketsAreNostalgic/ran-video-cover.git"
+		"url": "https://github.com/RocketsAreNostalgic/ran-enhanced-cover.git"
 	},
 	"bugs": {
-		"url": "https://github.com/RocketsAreNostalgic/ran-video-cover"
+		"url": "https://github.com/RocketsAreNostalgic/ran-enhanced-cover"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.61.1",
 		"@wordpress/env": "^11.10.0",
-		"@wordpress/scripts": "^30.25.0"
+		"@wordpress/prettier-config": "^4.50.0",
+		"@wordpress/scripts": "^30.25.0",
+		"prettier": "npm:wp-prettier@^3.0.3"
 	},
 	"scripts": {
 		"start": "wp-scripts start --source-path=blocks --output-path=build/blocks",
@@ -35,7 +37,7 @@
 		"lint:css": "wp-scripts lint-style",
 		"lint:pkg-json": "wp-scripts lint-pkg-json",
 		"lint:php": "bash scripts/lint-php.sh",
-		"pot": "wp i18n make-pot . languages/ran-video-cover.pot --exclude=build,node_modules,vendor,tests,dist,wordpress-org",
+		"pot": "wp i18n make-pot . languages/ran-enhanced-cover.pot --exclude=build,node_modules,vendor,tests,dist,wordpress-org && php scripts/prepare-pot-for-release.php",
 		"check": "wp-scripts lint-pkg-json && wp-scripts lint-js && wp-scripts lint-style && pnpm format:check",
 		"check:build": "pnpm build && git diff --exit-code -- build",
 		"release": "php scripts/build-release.php",

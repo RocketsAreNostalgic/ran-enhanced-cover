@@ -283,8 +283,8 @@ echo '<div class="ran-video-cover__content">' . $content . '</div>'; // phpcs:ig
 if ( $has_video && ! empty( $attributes['pauseControl'] ) ) {
 	printf(
 		'<button class="ran-video-cover__toggle" type="button" aria-label="%1$s" data-play-label="%1$s" data-pause-label="%2$s"><span class="ran-video-cover__toggle-label">%1$s</span></button>',
-		esc_attr__( 'Play animation', 'ran-video-cover' ),
-		esc_attr__( 'Pause animation', 'ran-video-cover' )
+		esc_attr__( 'Play', 'ran-enhanced-cover' ),
+		esc_attr__( 'Pause', 'ran-enhanced-cover' )
 	);
 }
 

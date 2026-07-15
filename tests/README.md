@@ -21,9 +21,9 @@ The Playwright checks are opt-in because this standalone plugin does not own a
 published WordPress fixture. Supply these URLs when running `pnpm test:browser`:
 
 ```sh
-export RAN_VIDEO_COVER_E2E_URL=https://example.test/video-cover-video/
-export RAN_VIDEO_COVER_STATIC_E2E_URL=https://example.test/video-cover-poster-only/
-export RAN_VIDEO_COVER_SURFACE_E2E_URL=https://example.test/video-cover-transparent-surface/
+export RAN_ENHANCED_COVER_E2E_URL=https://example.test/video-cover-video/
+export RAN_ENHANCED_COVER_STATIC_E2E_URL=https://example.test/video-cover-poster-only/
+export RAN_ENHANCED_COVER_SURFACE_E2E_URL=https://example.test/video-cover-transparent-surface/
 pnpm test:browser
 ```
 

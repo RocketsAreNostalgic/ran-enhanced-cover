@@ -6,7 +6,7 @@
   "title": "Ran Enhanced Cover",
   "category": "media",
   "description": "Cover-style background video with a poster fallback, colour wash, reduced-motion handling, and a pause/play control.",
-  "textdomain": "ran-video-cover",
+  "textdomain": "ran-enhanced-cover",
   "attributes": {
     "videoId": {
       "type": "number",
