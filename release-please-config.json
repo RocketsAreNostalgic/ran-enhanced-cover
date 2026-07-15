@@ -1,0 +1,42 @@
+{
+	"$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+	"bootstrap-sha": "c1c4423bd4043b9c05d0bd80cc9689da08c2f955",
+	"packages": {
+		".": {
+			"release-type": "php",
+			"package-name": "ran-enhanced-cover",
+			"changelog-path": "CHANGELOG.md",
+			"include-component-in-tag": false,
+			"include-v-in-tag": true,
+			"extra-files": [
+				{
+					"type": "json",
+					"path": "package.json",
+					"jsonpath": "$.version"
+				},
+				{
+					"type": "json",
+					"path": "blocks/media/video-cover/block.json",
+					"jsonpath": "$.version"
+				},
+				{
+					"type": "json",
+					"path": "build/blocks/media/video-cover/block.json",
+					"jsonpath": "$.version"
+				},
+				{
+					"type": "generic",
+					"path": "ran-enhanced-cover.php"
+				},
+				{
+					"type": "generic",
+					"path": "readme.txt"
+				},
+				{
+					"type": "generic",
+					"path": "languages/ran-enhanced-cover.pot"
+				}
+			]
+		}
+	}
+}
