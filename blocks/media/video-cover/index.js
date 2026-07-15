@@ -17,10 +17,12 @@ import { registerBlockType } from '@wordpress/blocks';
 import {
 	BaseControl,
 	Button,
+	Dropdown,
 	FocalPointPicker,
 	PanelBody,
 	RangeControl,
 	SelectControl,
+	ToolbarButton,
 	ToggleControl,
 	__experimentalToolsPanelItem as ToolsPanelItem,
 	__experimentalUnitControl as ComponentsUnitControl,
@@ -445,6 +447,192 @@ function fileNameFromUrl( url ) {
 	}
 }
 
+function sourceFromMedia( media ) {
+	return {
+		id: media && media.id ? media.id : 0,
+		url: media && media.url ? media.url : '',
+	};
+}
+
+function normaliseVideoSource( source ) {
+	if ( ! source || ! source.url ) {
+		return null;
+	}
+
+	return {
+		id: source.id || 0,
+		url: source.url,
+	};
+}
+
+function videoSources( attributes ) {
+	const sources = Array.isArray( attributes.videoSources )
+		? attributes.videoSources.map( normaliseVideoSource ).filter( Boolean )
+		: [];
+
+	if ( sources.length ) {
+		return sources;
+	}
+
+	return attributes.videoUrl
+		? [
+				{
+					id: attributes.videoId || 0,
+					url: attributes.videoUrl,
+				},
+		  ]
+		: [];
+}
+
+function VideoSourcesPanel( {
+	onAdd,
+	onClose,
+	onMove,
+	onRemove,
+	onReplace,
+	sources,
+} ) {
+	function openMediaLibrary( mediaUpload ) {
+		onClose();
+
+		window.requestAnimationFrame( function () {
+			mediaUpload.open();
+		} );
+	}
+
+	return el(
+		'div',
+		{ className: 'ran-video-cover-video-sources-popover' },
+		el( 'h2', null, __( 'Video sources', 'ran-video-cover' ) ),
+		el(
+			'p',
+			null,
+			__(
+				'Browsers try these files from top to bottom.',
+				'ran-video-cover'
+			)
+		),
+		sources.map( function ( source, index ) {
+			return el(
+				'div',
+				{
+					className: 'ran-video-cover-video-source',
+					key: source.url + index,
+				},
+				el(
+					'p',
+					{ className: 'ran-video-cover-video-source__name' },
+					fileNameFromUrl( source.url )
+				),
+				el(
+					'div',
+					{ className: 'ran-video-cover-video-source__actions' },
+					el(
+						'div',
+						{
+							className:
+								'ran-video-cover-video-source__order-actions',
+						},
+						el( Button, {
+							disabled: 0 === index,
+							icon: 'arrow-up-alt2',
+							label: __( 'Move up', 'ran-video-cover' ),
+							onClick() {
+								onMove( index, -1 );
+							},
+							showTooltip: true,
+							size: 'compact',
+							variant: 'tertiary',
+						} ),
+						el( Button, {
+							disabled: index === sources.length - 1,
+							icon: 'arrow-down-alt2',
+							label: __( 'Move down', 'ran-video-cover' ),
+							onClick() {
+								onMove( index, 1 );
+							},
+							showTooltip: true,
+							size: 'compact',
+							variant: 'tertiary',
+						} )
+					),
+					el(
+						'div',
+						{
+							className:
+								'ran-video-cover-video-source__file-actions',
+						},
+						el(
+							MediaUploadCheck,
+							null,
+							el( MediaUpload, {
+								allowedTypes: [ 'video' ],
+								onSelect( media ) {
+									onReplace( index, media );
+									onClose();
+								},
+								value: source.id,
+								render( mediaUpload ) {
+									return el( Button, {
+										icon: 'update',
+										label: __(
+											'Replace video',
+											'ran-video-cover'
+										),
+										onClick() {
+											openMediaLibrary( mediaUpload );
+										},
+										showTooltip: true,
+										size: 'compact',
+										variant: 'secondary',
+									} );
+								},
+							} )
+						),
+						el( Button, {
+							icon: 'trash',
+							isDestructive: true,
+							label: __( 'Remove video', 'ran-video-cover' ),
+							onClick() {
+								onRemove( index );
+							},
+							showTooltip: true,
+							size: 'compact',
+							variant: 'tertiary',
+						} )
+					)
+				)
+			);
+		} ),
+		el(
+			MediaUploadCheck,
+			null,
+			el( MediaUpload, {
+				allowedTypes: [ 'video' ],
+				onSelect( media ) {
+					onAdd( media );
+					onClose();
+				},
+				render( mediaUpload ) {
+					return el(
+						Button,
+						{
+							className:
+								'ran-video-cover-video-sources-popover__add',
+							icon: 'plus-alt2',
+							onClick() {
+								openMediaLibrary( mediaUpload );
+							},
+							variant: 'primary',
+						},
+						__( 'Add sources', 'ran-video-cover' )
+					);
+				},
+			} )
+		)
+	);
+}
+
 function MediaSelector( {
 	allowedTypes,
 	buttonLabel,
@@ -534,14 +722,62 @@ function VideoBannerEdit( props ) {
 		className: wrapperClassName( attributes ),
 		style: wrapperStyle( attributes, spacingSizes ),
 	} );
-	const hasMedia = !! ( attributes.videoUrl || attributes.posterUrl );
+	const sources = videoSources( attributes );
+	const primaryVideo = sources[ 0 ] || null;
+	const hasVideo = !! primaryVideo;
+	const hasMedia = !! ( hasVideo || attributes.posterUrl );
 	const showGenericPreview = ! hasMedia && ! props.isSelected;
 
-	function setVideo( media ) {
+	function setVideoSources( nextSources ) {
+		const firstSource = nextSources[ 0 ] || null;
+
 		setAttributes( {
-			videoId: media && media.id ? media.id : 0,
-			videoUrl: media && media.url ? media.url : '',
+			videoId: firstSource ? firstSource.id : 0,
+			videoSources: nextSources,
+			videoUrl: firstSource ? firstSource.url : '',
 		} );
+	}
+
+	function setVideo( media ) {
+		setVideoSources( media ? [ sourceFromMedia( media ) ] : [] );
+	}
+
+	function addVideoSource( media ) {
+		if ( media ) {
+			setVideoSources( sources.concat( sourceFromMedia( media ) ) );
+		}
+	}
+
+	function replaceVideoSource( index, media ) {
+		if ( ! media ) {
+			return;
+		}
+
+		const nextSources = sources.slice();
+		nextSources[ index ] = sourceFromMedia( media );
+		setVideoSources( nextSources );
+	}
+
+	function removeVideoSource( index ) {
+		setVideoSources(
+			sources.filter( function ( source, sourceIndex ) {
+				return sourceIndex !== index;
+			} )
+		);
+	}
+
+	function moveVideoSource( index, direction ) {
+		const nextIndex = index + direction;
+
+		if ( nextIndex < 0 || nextIndex >= sources.length ) {
+			return;
+		}
+
+		const nextSources = sources.slice();
+		const current = nextSources[ index ];
+		nextSources[ index ] = nextSources[ nextIndex ];
+		nextSources[ nextIndex ] = current;
+		setVideoSources( nextSources );
 	}
 
 	function setPoster( media ) {
@@ -686,9 +922,9 @@ function VideoBannerEdit( props ) {
 			{ group: 'other' },
 			el( MediaReplaceFlow, {
 				allowedTypes: [ 'video' ],
-				mediaId: attributes.videoId,
-				mediaURL: attributes.videoUrl,
-				name: attributes.videoUrl
+				mediaId: primaryVideo ? primaryVideo.id : 0,
+				mediaURL: primaryVideo ? primaryVideo.url : '',
+				name: hasVideo
 					? __( 'Replace video', 'ran-video-cover' )
 					: __( 'Add video', 'ran-video-cover' ),
 				onReset() {
@@ -696,7 +932,27 @@ function VideoBannerEdit( props ) {
 				},
 				onSelect: setVideo,
 				variant: 'toolbar',
-			} )
+			} ),
+			hasVideo &&
+				el( Dropdown, {
+					renderToggle( { onToggle } ) {
+						return el( ToolbarButton, {
+							icon: 'format-video',
+							label: __( 'Video sources', 'ran-video-cover' ),
+							onClick: onToggle,
+						} );
+					},
+					renderContent( { onClose } ) {
+						return el( VideoSourcesPanel, {
+							onAdd: addVideoSource,
+							onClose,
+							onMove: moveVideoSource,
+							onRemove: removeVideoSource,
+							onReplace: replaceVideoSource,
+							sources,
+						} );
+					},
+				} )
 		),
 		el(
 			InspectorControls,
@@ -721,7 +977,9 @@ function VideoBannerEdit( props ) {
 				hasMedia &&
 					el( FocalPointPicker, {
 						label: __( 'Focal point', 'ran-video-cover' ),
-						url: attributes.posterUrl || attributes.videoUrl,
+						url:
+							attributes.posterUrl ||
+							( primaryVideo && primaryVideo.url ),
 						value: focalPoint( attributes ),
 						onChange( value ) {
 							setAttributes( { focalPoint: value } );
@@ -906,19 +1164,27 @@ function VideoBannerEdit( props ) {
 				} )
 			)
 		),
-		attributes.videoUrl &&
-			el( 'video', {
-				className: 'ran-video-cover__media',
-				autoPlay: false,
-				muted: true,
-				loop: true,
-				playsInline: true,
-				ref: videoRef,
-				src: attributes.videoUrl,
-				poster: attributes.posterUrl,
-				style: mediaPositionStyle( attributes ),
-			} ),
-		! attributes.videoUrl &&
+		hasVideo &&
+			el(
+				'video',
+				{
+					className: 'ran-video-cover__media',
+					autoPlay: false,
+					muted: true,
+					loop: true,
+					playsInline: true,
+					ref: videoRef,
+					poster: attributes.posterUrl,
+					style: mediaPositionStyle( attributes ),
+				},
+				sources.map( function ( source, index ) {
+					return el( 'source', {
+						key: source.url + index,
+						src: source.url,
+					} );
+				} )
+			),
+		! hasVideo &&
 			attributes.posterUrl &&
 			el( 'img', {
 				className: 'ran-video-cover__media',
@@ -951,7 +1217,7 @@ function VideoBannerEdit( props ) {
 			el( InnerBlocks, { template: TEMPLATE } )
 		),
 		attributes.pauseControl &&
-			attributes.videoUrl &&
+			hasVideo &&
 			el(
 				'button',
 				{

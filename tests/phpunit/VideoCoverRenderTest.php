@@ -53,8 +53,48 @@ class VideoCoverRenderTest extends \WP_UnitTestCase {
 
 		$this->assertStringContainsString( 'is-paused', $rendered );
 		$this->assertStringContainsString( 'preload="metadata"', $rendered );
+		$this->assertStringContainsString( '<source src="https://example.com/video.mp4" type="video/mp4">', $rendered );
 		$this->assertStringContainsString( '>Play animation<', $rendered );
 		$this->assertStringNotContainsString( ' autoplay', $rendered );
+	}
+
+	/**
+	 * An existing block with one saved video URL remains a one-source video.
+	 *
+	 * @return void
+	 */
+	public function test_legacy_video_url_renders_a_single_video_source() {
+		$rendered = do_blocks(
+			'<!-- wp:ran/video-cover {"videoUrl":"https://example.com/legacy-video.mp4"} --><p>Example content</p><!-- /wp:ran/video-cover -->'
+		);
+
+		$this->assertSame( 1, substr_count( $rendered, '<source ' ) );
+		$this->assertStringContainsString( '<source src="https://example.com/legacy-video.mp4" type="video/mp4">', $rendered );
+		$this->assertTrue( wp_script_is( self::RUNTIME_HANDLE, 'enqueued' ) );
+	}
+
+	/**
+	 * Alternative sources must be rendered in saved priority order so the browser
+	 * can choose the first compatible file.
+	 *
+	 * @return void
+	 */
+	public function test_video_sources_render_ordered_source_tags_with_inferred_types() {
+		$rendered = do_blocks(
+			'<!-- wp:ran/video-cover {"videoSources":[{"id":101,"url":"https://example.com/animation-alpha.mp4"},{"id":102,"url":"https://example.com/animation-alpha.webm"},{"id":103,"url":"https://example.com/animation-fallback.mp4"}]} --><p>Example content</p><!-- /wp:ran/video-cover -->'
+		);
+
+		$first_mp4_source  = '<source src="https://example.com/animation-alpha.mp4" type="video/mp4">';
+		$webm_source       = '<source src="https://example.com/animation-alpha.webm" type="video/webm">';
+		$second_mp4_source = '<source src="https://example.com/animation-fallback.mp4" type="video/mp4">';
+
+		$this->assertSame( 3, substr_count( $rendered, '<source ' ) );
+		$this->assertStringContainsString( $first_mp4_source, $rendered );
+		$this->assertStringContainsString( $webm_source, $rendered );
+		$this->assertStringContainsString( $second_mp4_source, $rendered );
+		$this->assertLessThan( strpos( $rendered, $webm_source ), strpos( $rendered, $first_mp4_source ) );
+		$this->assertLessThan( strpos( $rendered, $second_mp4_source ), strpos( $rendered, $webm_source ) );
+		$this->assertTrue( wp_script_is( self::RUNTIME_HANDLE, 'enqueued' ) );
 	}
 
 	/**
@@ -143,10 +183,12 @@ class VideoCoverRenderTest extends \WP_UnitTestCase {
 	 */
 	public function test_no_media_block_omits_media_toggle_and_runtime_handle() {
 		$rendered = do_blocks(
-			'<!-- wp:ran/video-cover {"pauseControl":true} --><p>Example content</p><!-- /wp:ran/video-cover -->'
+			'<!-- wp:ran/video-cover {"videoSources":[],"pauseControl":true} --><p>Example content</p><!-- /wp:ran/video-cover -->'
 		);
 
 		$this->assertStringNotContainsString( 'ran-video-cover__media', $rendered );
+		$this->assertStringNotContainsString( '<video ', $rendered );
+		$this->assertStringNotContainsString( '<source ', $rendered );
 		$this->assertStringNotContainsString( 'ran-video-cover__toggle', $rendered );
 		$this->assertFalse( wp_script_is( self::RUNTIME_HANDLE, 'enqueued' ) );
 	}

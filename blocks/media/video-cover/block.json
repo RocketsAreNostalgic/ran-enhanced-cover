@@ -16,6 +16,10 @@
 			"type": "string",
 			"default": ""
 		},
+		"videoSources": {
+			"type": "array",
+			"default": []
+		},
 		"posterId": {
 			"type": "number",
 			"default": 0
