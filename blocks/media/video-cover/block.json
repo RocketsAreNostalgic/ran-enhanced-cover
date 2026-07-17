@@ -1,6 +1,6 @@
 {
 	"$schema": "https://schemas.wp.org/wp/6.5/block.json",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"apiVersion": 3,
 	"name": "ran/enhanced-cover",
 	"title": "Ran Enhanced Cover",
@@ -114,7 +114,9 @@
 			"heading": true,
 			"text": true,
 			"background": false,
-			"__experimentalSkipSerialization": [ "gradients" ],
+			"__experimentalSkipSerialization": [
+				"gradients"
+			],
 			"enableContrastChecker": false
 		},
 		"dimensions": {
