@@ -52,6 +52,11 @@ pnpm check
 Source files live in `blocks/`. Rebuild `build/blocks/` after block changes and
 commit the generated runtime assets with their source.
 
+## Agent workflow
+
+See [AGENTS.md](AGENTS.md) for the local Dex workflow, WordPress skills,
+generated-asset rules, quality checks, and release guidance.
+
 ## Extensibility and compatibility
 
 The block is not a migration adapter for arbitrary `core/cover` serialized
