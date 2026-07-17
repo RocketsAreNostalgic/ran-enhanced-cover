@@ -26,11 +26,11 @@ jobs:
               with:
                   php-version: ${{ matrix.php }}
                   extensions: zip
-                  tools: composer:v2
+                  tools: composer:v2, wp-cli
             - run: pnpm install --frozen-lockfile
             - run: composer install --no-interaction --prefer-dist
             - run: pnpm check
-            - run: pnpm check:build
+            - run: pnpm check:generated
             - run: composer lint
             - run: composer phpcs
             - run: pnpm release
@@ -68,7 +68,7 @@ jobs:
                   tools: composer:v2, wp-cli
             - run: composer install --no-interaction --prefer-dist
             - run: bash scripts/install-wp-tests.sh wordpress_test root '' 127.0.0.1 ${{ matrix.wordpress }}
-            - run: composer test
+            - run: pnpm test:php
               env:
                   WP_TESTS_DIR: /tmp/wordpress-tests-lib
             - name: Install and activate the release ZIP in fresh WordPress
