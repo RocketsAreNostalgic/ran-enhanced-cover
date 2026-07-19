@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/compare/v1.1.0...v1.1.1) (2026-07-19)
+
+
+### Miscellaneous Chores
+
+* ignore generated changelog ([be3f3a7](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/commit/be3f3a7676b96b1c8c6927de1adc55c90f35d626))
+
 ## [1.1.0](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/compare/v1.0.0...v1.1.0) (2026-07-17)
 
 
