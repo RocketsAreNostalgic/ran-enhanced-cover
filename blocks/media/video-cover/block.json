@@ -114,9 +114,7 @@
 			"heading": true,
 			"text": true,
 			"background": false,
-			"__experimentalSkipSerialization": [
-				"gradients"
-			],
+			"__experimentalSkipSerialization": [ "gradients" ],
 			"enableContrastChecker": false
 		},
 		"dimensions": {

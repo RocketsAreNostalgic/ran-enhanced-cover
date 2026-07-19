@@ -22,6 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar -- Release Please marker.
 define( 'RAN_VIDEO_COVER_VERSION', '1.1.1' ); // x-release-please-version
 define( 'RAN_VIDEO_COVER_PLUGIN_FILE', __FILE__ );
 define( 'RAN_VIDEO_COVER_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );

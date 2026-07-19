@@ -210,10 +210,10 @@ $wrapper_attributes = get_block_wrapper_attributes(
 	)
 );
 
-$video_url          = ! empty( $attributes['videoUrl'] ) ? esc_url( $attributes['videoUrl'] ) : '';
-$poster_url         = ! empty( $attributes['posterUrl'] ) ? esc_url( $attributes['posterUrl'] ) : '';
-$object_position    = esc_attr( ( $focal_x * 100 ) . '% ' . ( $focal_y * 100 ) . '%' );
-$video_sources = array();
+$video_url       = ! empty( $attributes['videoUrl'] ) ? esc_url( $attributes['videoUrl'] ) : '';
+$poster_url      = ! empty( $attributes['posterUrl'] ) ? esc_url( $attributes['posterUrl'] ) : '';
+$object_position = esc_attr( ( $focal_x * 100 ) . '% ' . ( $focal_y * 100 ) . '%' );
+$video_sources   = array();
 
 if ( ! empty( $attributes['videoSources'] ) && is_array( $attributes['videoSources'] ) ) {
 	foreach ( $attributes['videoSources'] as $source ) {
@@ -240,7 +240,7 @@ if ( ! empty( $attributes['videoSources'] ) && is_array( $attributes['videoSourc
 }
 
 if ( ! $video_sources && $video_url ) {
-	$file_type = wp_check_filetype( $video_url, wp_get_mime_types() );
+	$file_type       = wp_check_filetype( $video_url, wp_get_mime_types() );
 	$video_sources[] = array(
 		'url'  => $video_url,
 		'type' => ! empty( $file_type['type'] ) && str_starts_with( $file_type['type'], 'video/' )
