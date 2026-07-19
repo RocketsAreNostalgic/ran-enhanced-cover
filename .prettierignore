@@ -1,5 +1,6 @@
 build/
 node_modules/
 vendor/
+.codex/skills/
 *.min.css
 CHANGELOG.md

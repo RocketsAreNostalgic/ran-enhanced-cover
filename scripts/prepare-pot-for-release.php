@@ -1,10 +1,12 @@
 <?php
 /**
- * Restore the Release Please metadata contract after regenerating the POT.
+ * Restore deterministic release metadata after regenerating the POT.
  *
  * The generic Release Please updater needs a valid PO comment block around the
  * Project-Id-Version field. Keep other generated semver-looking metadata out
- * of that block so a plugin release updates only the project version.
+ * of that block so a plugin release updates only the project version. Normalize
+ * metadata that otherwise depends on the checkout directory, generation time,
+ * or local WP-CLI version.
  *
  * @package RAN_Video_Cover
  */
@@ -28,16 +30,26 @@ $pot_file = str_replace(
 	'',
 	$pot_file
 );
-$pot_file = preg_replace( '/^"X-Generator:.*\\n"\n/m', '', $pot_file );
 $pot_file = preg_replace(
-	'/^"Project-Id-Version: RAN Enhanced Cover [^\\n]*\\n"$/m',
+	'/^"Report-Msgid-Bugs-To:.*"$/m',
+	'"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/ran-enhanced-cover\\n"',
+	$pot_file,
+	1
+);
+$pot_file = preg_replace( '/^"(?:POT-Creation-Date|X-Generator):.*"\R/m', '', $pot_file );
+$pot_file = preg_replace(
+	'/^"Project-Id-Version: RAN Enhanced Cover .*"$/m',
 	'"Project-Id-Version: RAN Enhanced Cover ' . $version . '\\n"',
 	$pot_file,
 	1
 );
 
-if ( null === $pot_file || ! str_contains( $pot_file, '"Project-Id-Version: RAN Enhanced Cover ' . $version . '\\n"' ) ) {
-	fwrite( STDERR, "Unable to update the POT project version.\n" );
+if (
+	null === $pot_file
+	|| ! str_contains( $pot_file, '"Project-Id-Version: RAN Enhanced Cover ' . $version . '\\n"' )
+	|| ! str_contains( $pot_file, '"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/ran-enhanced-cover\\n"' )
+) {
+	fwrite( STDERR, "Unable to normalize the POT release metadata.\n" );
 	exit( 1 );
 }
 

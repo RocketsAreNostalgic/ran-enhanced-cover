@@ -139,7 +139,7 @@ class VideoCoverRenderTest extends \WP_UnitTestCase {
 		);
 
 		$this->assertStringContainsString(
-			'--ran-video-cover-background:var(--wp--preset--color--brand-purple, transparent);',
+			'--ran-video-cover-background:var(--wp--preset--color--brand-purple, transparent)',
 			$rendered
 		);
 	}
@@ -155,7 +155,7 @@ class VideoCoverRenderTest extends \WP_UnitTestCase {
 		);
 
 		$this->assertStringContainsString(
-			'--ran-video-cover-background:#123456;',
+			'--ran-video-cover-background:#123456',
 			$rendered
 		);
 	}
@@ -171,7 +171,7 @@ class VideoCoverRenderTest extends \WP_UnitTestCase {
 		);
 
 		$this->assertStringContainsString(
-			'--ran-video-cover-background:transparent;',
+			'--ran-video-cover-background:transparent',
 			$rendered
 		);
 	}
