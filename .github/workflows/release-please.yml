@@ -106,10 +106,10 @@ jobs:
             - name: Build verified release assets
               id: release
               run: |
-                                    bash scripts/create-release-assets.sh "${TAG_NAME}"
-                                    version="${TAG_NAME#v}"
-                                    echo "tag_name=${TAG_NAME}" >> "${GITHUB_OUTPUT}"
-                                    echo "version=${version}" >> "${GITHUB_OUTPUT}"
+                  bash scripts/create-release-assets.sh "${TAG_NAME}"
+                  version="${TAG_NAME#v}"
+                  echo "tag_name=${TAG_NAME}" >> "${GITHUB_OUTPUT}"
+                  echo "version=${version}" >> "${GITHUB_OUTPUT}"
 
             - name: Read deployment contract
               id: contract
