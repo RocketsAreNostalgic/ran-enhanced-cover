@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/compare/v1.2.0...v1.2.1) (2026-07-20)
+
+
+### Bug Fixes
+
+* streamline release asset creation and update block.json formatting ([1377b44](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/commit/1377b44b313725e79b911a98c45b860c856d70fc))
+
 ## [1.2.0](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/compare/v1.1.1...v1.2.0) (2026-07-20)
 
 

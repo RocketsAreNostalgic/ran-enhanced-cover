@@ -1,6 +1,6 @@
 {
   "$schema": "https://schemas.wp.org/wp/6.5/block.json",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "apiVersion": 3,
   "name": "ran/enhanced-cover",
   "title": "Ran Enhanced Cover",
