@@ -50,6 +50,5 @@
 		"release:plugin-check": "bash scripts/plugin-check.sh",
 		"test:browser": "playwright test --config=tests/browser/playwright.config.js"
 	},
-	"prettier": "@wordpress/prettier-config",
 	"packageManager": "pnpm@11.5.2"
 }
