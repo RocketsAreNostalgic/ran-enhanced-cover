@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/compare/v1.1.1...v1.2.0) (2026-07-20)
+
+
+### Features
+
+* standardize GitHub-backed WordPress.org releases ([73c6d50](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/commit/73c6d50180114a089b1b3da9b46e9b7e55065a79))
+
 ## [1.1.1](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/compare/v1.1.0...v1.1.1) (2026-07-19)
 
 
