@@ -101,7 +101,10 @@ pnpm release:plugin-check
 an installed WordPress test library. See `tests/README.md` for setup details.
 `pnpm release:plugin-check` runs the official WordPress Plugin Check command
 against the generated ZIP after Plugin Check has been installed in the target
-WordPress environment.
+WordPress environment. The archive builder writes files in a stable order with
+fixed ZIP metadata, checks every Release Please-managed version source, and
+rejects any archive whose contents differ from the explicit runtime allowlist.
+Use `php scripts/build-release.php --check` for a non-persistent archive gate.
 
 ## License
 

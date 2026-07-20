@@ -1,0 +1,11 @@
+{
+	"schemaVersion": 1,
+	"enabled": false,
+	"wordpressOrgSlug": "",
+	"packageSlug": "ran-enhanced-cover",
+	"mainPluginFile": "ran-enhanced-cover.php",
+	"buildCommand": "php scripts/build-release.php --output \"$ARCHIVE_PATH\"",
+	"verifyCommand": "php scripts/verify-release.php \"$ARCHIVE_PATH\"",
+	"archivePath": "dist/ran-enhanced-cover-{version}.zip",
+	"listingAssetsDirectory": "wordpress-org/assets"
+}

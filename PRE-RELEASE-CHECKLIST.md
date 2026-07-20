@@ -15,7 +15,7 @@ submission.
         update `readme.txt` if screenshots are included in the directory listing.
         Current assets cover icons and banners only.
 -   [ ] Review `readme.txt` against the current WordPress.org readme validator,
-        including tags, external-service/privacy language, stable tag `1.0.0`, and
+        including tags, external-service/privacy language, the current stable tag, and
         the declared `Tested up to` value.
 -   [ ] Run the full local release gate from a clean worktree:
 
@@ -43,9 +43,11 @@ submission.
         poster fallback, and pause/play persistence.
 -   [ ] Confirm the release ZIP contains the built `build/blocks/` runtime assets
         and excludes development-only files.
--   [ ] Complete the manual SVN hand-off in `wordpress-org/SVN-RELEASE.md`, then
-        verify `trunk`, `tags/1.0.0`, and `/assets` agree with the approved ZIP
-        and public artwork.
+-   [ ] Submit the reviewed ZIP manually and wait for WordPress.org approval and
+        the assigned slug before configuring the protected deployment contract.
+-   [ ] Follow `wordpress-org/DEPLOYMENT.md` for the first reviewer-approved
+        deployment, then verify SVN `trunk`, the matching version tag, `/assets`,
+        the directory page, and the installation/update path.
 
 ## Translation readiness
 
