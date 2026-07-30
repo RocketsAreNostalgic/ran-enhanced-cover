@@ -86,10 +86,9 @@ release version. The normal PHP strategy does not update those
 WordPress-specific sources automatically; configure and test explicit
 extra-file updates.
 
-Do not enable automated releases until the quality workflow and release
-scripts derive archive names from the plugin metadata rather than the current
-hard-coded `1.0.0` value. Keep packaging or WordPress.org deployment separate
-from Release Please.
+The quality workflow and release scripts derive archive names from the plugin
+metadata and verify the resulting archive. Keep packaging or WordPress.org
+deployment separate from Release Please.
 
 Treat the existing initial-release preparation commit as the bootstrap
 boundary, preserve version `1.0.0` in the initial manifest, and review the
