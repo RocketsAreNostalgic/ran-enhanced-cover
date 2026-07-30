@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.3.0](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/compare/v1.2.1...v1.3.0) (2026-07-30)
+
+
+### Features
+
+* add Prettier configuration and update block.json formatting ([8d407a4](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/commit/8d407a46ab3d763d98addc4f5259a194549426fa))
+
+
+### Bug Fixes
+
+* update block.json to streamline gradient serialization ([b7e0276](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/commit/b7e02763e7f4f8d8c04842afb826ea58124c68c3))
+
+
+### Miscellaneous Chores
+
+* **deps:** update WPCS security patch ([bd93353](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/commit/bd933532b853f1656e7aadf8cf88c2d531da2e18))
+
 ## [1.2.1](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/compare/v1.2.0...v1.2.1) (2026-07-20)
 
 
