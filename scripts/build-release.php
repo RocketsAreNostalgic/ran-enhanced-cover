@@ -126,6 +126,41 @@ function ran_enhanced_cover_release_files( string $root, array $allowlist ): arr
 }
 
 /**
+ * Return the release-ready contents for a runtime file.
+ *
+ * Release Please needs marker lines in the source readme, but those control
+ * comments are not part of the WordPress.org package metadata.
+ *
+ * @param string $root Plugin root.
+ * @param string $file Runtime relative path.
+ * @return string
+ * @throws RuntimeException When the file cannot be read or transformed.
+ */
+function ran_enhanced_cover_release_file_contents( string $root, string $file ): string {
+	$contents = file_get_contents( $root . '/' . $file );
+
+	if ( false === $contents ) {
+		throw new RuntimeException( 'Unable to read a runtime file: ' . $file );
+	}
+
+	if ( 'readme.txt' !== $file ) {
+		return $contents;
+	}
+
+	$contents = preg_replace(
+		'/^[\t ]*<!-- x-release-please-(?:start-version|end) -->[\t ]*(?:\r\n|\n|\r|$)/m',
+		'',
+		$contents
+	);
+
+	if ( null === $contents ) {
+		throw new RuntimeException( 'Unable to prepare readme.txt for release.' );
+	}
+
+	return $contents;
+}
+
+/**
  * Validate every Release Please-managed version source.
  *
  * @param string $root Plugin root.
@@ -266,6 +301,9 @@ function ran_enhanced_cover_release_validate_archive( string $archive_path, arra
 	$source_block = $archive->getFromName( RAN_ENHANCED_COVER_RELEASE_SLUG . '/blocks/media/video-cover/block.json' );
 	$build_block  = $archive->getFromName( RAN_ENHANCED_COVER_RELEASE_SLUG . '/build/blocks/media/video-cover/block.json' );
 	$archive->close();
+	$expected_readme = ran_enhanced_cover_release_file_contents( dirname( __DIR__ ), 'readme.txt' );
+	$readme_metadata_pattern = '/^Stable tag:[\t ]*' . preg_quote( $version, '/' ) . '[\t ]*\RLicense:[\t ]*[^\r\n]+\RLicense URI:[\t ]*https?:\/\/[^\s]+[\t ]*$/mi';
+	$release_marker_pattern  = '/^[\t ]*<!-- x-release-please-(?:start-version|end) -->[\t ]*$/m';
 
 	if (
 		false === $plugin_file ||
@@ -273,9 +311,12 @@ function ran_enhanced_cover_release_validate_archive( string $archive_path, arra
 		false === $pot ||
 		false === $source_block ||
 		false === $build_block ||
+		$expected_readme !== $readme ||
 		! preg_match( '/^ \* Version:\s*' . preg_quote( $version, '/' ) . '\s*$/m', $plugin_file ) ||
 		! str_contains( $plugin_file, "RAN_VIDEO_COVER_VERSION', '" . $version . "'" ) ||
 		! preg_match( '/^Stable tag:\s*' . preg_quote( $version, '/' ) . '\s*$/mi', $readme ) ||
+		preg_match( $release_marker_pattern, $readme ) ||
+		! preg_match( $readme_metadata_pattern, $readme ) ||
 		! str_contains( $pot, 'Project-Id-Version: RAN Enhanced Cover ' . $version ) ||
 		! preg_match( '/"version"\s*:\s*"' . preg_quote( $version, '/' ) . '"/', $source_block ) ||
 		! preg_match( '/"version"\s*:\s*"' . preg_quote( $version, '/' ) . '"/', $build_block )
@@ -332,8 +373,11 @@ function ran_enhanced_cover_release_main( array $arguments ): int {
 
 		foreach ( $files as $file ) {
 			$archive_path = RAN_ENHANCED_COVER_RELEASE_SLUG . '/' . $file;
+			$added        = 'readme.txt' === $file
+				? $archive->addFromString( $archive_path, ran_enhanced_cover_release_file_contents( $root, $file ) )
+				: $archive->addFile( $root . '/' . $file, $archive_path );
 			if (
-				! $archive->addFile( $root . '/' . $file, $archive_path ) ||
+				! $added ||
 				! $archive->setMtimeName( $archive_path, RAN_ENHANCED_COVER_RELEASE_MTIME ) ||
 				! $archive->setExternalAttributesName( $archive_path, ZipArchive::OPSYS_UNIX, 0100644 << 16 )
 			) {
