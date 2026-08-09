@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/compare/v1.3.0...v1.3.1) (2026-08-09)
+
+
+### Bug Fixes
+
+* **release:** preserve packaged readme metadata ([18af369](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/commit/18af369d6a343762ebef1ab2ac6b55fecf14a9d2))
+
 ## [1.3.0](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/compare/v1.2.1...v1.3.0) (2026-07-30)
 
 
