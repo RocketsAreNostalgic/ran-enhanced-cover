@@ -72,7 +72,17 @@ jobs:
                   release_pages="$(gh api --paginate --slurp "repos/${GITHUB_REPOSITORY}/releases?per_page=100")"
                   if release_json="$(jq -cer --arg tag "$tag" 'add | .[] | select(.tag_name == $tag)' <<< "$release_pages")"; then
                       test "$(jq -er '.target_commitish' <<< "$release_json")" = "$RAN_QUALITY_COMMIT"
-                      if [[ "$(jq -er '.draft' <<< "$release_json")" == false ]]; then state=published; release_pending=false; else state=draft; release_pending=true; fi
+                      if [[ "$(jq -er '.draft' <<< "$release_json")" == false ]]; then
+                          if [[ "$(jq -er '.immutable' <<< "$release_json")" != true ]]; then
+                              echo '::error::The published release is not immutable and cannot be accepted.'
+                              exit 1
+                          fi
+                          state=published
+                          release_pending=false
+                      else
+                          state=draft
+                          release_pending=true
+                      fi
                   else state=absent; release_pending=true; fi
                   if [[ "$release_pending" == true ]]; then test "$pending" = true; test "$tagged" = false; elif [[ "$pending" != true && "$tagged" != true ]]; then echo '::error::The published release PR has neither the pending nor tagged Release Please label.'; exit 1; fi
                   printf 'release-required=true\ntag-name=%s\n' "$tag" >> "$GITHUB_OUTPUT"
@@ -107,23 +117,41 @@ jobs:
                   (cd dist && sha256sum --check --strict "$(basename "$checksum")")
                   php scripts/verify-release.php "$archive"
 
-            - name: Create a draft, attach the tested assets, and publish
-              id: publish
-              if: steps.release-state.outputs.release-required == 'true'
+            - name: Create or reuse the draft and attach the tested assets
+              if: steps.release-state.outputs.release-required == 'true' && env.RAN_RELEASE_PENDING == 'true'
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   RAN_QUALITY_COMMIT: ${{ github.event.workflow_run.head_sha }}
               run: |
                   set -euo pipefail
-                  echo 'published-now=false' >> "$GITHUB_OUTPUT"
-                  if [[ "$RAN_RELEASE_PENDING" != true ]]; then exit 0; fi
                   if [[ "$RAN_RELEASE_STATE" == absent ]]; then prerelease=(); [[ "$RAN_RELEASE_VERSION" == *-* ]] && prerelease=(--prerelease); gh release create "$RAN_RELEASE_TAG" --draft --target "$RAN_QUALITY_COMMIT" --title "$RAN_RELEASE_TAG" --generate-notes "${prerelease[@]}"; fi
                   gh release upload "$RAN_RELEASE_TAG" "dist/ran-enhanced-cover-${RAN_RELEASE_VERSION}.zip" "dist/ran-enhanced-cover-${RAN_RELEASE_VERSION}.zip.sha256" "dist/ran-enhanced-cover-${RAN_RELEASE_VERSION}.manifest.json" --clobber --repo "$GITHUB_REPOSITORY"
+
+            - name: Publish only under the immutable-release contract
+              id: publish
+              if: steps.release-state.outputs.release-required == 'true' && env.RAN_RELEASE_PENDING == 'true'
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  IMMUTABLE_RELEASES_ENABLED: ${{ vars.RAN_IMMUTABLE_RELEASES_ENABLED }}
+              run: |
+                  set -euo pipefail
+                  echo 'published-now=false' >> "$GITHUB_OUTPUT"
+                  if [[ "$IMMUTABLE_RELEASES_ENABLED" != true ]]; then
+                      echo '::error::Enable GitHub immutable releases and set RAN_IMMUTABLE_RELEASES_ENABLED=true. The verified release remains a draft.'
+                      exit 1
+                  fi
                   latest=(--latest); [[ "$RAN_RELEASE_VERSION" == *-* ]] && latest=(--prerelease)
                   gh release edit "$RAN_RELEASE_TAG" --draft=false "${latest[@]}"
+                  immutable=false
+                  for delay in 0 2 2 2 2; do
+                      sleep "$delay"
+                      if immutable="$(gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${RAN_RELEASE_TAG}" --jq '.immutable' 2>/dev/null)" \
+                          && [[ "$immutable" == true ]]; then break; fi
+                  done
+                  test "$immutable" = true
                   echo 'published-now=true' >> "$GITHUB_OUTPUT"
 
-            - name: Read back the published release and reconcile its exact PR
+            - name: Read back the immutable release and reconcile its exact PR
               if: steps.release-state.outputs.release-required == 'true'
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -131,7 +159,7 @@ jobs:
               run: |
                   set -euo pipefail
                   release_json="$(gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${RAN_RELEASE_TAG}")"
-                  jq -e --arg tag "$RAN_RELEASE_TAG" --arg commit "$RAN_QUALITY_COMMIT" '.tag_name == $tag and .draft == false and .target_commitish == $commit' <<< "$release_json" >/dev/null
+                  jq -e --arg tag "$RAN_RELEASE_TAG" --arg commit "$RAN_QUALITY_COMMIT" '.tag_name == $tag and .draft == false and .immutable == true and .target_commitish == $commit' <<< "$release_json" >/dev/null
                   tag_ref="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${RAN_RELEASE_TAG}")"; jq -e --arg commit "$RAN_QUALITY_COMMIT" '.object.type == "commit" and .object.sha == $commit' <<< "$tag_ref" >/dev/null
                   expected="$(printf '%s\n' "ran-enhanced-cover-${RAN_RELEASE_VERSION}.manifest.json" "ran-enhanced-cover-${RAN_RELEASE_VERSION}.zip" "ran-enhanced-cover-${RAN_RELEASE_VERSION}.zip.sha256" | jq -Rsc 'split("\n") | map(select(length > 0)) | sort')"; test "$(jq -c '[.assets[].name] | sort' <<< "$release_json")" = "$expected"
                   labels="$(gh api "repos/${GITHUB_REPOSITORY}/issues/${RAN_RELEASE_PR_NUMBER}" --jq '[.labels[].name]')"
