@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.2](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/compare/v1.3.1...v1.3.2) (2026-08-17)
+
+
+### Miscellaneous Chores
+
+* **deps:** update PHP_CodeSniffer to 3.13.6 ([bf43d6f](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/commit/bf43d6f8f111e899083a30d23487926da160c76b))
+* **deps:** update PHP_CodeSniffer to 3.13.6 ([12fcd3d](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/commit/12fcd3d1f738cb0fd33b5018841ebcc956e310f1))
+
 ## [1.3.1](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/compare/v1.3.0...v1.3.1) (2026-08-09)
 
 
