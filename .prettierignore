@@ -2,5 +2,6 @@ build/
 node_modules/
 vendor/
 .codex/skills/
+.agents/skills/
 *.min.css
 CHANGELOG.md
