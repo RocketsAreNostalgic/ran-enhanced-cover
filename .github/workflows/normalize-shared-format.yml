@@ -39,14 +39,13 @@ jobs:
             - name: Install exact Node dependencies
               run: pnpm install --frozen-lockfile
 
-            - name: Normalize exact files reported by format check
+            - name: Normalize convergent files reported by format check
               run: |
                   pnpm exec prettier --write \
                     .stylelintrc.json \
                     .wp-env.json \
                     AGENTS.md \
                     blocks/media/video-cover/editor.css \
-                    PRE-RELEASE-CHECKLIST.md \
                     README.md \
                     wordpress-org/assets/README.md
                   pnpm format:check
@@ -69,7 +68,6 @@ jobs:
                           |.wp-env.json \
                           |AGENTS.md \
                           |blocks/media/video-cover/editor.css \
-                          |PRE-RELEASE-CHECKLIST.md \
                           |README.md \
                           |wordpress-org/assets/README.md \
                           |build/blocks/* \
@@ -87,7 +85,6 @@ jobs:
                     .wp-env.json \
                     AGENTS.md \
                     blocks/media/video-cover/editor.css \
-                    PRE-RELEASE-CHECKLIST.md \
                     README.md \
                     wordpress-org/assets/README.md \
                     build/blocks \
