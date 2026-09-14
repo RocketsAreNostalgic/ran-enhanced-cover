@@ -19,6 +19,13 @@ jobs:
                   fetch-depth: 0
                   ref: ${{ github.event.pull_request.head.ref }}
 
+            - name: Set up PHP and WP-CLI
+              uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+              with:
+                  php-version: '8.3'
+                  coverage: none
+                  tools: wp-cli
+
             - name: Set up pnpm
               uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
               with:
@@ -49,7 +56,7 @@ jobs:
                   if total != 4:
                       raise SystemExit(f'expected exactly 4 unused catch bindings, found {total}')
 
-            - name: Apply shared Prettier formatting to exact JS lint surface
+            - name: Apply formatter and regenerate corresponding tracked outputs
               run: |
                   pnpm exec prettier --write \
                     blocks/media/video-cover/index.js \
@@ -58,26 +65,56 @@ jobs:
                     tests/browser/video-cover.smoke.spec.js \
                     webpack.config.js
                   pnpm lint:js
+                  pnpm build
+                  pnpm i18n:pot
 
-            - name: Commit only normalized JavaScript
+            - name: Stage bounded source and generated changes
               shell: bash
               run: |
                   set -euo pipefail
-                  changed="$(git diff --name-only | sort)"
-                  expected="$(printf '%s\n' \
-                    blocks/media/video-cover/index.js \
-                    blocks/media/video-cover/view.js \
-                    tests/browser/playwright.config.js \
-                    tests/browser/video-cover.smoke.spec.js \
-                    webpack.config.js | sort)"
-                  test "$changed" = "$expected"
-                  git config user.name 'github-actions[bot]'
-                  git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+                  changed="$(git diff --name-only)"
+                  printf '%s\n' "$changed"
+                  while IFS= read -r path; do
+                      case "$path" in
+                          '' \
+                          |blocks/media/video-cover/index.js \
+                          |blocks/media/video-cover/view.js \
+                          |tests/browser/playwright.config.js \
+                          |tests/browser/video-cover.smoke.spec.js \
+                          |webpack.config.js \
+                          |build/blocks/media/video-cover/index.asset.php \
+                          |build/blocks/media/video-cover/index.js \
+                          |build/blocks/media/video-cover/view.asset.php \
+                          |build/blocks/media/video-cover/view.js \
+                          |languages/ran-enhanced-cover.pot)
+                              ;;
+                          *)
+                              echo "Unexpected generated change: $path" >&2
+                              exit 1
+                              ;;
+                      esac
+                  done <<< "$changed"
                   git add -- \
                     blocks/media/video-cover/index.js \
                     blocks/media/video-cover/view.js \
                     tests/browser/playwright.config.js \
                     tests/browser/video-cover.smoke.spec.js \
-                    webpack.config.js
+                    webpack.config.js \
+                    build/blocks/media/video-cover/index.asset.php \
+                    build/blocks/media/video-cover/index.js \
+                    build/blocks/media/video-cover/view.asset.php \
+                    build/blocks/media/video-cover/view.js \
+                    languages/ran-enhanced-cover.pot
+
+            - name: Prove generated outputs converge and commit
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  pnpm build
+                  pnpm i18n:pot
+                  git diff --quiet -- build/blocks languages/ran-enhanced-cover.pot
+                  pnpm lint:js
+                  git config user.name 'github-actions[bot]'
+                  git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
                   git commit -m 'style: normalize JavaScript for shared profile'
                   git push origin HEAD:${{ github.event.pull_request.head.ref }}
