@@ -64,6 +64,28 @@ relevant source changes, then review and stage the generated build assets and
 for its configured source paths; tooling, documentation, and release-only
 changes must not cause an unnecessary rebuild.
 
+## Quality profile and ownership
+
+This repository uses the RAN `wordpress-plugin` quality profile.
+
+-   `ran/coding-standards` owns the organisation-wide PHP, WordPress Coding
+    Standards, and PHPCompatibility ancestry. This repository continues to own
+    its WordPress 6.5+ / PHP 8.0+ support range, source paths, text domain, and
+    justified PHPCS exceptions.
+-   `@rocketsarenostalgic/quality-config` owns the shared ESLint, Prettier, and
+    Stylelint ancestry. This repository continues to own source selection,
+    generated/vendor exclusions, CommonJS/Node globals, WordPress external
+    module declarations, and product-specific exceptions including
+    `@wordpress/no-unsafe-wp-apis` and the block metadata Prettier override.
+-   `composer check` is the deterministic PHPCS source-quality contract for the
+    shared baseline. PHP syntax linting and WordPress integration PHPUnit remain
+    repository-owned gates.
+-   `pnpm check` remains the deterministic package-level quality contract.
+-   Canonical release-archive creation and verification, generated block/POT
+    drift, the WordPress compatibility matrix, fresh-ZIP install/activation,
+    release-workflow contract checks, and Plugin Check remain repository-owned
+    specialist gates. Shared quality adoption must not remove or weaken them.
+
 ## Git and commits
 
 Use Conventional Commits with one coherent change per commit. `feat:` and
