@@ -1,76 +1,74 @@
-const { expect, test } = require( '@playwright/test' );
+const { expect, test } = require('@playwright/test');
 
 const fixtureUrl = process.env.RAN_ENHANCED_COVER_E2E_URL;
 const staticFixtureUrl = process.env.RAN_ENHANCED_COVER_STATIC_E2E_URL;
 const surfaceFixtureUrl = process.env.RAN_ENHANCED_COVER_SURFACE_E2E_URL;
 
-test( 'a reduced-motion visitor receives a paused, labelled video control', async ( {
+test('a reduced-motion visitor receives a paused, labelled video control', async ({
 	page,
-} ) => {
+}) => {
 	test.skip(
-		! fixtureUrl,
+		!fixtureUrl,
 		'Set RAN_ENHANCED_COVER_E2E_URL to a published post containing a video Video Cover block.'
 	);
 
-	await page.emulateMedia( { reducedMotion: 'reduce' } );
-	await page.goto( fixtureUrl );
+	await page.emulateMedia({ reducedMotion: 'reduce' });
+	await page.goto(fixtureUrl);
 
-	const cover = page.locator( '.wp-block-ran-enhanced-cover' ).first();
-	const video = cover.locator( 'video.ran-video-cover__media' );
-	const control = cover.getByRole( 'button', { name: 'Play' } );
+	const cover = page.locator('.wp-block-ran-enhanced-cover').first();
+	const video = cover.locator('video.ran-video-cover__media');
+	const control = cover.getByRole('button', { name: 'Play' });
 
-	await expect( cover ).toHaveClass( /is-paused/ );
-	await expect( video ).not.toHaveAttribute( 'autoplay', '' );
-	await expect( video ).toHaveAttribute( 'aria-hidden', 'true' );
-	await expect( control ).toBeVisible();
+	await expect(cover).toHaveClass(/is-paused/);
+	await expect(video).not.toHaveAttribute('autoplay', '');
+	await expect(video).toHaveAttribute('aria-hidden', 'true');
+	await expect(control).toBeVisible();
 	await control.focus();
-	await expect( control ).toBeFocused();
-	expect( await video.evaluate( ( element ) => element.paused ) ).toBe(
-		true
-	);
-} );
+	await expect(control).toBeFocused();
+	expect(await video.evaluate((element) => element.paused)).toBe(true);
+});
 
-test( 'the no-JavaScript response remains understandable and paused', async ( {
+test('the no-JavaScript response remains understandable and paused', async ({
 	browser,
-} ) => {
+}) => {
 	test.skip(
-		! fixtureUrl,
+		!fixtureUrl,
 		'Set RAN_ENHANCED_COVER_E2E_URL to a published post containing a video Video Cover block.'
 	);
 
-	const context = await browser.newContext( { javaScriptEnabled: false } );
+	const context = await browser.newContext({ javaScriptEnabled: false });
 	const page = await context.newPage();
 
-	await page.goto( fixtureUrl );
+	await page.goto(fixtureUrl);
 
-	const cover = page.locator( '.wp-block-ran-enhanced-cover' ).first();
-	const video = cover.locator( 'video.ran-video-cover__media' );
+	const cover = page.locator('.wp-block-ran-enhanced-cover').first();
+	const video = cover.locator('video.ran-video-cover__media');
 
-	await expect( cover ).toHaveClass( /is-paused/ );
-	await expect( video ).not.toHaveAttribute( 'autoplay', '' );
-	await expect( cover.getByRole( 'button', { name: 'Play' } ) ).toBeVisible();
+	await expect(cover).toHaveClass(/is-paused/);
+	await expect(video).not.toHaveAttribute('autoplay', '');
+	await expect(cover.getByRole('button', { name: 'Play' })).toBeVisible();
 
 	await context.close();
-} );
+});
 
-test( 'a video cover requests the player runtime', async ( { page } ) => {
+test('a video cover requests the player runtime', async ({ page }) => {
 	test.skip(
-		! fixtureUrl,
+		!fixtureUrl,
 		'Set RAN_ENHANCED_COVER_E2E_URL to a published post containing a video Video Cover block.'
 	);
 
 	const runtimeRequests = [];
-	page.on( 'request', ( request ) => {
+	page.on('request', (request) => {
 		if (
 			/\/build\/blocks\/media\/video-cover\/view\.js(?:\?|$)/.test(
 				request.url()
 			)
 		) {
-			runtimeRequests.push( request.url() );
+			runtimeRequests.push(request.url());
 		}
-	} );
+	});
 
-	await page.goto( fixtureUrl, { waitUntil: 'load' } );
+	await page.goto(fixtureUrl, { waitUntil: 'load' });
 
 	await expect(
 		page
@@ -79,55 +77,51 @@ test( 'a video cover requests the player runtime', async ( { page } ) => {
 			)
 			.first()
 	).toBeVisible();
-	expect( runtimeRequests ).toHaveLength( 1 );
-} );
+	expect(runtimeRequests).toHaveLength(1);
+});
 
-test( 'a poster-only or empty cover omits player controls and runtime', async ( {
+test('a poster-only or empty cover omits player controls and runtime', async ({
 	page,
-} ) => {
+}) => {
 	test.skip(
-		! staticFixtureUrl,
+		!staticFixtureUrl,
 		'Set RAN_ENHANCED_COVER_STATIC_E2E_URL to a published post containing a poster-only or empty Video Cover block.'
 	);
 
 	const runtimeRequests = [];
-	page.on( 'request', ( request ) => {
+	page.on('request', (request) => {
 		if (
 			/\/build\/blocks\/media\/video-cover\/view\.js(?:\?|$)/.test(
 				request.url()
 			)
 		) {
-			runtimeRequests.push( request.url() );
+			runtimeRequests.push(request.url());
 		}
-	} );
+	});
 
-	await page.goto( staticFixtureUrl, { waitUntil: 'load' } );
+	await page.goto(staticFixtureUrl, { waitUntil: 'load' });
 
-	const cover = page.locator( '.wp-block-ran-enhanced-cover' ).first();
-	await expect( cover.locator( 'video.ran-video-cover__media' ) ).toHaveCount(
-		0
-	);
-	await expect( cover.locator( '.ran-video-cover__toggle' ) ).toHaveCount(
-		0
-	);
-	expect( runtimeRequests ).toEqual( [] );
-} );
+	const cover = page.locator('.wp-block-ran-enhanced-cover').first();
+	await expect(cover.locator('video.ran-video-cover__media')).toHaveCount(0);
+	await expect(cover.locator('.ran-video-cover__toggle')).toHaveCount(0);
+	expect(runtimeRequests).toEqual([]);
+});
 
-test( 'a transparent-media cover retains its independent brand-purple surface', async ( {
+test('a transparent-media cover retains its independent brand-purple surface', async ({
 	page,
-} ) => {
+}) => {
 	test.skip(
-		! surfaceFixtureUrl,
+		!surfaceFixtureUrl,
 		'Set RAN_ENHANCED_COVER_SURFACE_E2E_URL to a transparent-media Video Cover with the brand-purple background colour.'
 	);
 
-	await page.goto( surfaceFixtureUrl, { waitUntil: 'load' } );
+	await page.goto(surfaceFixtureUrl, { waitUntil: 'load' });
 
-	const cover = page.locator( '.wp-block-ran-enhanced-cover' ).first();
-	const style = await cover.getAttribute( 'style' );
+	const cover = page.locator('.wp-block-ran-enhanced-cover').first();
+	const style = await cover.getAttribute('style');
 
-	expect( style ).toContain(
+	expect(style).toContain(
 		'--ran-video-cover-background:var(--wp--preset--color--brand-purple, transparent);'
 	);
-	await expect( cover.locator( '.ran-video-cover__wash' ) ).toHaveCount( 1 );
-} );
+	await expect(cover.locator('.ran-video-cover__wash')).toHaveCount(1);
+});
