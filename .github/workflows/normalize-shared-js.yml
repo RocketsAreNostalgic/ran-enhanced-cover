@@ -1,0 +1,83 @@
+name: Normalize shared JS contract
+
+on:
+    pull_request:
+
+permissions:
+    contents: write
+
+jobs:
+    normalize:
+        if: >-
+            github.event.pull_request.head.repo.full_name == github.repository
+            && github.event.pull_request.head.ref == 'chore/adopt-shared-quality-profile'
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out feature branch
+              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+              with:
+                  fetch-depth: 0
+                  ref: ${{ github.event.pull_request.head.ref }}
+
+            - name: Set up pnpm
+              uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
+              with:
+                  version: 11.5.2
+
+            - name: Set up Node.js
+              uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+              with:
+                  node-version-file: package.json
+
+            - name: Install exact Node dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Remove unused catch bindings and normalize exact lint surface
+              shell: python
+              run: |
+                  from pathlib import Path
+                  targets = [
+                      Path('blocks/media/video-cover/index.js'),
+                      Path('blocks/media/video-cover/view.js'),
+                  ]
+                  total = 0
+                  for path in targets:
+                      text = path.read_text()
+                      count = text.count('catch ( error ) {')
+                      total += count
+                      path.write_text(text.replace('catch ( error ) {', 'catch {'))
+                  if total != 4:
+                      raise SystemExit(f'expected exactly 4 unused catch bindings, found {total}')
+
+            - name: Apply shared Prettier formatting to exact JS lint surface
+              run: |
+                  pnpm exec prettier --write \
+                    blocks/media/video-cover/index.js \
+                    blocks/media/video-cover/view.js \
+                    tests/browser/playwright.config.js \
+                    tests/browser/video-cover.smoke.spec.js \
+                    webpack.config.js
+                  pnpm lint:js
+
+            - name: Commit only normalized JavaScript
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  changed="$(git diff --name-only | sort)"
+                  expected="$(printf '%s\n' \
+                    blocks/media/video-cover/index.js \
+                    blocks/media/video-cover/view.js \
+                    tests/browser/playwright.config.js \
+                    tests/browser/video-cover.smoke.spec.js \
+                    webpack.config.js | sort)"
+                  test "$changed" = "$expected"
+                  git config user.name 'github-actions[bot]'
+                  git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+                  git add -- \
+                    blocks/media/video-cover/index.js \
+                    blocks/media/video-cover/view.js \
+                    tests/browser/playwright.config.js \
+                    tests/browser/video-cover.smoke.spec.js \
+                    webpack.config.js
+                  git commit -m 'style: normalize JavaScript for shared profile'
+                  git push origin HEAD:${{ github.event.pull_request.head.ref }}
