@@ -5,3 +5,4 @@ vendor/
 .agents/skills/
 *.min.css
 CHANGELOG.md
+pnpm-lock.yaml
