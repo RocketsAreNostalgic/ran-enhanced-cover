@@ -42,10 +42,10 @@ const ICON = el(
 		viewBox: '0 0 24 24',
 		xmlns: 'http://www.w3.org/2000/svg',
 	},
-	el( 'path', {
+	el('path', {
 		d: 'M3 5.5A2.5 2.5 0 0 1 5.5 3h13A2.5 2.5 0 0 1 21 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 18.5v-13Zm2 0v13c0 .28.22.5.5.5h13a.5.5 0 0 0 .5-.5v-13a.5.5 0 0 0-.5-.5h-13a.5.5 0 0 0-.5.5Zm4 9.75v-6.5L14.25 12 9 15.25ZM15 9h2v1.5h-2V9Zm0 4.5h2V15h-2v-1.5ZM7 17h10v1.5H7V17Z',
 		fill: 'currentColor',
-	} )
+	})
 );
 
 const TEMPLATE = [
@@ -53,13 +53,13 @@ const TEMPLATE = [
 		'core/heading',
 		{
 			level: 1,
-			placeholder: __( 'Banner heading', 'ran-enhanced-cover' ),
+			placeholder: __('Banner heading', 'ran-enhanced-cover'),
 		},
 	],
 	[
 		'core/paragraph',
 		{
-			placeholder: __( 'Optional hook text', 'ran-enhanced-cover' ),
+			placeholder: __('Optional hook text', 'ran-enhanced-cover'),
 		},
 	],
 ];
@@ -93,31 +93,31 @@ const MIN_HEIGHT_UNITS = [
 	{ value: 'vh', label: 'vh', default: 50 },
 ];
 
-function positionClass( contentPosition ) {
+function positionClass(contentPosition) {
 	return (
 		'is-position-' +
-		String( contentPosition || 'center left' ).replace( /\s+/g, '-' )
+		String(contentPosition || 'center left').replace(/\s+/g, '-')
 	);
 }
 
-function overlayValue( attributes ) {
-	if ( attributes.customOverlayColor ) {
+function overlayValue(attributes) {
+	if (attributes.customOverlayColor) {
 		return attributes.customOverlayColor;
 	}
 
-	if ( attributes.overlayColor ) {
+	if (attributes.overlayColor) {
 		return 'var(--wp--preset--color--' + attributes.overlayColor + ')';
 	}
 
 	return '#121212';
 }
 
-function backgroundValue( attributes ) {
-	if ( attributes.customBackgroundColor ) {
+function backgroundValue(attributes) {
+	if (attributes.customBackgroundColor) {
 		return attributes.customBackgroundColor;
 	}
 
-	if ( attributes.backgroundColor ) {
+	if (attributes.backgroundColor) {
 		return (
 			'var(--wp--preset--color--' +
 			attributes.backgroundColor +
@@ -128,37 +128,37 @@ function backgroundValue( attributes ) {
 	return 'transparent';
 }
 
-function controlPosition( value ) {
-	return CONTROL_POSITIONS.includes( value ) ? value : 'bottom right';
+function controlPosition(value) {
+	return CONTROL_POSITIONS.includes(value) ? value : 'bottom right';
 }
 
-function minHeightValue( attributes ) {
-	const value = Number.isFinite( Number( attributes.minHeight ) )
+function minHeightValue(attributes) {
+	const value = Number.isFinite(Number(attributes.minHeight))
 		? attributes.minHeight
 		: 80;
-	const unit = MIN_HEIGHT_UNITS.some( function ( item ) {
+	const unit = MIN_HEIGHT_UNITS.some(function (item) {
 		return item.value === attributes.minHeightUnit;
-	} )
+	})
 		? attributes.minHeightUnit
 		: 'vh';
 
 	return value + unit;
 }
 
-function minHeightParts( value ) {
-	const match = String( value || '' )
+function minHeightParts(value) {
+	const match = String(value || '')
 		.trim()
-		.match( /^([-+]?(?:\d+|\d*\.\d+))(px|%|em|rem|vw|vh)$/ );
+		.match(/^([-+]?(?:\d+|\d*\.\d+))(px|%|em|rem|vw|vh)$/);
 
-	if ( ! match ) {
+	if (!match) {
 		return null;
 	}
 
-	return { value: Number( match[ 1 ] ), unit: match[ 2 ] };
+	return { value: Number(match[1]), unit: match[2] };
 }
 
-function styleWithoutAspectRatio( style ) {
-	if ( ! style || ! style.dimensions || ! style.dimensions.aspectRatio ) {
+function styleWithoutAspectRatio(style) {
+	if (!style || !style.dimensions || !style.dimensions.aspectRatio) {
 		return style;
 	}
 
@@ -171,137 +171,137 @@ function styleWithoutAspectRatio( style ) {
 	};
 }
 
-function spacingPresetSlug( value ) {
-	const presetToken = String( value || '' ).match(
+function spacingPresetSlug(value) {
+	const presetToken = String(value || '').match(
 		/^var:preset\|spacing\|([a-z0-9-]+)$/
 	);
 
-	if ( presetToken ) {
-		return presetToken[ 1 ];
+	if (presetToken) {
+		return presetToken[1];
 	}
 
-	const match = String( value || '' ).match(
+	const match = String(value || '').match(
 		/^var\(--wp--preset--spacing--([a-z0-9-]+)\)$/
 	);
 
-	return match ? match[ 1 ] : '';
+	return match ? match[1] : '';
 }
 
-function insetParts( value, spacingSizes ) {
-	const preset = spacingPresetSlug( value );
+function insetParts(value, spacingSizes) {
+	const preset = spacingPresetSlug(value);
 
-	if ( preset ) {
+	if (preset) {
 		const matchingPreset = (
-			Array.isArray( spacingSizes ) ? spacingSizes : []
-		).find( function ( size ) {
+			Array.isArray(spacingSizes) ? spacingSizes : []
+		).find(function (size) {
 			return size && size.slug === preset && size.size;
-		} );
+		});
 
-		if ( matchingPreset ) {
-			return insetParts( matchingPreset.size );
+		if (matchingPreset) {
+			return insetParts(matchingPreset.size);
 		}
 	}
 
-	const match = String( value || '' ).match(
+	const match = String(value || '').match(
 		/^([-+]?(?:\d+|\d*\.\d+))(px|rem|em|%|vw|vh)$/
 	);
 
-	if ( match ) {
-		return { value: match[ 1 ], unit: match[ 2 ] };
+	if (match) {
+		return { value: match[1], unit: match[2] };
 	}
 
-	if ( '0' === String( value ) ) {
+	if ('0' === String(value)) {
 		return { value: '0', unit: 'rem' };
 	}
 
 	return { value: '1', unit: 'rem' };
 }
 
-function insetValue( value, spacingSizes ) {
-	const preset = spacingPresetSlug( value );
+function insetValue(value, spacingSizes) {
+	const preset = spacingPresetSlug(value);
 
-	if ( preset ) {
+	if (preset) {
 		const hasPreset = (
-			Array.isArray( spacingSizes ) ? spacingSizes : []
-		).some( function ( size ) {
+			Array.isArray(spacingSizes) ? spacingSizes : []
+		).some(function (size) {
 			return size && size.slug === preset && size.size;
-		} );
+		});
 
 		return hasPreset
 			? 'var(--wp--preset--spacing--' + preset + ')'
 			: '1rem';
 	}
 
-	const parts = insetParts( value );
+	const parts = insetParts(value);
 
 	return parts.value + parts.unit;
 }
 
-function insetRangeConfig( unit ) {
-	if ( 'rem' === unit || 'em' === unit ) {
+function insetRangeConfig(unit) {
+	if ('rem' === unit || 'em' === unit) {
 		return { max: 8, step: 0.1 };
 	}
 
-	if ( '%' === unit || 'vw' === unit || 'vh' === unit ) {
+	if ('%' === unit || 'vw' === unit || 'vh' === unit) {
 		return { max: 100, step: 1 };
 	}
 
 	return { max: 128, step: 1 };
 }
 
-function InsetControl( {
+function InsetControl({
 	attribute,
 	label,
 	setAttributes,
 	spacingSizes,
 	value,
-} ) {
-	const requestedPreset = spacingPresetSlug( value );
-	const preset = ( Array.isArray( spacingSizes ) ? spacingSizes : [] ).some(
-		function ( size ) {
+}) {
+	const requestedPreset = spacingPresetSlug(value);
+	const preset = (Array.isArray(spacingSizes) ? spacingSizes : []).some(
+		function (size) {
 			return size && size.slug === requestedPreset && size.size;
 		}
 	)
 		? requestedPreset
 		: '';
-	const parts = insetParts( value, spacingSizes );
-	const rangeConfig = insetRangeConfig( parts.unit );
+	const parts = insetParts(value, spacingSizes);
+	const rangeConfig = insetRangeConfig(parts.unit);
 	const presetOptions = [
 		{
-			label: __( 'Custom numeric value', 'ran-enhanced-cover' ),
+			label: __('Custom numeric value', 'ran-enhanced-cover'),
 			value: '',
 		},
 	].concat(
-		( Array.isArray( spacingSizes ) ? spacingSizes : [] )
-			.filter( function ( size ) {
+		(Array.isArray(spacingSizes) ? spacingSizes : [])
+			.filter(function (size) {
 				return size && size.slug && size.name;
-			} )
-			.map( function ( size ) {
+			})
+			.map(function (size) {
 				return { label: size.name, value: size.slug };
-			} )
+			})
 	);
 
 	return el(
 		'div',
 		{ className: 'ran-video-cover-inset-control' },
-		el( 'p', { className: 'components-base-control__label' }, label ),
-		el( SelectControl, {
-			label: __( 'Spacing preset', 'ran-enhanced-cover' ) + ': ' + label,
+		el('p', { className: 'components-base-control__label' }, label),
+		el(SelectControl, {
+			label: __('Spacing preset', 'ran-enhanced-cover') + ': ' + label,
 			value: preset,
 			options: presetOptions,
-			onChange( slug ) {
-				setAttributes( {
-					[ attribute ]: slug
+			onChange(slug) {
+				setAttributes({
+					[attribute]: slug
 						? 'var:preset|spacing|' + slug
 						: parts.value + parts.unit,
-				} );
+				});
 			},
-		} ),
-		! preset &&
+		}),
+		!preset &&
 			el(
 				'div',
 				{ className: 'ran-video-cover-inset-control__inputs' },
-				el( UnitControl, {
+				el(UnitControl, {
 					__next40pxDefaultSize: true,
 					__unstableInputWidth: '88px',
 					hideLabelFromVision: true,
@@ -309,48 +309,48 @@ function InsetControl( {
 					min: 0,
 					units: INSET_UNITS,
 					value: parts.value + parts.unit,
-					onChange( nextValue ) {
-						setAttributes( {
-							[ attribute ]: nextValue || '',
-						} );
+					onChange(nextValue) {
+						setAttributes({
+							[attribute]: nextValue || '',
+						});
 					},
-				} ),
-				el( RangeControl, {
+				}),
+				el(RangeControl, {
 					__next40pxDefaultSize: true,
 					hideLabelFromVision: true,
 					label,
 					max: rangeConfig.max,
 					min: 0,
 					step: rangeConfig.step,
-					value: Number( parts.value ),
+					value: Number(parts.value),
 					withInputField: false,
-					onChange( nextValue ) {
-						setAttributes( {
-							[ attribute ]:
+					onChange(nextValue) {
+						setAttributes({
+							[attribute]:
 								nextValue === undefined
 									? ''
 									: nextValue + parts.unit,
-						} );
+						});
 					},
-				} )
+				})
 			)
 	);
 }
 
-function focalPoint( attributes ) {
+function focalPoint(attributes) {
 	return attributes.focalPoint || { x: 0.5, y: 0.5 };
 }
 
-function mediaPositionStyle( attributes ) {
-	const point = focalPoint( attributes );
+function mediaPositionStyle(attributes) {
+	const point = focalPoint(attributes);
 
 	return {
 		objectPosition: point.x * 100 + '% ' + point.y * 100 + '%',
 	};
 }
 
-function wrapperStyle( attributes, spacingSizes ) {
-	const point = focalPoint( attributes );
+function wrapperStyle(attributes, spacingSizes) {
+	const point = focalPoint(attributes);
 	const minHeight = attributes.minHeight || 80;
 	const minHeightUnit = attributes.minHeightUnit || 'vh';
 	const blockInset = insetValue(
@@ -361,8 +361,8 @@ function wrapperStyle( attributes, spacingSizes ) {
 		attributes.pauseControlInsetInline,
 		spacingSizes
 	);
-	const togglePosition = controlPosition( attributes.pauseControlPosition );
-	const hasAspectRatio = !! (
+	const togglePosition = controlPosition(attributes.pauseControlPosition);
+	const hasAspectRatio = !!(
 		attributes.style &&
 		attributes.style.dimensions &&
 		attributes.style.dimensions.aspectRatio
@@ -373,10 +373,10 @@ function wrapperStyle( attributes, spacingSizes ) {
 			: minHeight + minHeightUnit,
 		'--ran-video-cover-focal-x': point.x * 100 + '%',
 		'--ran-video-cover-focal-y': point.y * 100 + '%',
-		'--ran-video-cover-background': backgroundValue( attributes ),
-		'--ran-video-cover-wash': overlayValue( attributes ),
+		'--ran-video-cover-background': backgroundValue(attributes),
+		'--ran-video-cover-wash': overlayValue(attributes),
 		'--ran-video-cover-wash-opacity':
-			( attributes.overlayOpacity || 0 ) / 100,
+			(attributes.overlayOpacity || 0) / 100,
 		'--ran-video-cover-toggle-block-start': 'auto',
 		'--ran-video-cover-toggle-block-end': 'auto',
 		'--ran-video-cover-toggle-inline-start': 'auto',
@@ -384,78 +384,78 @@ function wrapperStyle( attributes, spacingSizes ) {
 		'--ran-video-cover-toggle-transform': 'none',
 	};
 
-	if ( togglePosition.indexOf( 'top' ) !== -1 ) {
-		style[ '--ran-video-cover-toggle-block-start' ] = blockInset;
+	if (togglePosition.indexOf('top') !== -1) {
+		style['--ran-video-cover-toggle-block-start'] = blockInset;
 	} else {
-		style[ '--ran-video-cover-toggle-block-end' ] = blockInset;
+		style['--ran-video-cover-toggle-block-end'] = blockInset;
 	}
 
-	if ( togglePosition.indexOf( 'left' ) !== -1 ) {
-		style[ '--ran-video-cover-toggle-inline-start' ] = inlineInset;
-	} else if ( togglePosition.indexOf( 'center' ) !== -1 ) {
-		style[ '--ran-video-cover-toggle-inline-start' ] = '50%';
-		style[ '--ran-video-cover-toggle-transform' ] = 'translateX(-50%)';
+	if (togglePosition.indexOf('left') !== -1) {
+		style['--ran-video-cover-toggle-inline-start'] = inlineInset;
+	} else if (togglePosition.indexOf('center') !== -1) {
+		style['--ran-video-cover-toggle-inline-start'] = '50%';
+		style['--ran-video-cover-toggle-transform'] = 'translateX(-50%)';
 	} else {
-		style[ '--ran-video-cover-toggle-inline-end' ] = inlineInset;
+		style['--ran-video-cover-toggle-inline-end'] = inlineInset;
 	}
 
 	return style;
 }
 
-function wrapperClassName( attributes ) {
+function wrapperClassName(attributes) {
 	return [
 		'ran-enhanced-cover',
 		'has-custom-content-position',
-		positionClass( attributes.contentPosition ),
-	].join( ' ' );
+		positionClass(attributes.contentPosition),
+	].join(' ');
 }
 
-function matchingPaletteColor( palette, color ) {
-	return palette.find( function ( paletteColor ) {
+function matchingPaletteColor(palette, color) {
+	return palette.find(function (paletteColor) {
 		return paletteColor.color === color;
-	} );
+	});
 }
 
-function selectedColor( palette, colorSlug, customColor ) {
-	if ( customColor ) {
+function selectedColor(palette, colorSlug, customColor) {
+	if (customColor) {
 		return customColor;
 	}
 
-	const match = palette.find( function ( paletteColor ) {
+	const match = palette.find(function (paletteColor) {
 		return paletteColor.slug === colorSlug;
-	} );
+	});
 
 	return match ? match.color : '';
 }
 
-function fileNameFromUrl( url ) {
-	if ( ! url ) {
+function fileNameFromUrl(url) {
+	if (!url) {
 		return '';
 	}
 
-	const path = String( url ).split( '?' )[ 0 ].split( '#' )[ 0 ];
-	const fileName = path.split( '/' ).filter( Boolean ).pop();
+	const path = String(url).split('?')[0].split('#')[0];
+	const fileName = path.split('/').filter(Boolean).pop();
 
-	if ( ! fileName ) {
+	if (!fileName) {
 		return '';
 	}
 
 	try {
-		return decodeURIComponent( fileName );
-	} catch ( error ) {
+		return decodeURIComponent(fileName);
+	} catch {
 		return fileName;
 	}
 }
 
-function sourceFromMedia( media ) {
+function sourceFromMedia(media) {
 	return {
 		id: media && media.id ? media.id : 0,
 		url: media && media.url ? media.url : '',
 	};
 }
 
-function normaliseVideoSource( source ) {
-	if ( ! source || ! source.url ) {
+function normaliseVideoSource(source) {
+	if (!source || !source.url) {
 		return null;
 	}
 
@@ -465,12 +465,12 @@ function normaliseVideoSource( source ) {
 	};
 }
 
-function videoSources( attributes ) {
-	const sources = Array.isArray( attributes.videoSources )
-		? attributes.videoSources.map( normaliseVideoSource ).filter( Boolean )
+function videoSources(attributes) {
+	const sources = Array.isArray(attributes.videoSources)
+		? attributes.videoSources.map(normaliseVideoSource).filter(Boolean)
 		: [];
 
-	if ( sources.length ) {
+	if (sources.length) {
 		return sources;
 	}
 
@@ -480,30 +480,30 @@ function videoSources( attributes ) {
 					id: attributes.videoId || 0,
 					url: attributes.videoUrl,
 				},
-		  ]
+			]
 		: [];
 }
 
-function VideoSourcesPanel( {
+function VideoSourcesPanel({
 	onAdd,
 	onClose,
 	onMove,
 	onRemove,
 	onReplace,
 	sources,
-} ) {
-	function openMediaLibrary( mediaUpload ) {
+}) {
+	function openMediaLibrary(mediaUpload) {
 		onClose();
 
-		window.requestAnimationFrame( function () {
+		window.requestAnimationFrame(function () {
 			mediaUpload.open();
-		} );
+		});
 	}
 
 	return el(
 		'div',
 		{ className: 'ran-video-cover-video-sources-popover' },
-		el( 'h2', null, __( 'Video sources', 'ran-enhanced-cover' ) ),
+		el('h2', null, __('Video sources', 'ran-enhanced-cover')),
 		el(
 			'p',
 			null,
@@ -512,7 +512,7 @@ function VideoSourcesPanel( {
 				'ran-enhanced-cover'
 			)
 		),
-		sources.map( function ( source, index ) {
+		sources.map(function (source, index) {
 			return el(
 				'div',
 				{
@@ -522,7 +522,7 @@ function VideoSourcesPanel( {
 				el(
 					'p',
 					{ className: 'ran-video-cover-video-source__name' },
-					fileNameFromUrl( source.url )
+					fileNameFromUrl(source.url)
 				),
 				el(
 					'div',
@@ -533,28 +533,28 @@ function VideoSourcesPanel( {
 							className:
 								'ran-video-cover-video-source__order-actions',
 						},
-						el( Button, {
+						el(Button, {
 							disabled: 0 === index,
 							icon: 'arrow-up-alt2',
-							label: __( 'Move up', 'ran-enhanced-cover' ),
+							label: __('Move up', 'ran-enhanced-cover'),
 							onClick() {
-								onMove( index, -1 );
+								onMove(index, -1);
 							},
 							showTooltip: true,
 							size: 'compact',
 							variant: 'tertiary',
-						} ),
-						el( Button, {
+						}),
+						el(Button, {
 							disabled: index === sources.length - 1,
 							icon: 'arrow-down-alt2',
-							label: __( 'Move down', 'ran-enhanced-cover' ),
+							label: __('Move down', 'ran-enhanced-cover'),
 							onClick() {
-								onMove( index, 1 );
+								onMove(index, 1);
 							},
 							showTooltip: true,
 							size: 'compact',
 							variant: 'tertiary',
-						} )
+						})
 					),
 					el(
 						'div',
@@ -565,55 +565,55 @@ function VideoSourcesPanel( {
 						el(
 							MediaUploadCheck,
 							null,
-							el( MediaUpload, {
-								allowedTypes: [ 'video' ],
-								onSelect( media ) {
-									onReplace( index, media );
+							el(MediaUpload, {
+								allowedTypes: ['video'],
+								onSelect(media) {
+									onReplace(index, media);
 									onClose();
 								},
 								value: source.id,
-								render( mediaUpload ) {
-									return el( Button, {
+								render(mediaUpload) {
+									return el(Button, {
 										icon: 'update',
 										label: __(
 											'Replace video',
 											'ran-enhanced-cover'
 										),
 										onClick() {
-											openMediaLibrary( mediaUpload );
+											openMediaLibrary(mediaUpload);
 										},
 										showTooltip: true,
 										size: 'compact',
 										variant: 'secondary',
-									} );
+									});
 								},
-							} )
+							})
 						),
-						el( Button, {
+						el(Button, {
 							icon: 'trash',
 							isDestructive: true,
-							label: __( 'Remove video', 'ran-enhanced-cover' ),
+							label: __('Remove video', 'ran-enhanced-cover'),
 							onClick() {
-								onRemove( index );
+								onRemove(index);
 							},
 							showTooltip: true,
 							size: 'compact',
 							variant: 'tertiary',
-						} )
+						})
 					)
 				)
 			);
-		} ),
+		}),
 		el(
 			MediaUploadCheck,
 			null,
-			el( MediaUpload, {
-				allowedTypes: [ 'video' ],
-				onSelect( media ) {
-					onAdd( media );
+			el(MediaUpload, {
+				allowedTypes: ['video'],
+				onSelect(media) {
+					onAdd(media);
 					onClose();
 				},
-				render( mediaUpload ) {
+				render(mediaUpload) {
 					return el(
 						Button,
 						{
@@ -621,19 +621,19 @@ function VideoSourcesPanel( {
 								'ran-video-cover-video-sources-popover__add',
 							icon: 'plus-alt2',
 							onClick() {
-								openMediaLibrary( mediaUpload );
+								openMediaLibrary(mediaUpload);
 							},
 							variant: 'primary',
 						},
-						__( 'Add sources', 'ran-enhanced-cover' )
+						__('Add sources', 'ran-enhanced-cover')
 					);
 				},
-			} )
+			})
 		)
 	);
 }
 
-function MediaSelector( {
+function MediaSelector({
 	allowedTypes,
 	buttonLabel,
 	clearLabel,
@@ -642,7 +642,7 @@ function MediaSelector( {
 	onSelect,
 	url,
 	value,
-} ) {
+}) {
 	return el(
 		BaseControl,
 		{ className: 'ran-video-cover-media-control', label },
@@ -653,8 +653,8 @@ function MediaSelector( {
 				'div',
 				{ className: 'ran-video-cover-media-control__filename' },
 				url
-					? fileNameFromUrl( url )
-					: __( 'No file selected', 'ran-enhanced-cover' )
+					? fileNameFromUrl(url)
+					: __('No file selected', 'ran-enhanced-cover')
 			),
 			el(
 				'div',
@@ -662,11 +662,11 @@ function MediaSelector( {
 				el(
 					MediaUploadCheck,
 					null,
-					el( MediaUpload, {
+					el(MediaUpload, {
 						allowedTypes,
 						onSelect,
 						value,
-						render( mediaUpload ) {
+						render(mediaUpload) {
 							return el(
 								Button,
 								{
@@ -676,7 +676,7 @@ function MediaSelector( {
 								buttonLabel
 							);
 						},
-					} )
+					})
 				),
 				url &&
 					el(
@@ -693,200 +693,200 @@ function MediaSelector( {
 	);
 }
 
-function VideoBannerEdit( props ) {
+function VideoBannerEdit(props) {
 	const attributes = props.attributes;
 	const setAttributes = props.setAttributes;
 	const videoRef = useRef();
-	const editorPausedState = useState( true );
-	const isEditorPaused = editorPausedState[ 0 ];
-	const setIsEditorPaused = editorPausedState[ 1 ];
-	const settings = useSettings( 'color.palette' );
-	const colors = settings[ 0 ] || [];
-	const spacingSettings = useSettings( 'spacing.spacingSizes' );
-	const spacingSizes = spacingSettings[ 0 ] || [];
-	const previousHeightState = useState( {
+	const editorPausedState = useState(true);
+	const isEditorPaused = editorPausedState[0];
+	const setIsEditorPaused = editorPausedState[1];
+	const settings = useSettings('color.palette');
+	const colors = settings[0] || [];
+	const spacingSettings = useSettings('spacing.spacingSizes');
+	const spacingSizes = spacingSettings[0] || [];
+	const previousHeightState = useState({
 		value: attributes.minHeight,
 		unit: attributes.minHeightUnit,
-	} );
-	const previousHeight = previousHeightState[ 0 ];
-	const setPreviousHeight = previousHeightState[ 1 ];
+	});
+	const previousHeight = previousHeightState[0];
+	const setPreviousHeight = previousHeightState[1];
 	const hasInnerBlocks = useSelect(
-		function ( select ) {
-			const block = select( blockEditorStore ).getBlock( props.clientId );
+		function (select) {
+			const block = select(blockEditorStore).getBlock(props.clientId);
 
-			return !! ( block && block.innerBlocks.length );
+			return !!(block && block.innerBlocks.length);
 		},
-		[ props.clientId ]
+		[props.clientId]
 	);
-	const blockProps = useBlockProps( {
-		className: wrapperClassName( attributes ),
-		style: wrapperStyle( attributes, spacingSizes ),
-	} );
-	const sources = videoSources( attributes );
-	const primaryVideo = sources[ 0 ] || null;
-	const hasVideo = !! primaryVideo;
-	const hasMedia = !! ( hasVideo || attributes.posterUrl );
-	const showGenericPreview = ! hasMedia && ! props.isSelected;
+	const blockProps = useBlockProps({
+		className: wrapperClassName(attributes),
+		style: wrapperStyle(attributes, spacingSizes),
+	});
+	const sources = videoSources(attributes);
+	const primaryVideo = sources[0] || null;
+	const hasVideo = !!primaryVideo;
+	const hasMedia = !!(hasVideo || attributes.posterUrl);
+	const showGenericPreview = !hasMedia && !props.isSelected;
 
-	function setVideoSources( nextSources ) {
-		const firstSource = nextSources[ 0 ] || null;
+	function setVideoSources(nextSources) {
+		const firstSource = nextSources[0] || null;
 
-		setAttributes( {
+		setAttributes({
 			videoId: firstSource ? firstSource.id : 0,
 			videoSources: nextSources,
 			videoUrl: firstSource ? firstSource.url : '',
-		} );
+		});
 	}
 
-	function setVideo( media ) {
-		setVideoSources( media ? [ sourceFromMedia( media ) ] : [] );
+	function setVideo(media) {
+		setVideoSources(media ? [sourceFromMedia(media)] : []);
 	}
 
-	function addVideoSource( media ) {
-		if ( media ) {
-			setVideoSources( sources.concat( sourceFromMedia( media ) ) );
+	function addVideoSource(media) {
+		if (media) {
+			setVideoSources(sources.concat(sourceFromMedia(media)));
 		}
 	}
 
-	function replaceVideoSource( index, media ) {
-		if ( ! media ) {
+	function replaceVideoSource(index, media) {
+		if (!media) {
 			return;
 		}
 
 		const nextSources = sources.slice();
-		nextSources[ index ] = sourceFromMedia( media );
-		setVideoSources( nextSources );
+		nextSources[index] = sourceFromMedia(media);
+		setVideoSources(nextSources);
 	}
 
-	function removeVideoSource( index ) {
+	function removeVideoSource(index) {
 		setVideoSources(
-			sources.filter( function ( source, sourceIndex ) {
+			sources.filter(function (source, sourceIndex) {
 				return sourceIndex !== index;
-			} )
+			})
 		);
 	}
 
-	function moveVideoSource( index, direction ) {
+	function moveVideoSource(index, direction) {
 		const nextIndex = index + direction;
 
-		if ( nextIndex < 0 || nextIndex >= sources.length ) {
+		if (nextIndex < 0 || nextIndex >= sources.length) {
 			return;
 		}
 
 		const nextSources = sources.slice();
-		const current = nextSources[ index ];
-		nextSources[ index ] = nextSources[ nextIndex ];
-		nextSources[ nextIndex ] = current;
-		setVideoSources( nextSources );
+		const current = nextSources[index];
+		nextSources[index] = nextSources[nextIndex];
+		nextSources[nextIndex] = current;
+		setVideoSources(nextSources);
 	}
 
-	function setPoster( media ) {
-		setAttributes( {
+	function setPoster(media) {
+		setAttributes({
 			posterId: media && media.id ? media.id : 0,
 			posterUrl: media && media.url ? media.url : '',
-		} );
+		});
 	}
 
-	function setMinimumHeight( value ) {
-		const parts = minHeightParts( value );
+	function setMinimumHeight(value) {
+		const parts = minHeightParts(value);
 
-		if ( ! parts ) {
+		if (!parts) {
 			return;
 		}
 
-		setAttributes( {
+		setAttributes({
 			minHeight: parts.value,
 			minHeightUnit: parts.unit,
-			style: styleWithoutAspectRatio( attributes.style ),
-		} );
+			style: styleWithoutAspectRatio(attributes.style),
+		});
 	}
 
 	function toggleFullHeight() {
 		const isFullHeight =
 			'vh' === attributes.minHeightUnit &&
 			100 === attributes.minHeight &&
-			! (
+			!(
 				attributes.style &&
 				attributes.style.dimensions &&
 				attributes.style.dimensions.aspectRatio
 			);
 
-		if ( isFullHeight ) {
-			setAttributes( {
+		if (isFullHeight) {
+			setAttributes({
 				minHeight: previousHeight.value || 80,
 				minHeightUnit: previousHeight.unit || 'vh',
-			} );
+			});
 			return;
 		}
 
-		setPreviousHeight( {
+		setPreviousHeight({
 			value: attributes.minHeight,
 			unit: attributes.minHeightUnit,
-		} );
-		setAttributes( {
+		});
+		setAttributes({
 			minHeight: 100,
 			minHeightUnit: 'vh',
-			style: styleWithoutAspectRatio( attributes.style ),
-		} );
+			style: styleWithoutAspectRatio(attributes.style),
+		});
 	}
 
-	function setOverlayColor( color ) {
-		const match = matchingPaletteColor( colors, color );
+	function setOverlayColor(color) {
+		const match = matchingPaletteColor(colors, color);
 
-		if ( match ) {
-			setAttributes( {
+		if (match) {
+			setAttributes({
 				overlayColor: match.slug,
 				customOverlayColor: '',
-			} );
+			});
 			return;
 		}
 
-		setAttributes( {
+		setAttributes({
 			overlayColor: '',
 			customOverlayColor: color || '',
-		} );
+		});
 	}
 
-	function setBackgroundColor( color ) {
-		const match = matchingPaletteColor( colors, color );
+	function setBackgroundColor(color) {
+		const match = matchingPaletteColor(colors, color);
 
-		if ( match ) {
-			setAttributes( {
+		if (match) {
+			setAttributes({
 				backgroundColor: match.slug,
 				customBackgroundColor: '',
-			} );
+			});
 			return;
 		}
 
-		setAttributes( {
+		setAttributes({
 			backgroundColor: '',
 			customBackgroundColor: color || '',
-		} );
+		});
 	}
 
-	function toggleEditorVideo( event ) {
+	function toggleEditorVideo(event) {
 		event.preventDefault();
 		event.stopPropagation();
 
 		const video = videoRef.current;
 
-		if ( ! video ) {
+		if (!video) {
 			return;
 		}
 
-		if ( isEditorPaused ) {
+		if (isEditorPaused) {
 			const playAttempt = video.play();
 
-			setIsEditorPaused( false );
+			setIsEditorPaused(false);
 
-			if ( playAttempt && playAttempt.catch ) {
-				playAttempt.catch( function () {
-					setIsEditorPaused( true );
-				} );
+			if (playAttempt && playAttempt.catch) {
+				playAttempt.catch(function () {
+					setIsEditorPaused(true);
+				});
 			}
 		} else {
 			video.pause();
-			setIsEditorPaused( true );
+			setIsEditorPaused(true);
 		}
 	}
 
@@ -896,63 +896,63 @@ function VideoBannerEdit( props ) {
 		el(
 			BlockControls,
 			{ group: 'block' },
-			el( BlockAlignmentMatrixControl, {
-				label: __( 'Change content position', 'ran-enhanced-cover' ),
+			el(BlockAlignmentMatrixControl, {
+				label: __('Change content position', 'ran-enhanced-cover'),
 				value: attributes.contentPosition,
-				onChange( value ) {
-					setAttributes( { contentPosition: value } );
+				onChange(value) {
+					setAttributes({ contentPosition: value });
 				},
-				isDisabled: ! hasInnerBlocks,
-			} ),
-			el( BlockFullHeightAlignmentControl, {
+				isDisabled: !hasInnerBlocks,
+			}),
+			el(BlockFullHeightAlignmentControl, {
 				isActive:
 					'vh' === attributes.minHeightUnit &&
 					100 === attributes.minHeight &&
-					! (
+					!(
 						attributes.style &&
 						attributes.style.dimensions &&
 						attributes.style.dimensions.aspectRatio
 					),
 				onToggle: toggleFullHeight,
-				isDisabled: ! hasInnerBlocks,
-			} )
+				isDisabled: !hasInnerBlocks,
+			})
 		),
 		el(
 			BlockControls,
 			{ group: 'other' },
-			el( MediaReplaceFlow, {
-				allowedTypes: [ 'video' ],
+			el(MediaReplaceFlow, {
+				allowedTypes: ['video'],
 				mediaId: primaryVideo ? primaryVideo.id : 0,
 				mediaURL: primaryVideo ? primaryVideo.url : '',
 				name: hasVideo
-					? __( 'Replace video', 'ran-enhanced-cover' )
-					: __( 'Add video', 'ran-enhanced-cover' ),
+					? __('Replace video', 'ran-enhanced-cover')
+					: __('Add video', 'ran-enhanced-cover'),
 				onReset() {
-					setVideo( null );
+					setVideo(null);
 				},
 				onSelect: setVideo,
 				variant: 'toolbar',
-			} ),
+			}),
 			hasVideo &&
-				el( Dropdown, {
-					renderToggle( { onToggle } ) {
-						return el( ToolbarButton, {
+				el(Dropdown, {
+					renderToggle({ onToggle }) {
+						return el(ToolbarButton, {
 							icon: 'format-video',
-							label: __( 'Video sources', 'ran-enhanced-cover' ),
+							label: __('Video sources', 'ran-enhanced-cover'),
 							onClick: onToggle,
-						} );
+						});
 					},
-					renderContent( { onClose } ) {
-						return el( VideoSourcesPanel, {
+					renderContent({ onClose }) {
+						return el(VideoSourcesPanel, {
 							onAdd: addVideoSource,
 							onClose,
 							onMove: moveVideoSource,
 							onRemove: removeVideoSource,
 							onReplace: replaceVideoSource,
 							sources,
-						} );
+						});
 					},
-				} )
+				})
 		),
 		el(
 			InspectorControls,
@@ -960,76 +960,67 @@ function VideoBannerEdit( props ) {
 			el(
 				PanelBody,
 				{
-					title: __( 'Media', 'ran-enhanced-cover' ),
+					title: __('Media', 'ran-enhanced-cover'),
 					initialOpen: true,
 				},
-				el( MediaSelector, {
-					allowedTypes: [ 'image' ],
+				el(MediaSelector, {
+					allowedTypes: ['image'],
 					buttonLabel: attributes.posterUrl
-						? __( 'Replace', 'ran-enhanced-cover' )
-						: __( 'Select', 'ran-enhanced-cover' ),
-					clearLabel: __( 'Clear', 'ran-enhanced-cover' ),
-					label: __( 'Poster image', 'ran-enhanced-cover' ),
+						? __('Replace', 'ran-enhanced-cover')
+						: __('Select', 'ran-enhanced-cover'),
+					clearLabel: __('Clear', 'ran-enhanced-cover'),
+					label: __('Poster image', 'ran-enhanced-cover'),
 					onClear() {
-						setPoster( null );
+						setPoster(null);
 					},
 					onSelect: setPoster,
 					url: attributes.posterUrl,
 					value: attributes.posterId,
-				} ),
+				}),
 				hasMedia &&
-					el( FocalPointPicker, {
-						label: __( 'Focal point', 'ran-enhanced-cover' ),
+					el(FocalPointPicker, {
+						label: __('Focal point', 'ran-enhanced-cover'),
 						url:
 							attributes.posterUrl ||
-							( primaryVideo && primaryVideo.url ),
-						value: focalPoint( attributes ),
-						onChange( value ) {
-							setAttributes( { focalPoint: value } );
+							(primaryVideo && primaryVideo.url),
+						value: focalPoint(attributes),
+						onChange(value) {
+							setAttributes({ focalPoint: value });
 						},
-					} )
+					})
 			),
 			el(
 				PanelBody,
 				{
-					title: __( 'Pause/play control', 'ran-enhanced-cover' ),
+					title: __('Pause/play control', 'ran-enhanced-cover'),
 					initialOpen: false,
 				},
-				el( ToggleControl, {
-					label: __(
-						'Show pause/play control',
-						'ran-enhanced-cover'
-					),
+				el(ToggleControl, {
+					label: __('Show pause/play control', 'ran-enhanced-cover'),
 					checked: attributes.pauseControl,
-					onChange( value ) {
-						setAttributes( { pauseControl: value } );
+					onChange(value) {
+						setAttributes({ pauseControl: value });
 					},
-				} ),
+				}),
 				attributes.pauseControl &&
-					el( SelectControl, {
-						label: __( 'Control position', 'ran-enhanced-cover' ),
+					el(SelectControl, {
+						label: __('Control position', 'ran-enhanced-cover'),
 						value: attributes.pauseControlPosition,
 						options: [
 							{
-								label: __(
-									'Bottom right',
-									'ran-enhanced-cover'
-								),
+								label: __('Bottom right', 'ran-enhanced-cover'),
 								value: 'bottom right',
 							},
 							{
-								label: __(
-									'Bottom left',
-									'ran-enhanced-cover'
-								),
+								label: __('Bottom left', 'ran-enhanced-cover'),
 								value: 'bottom left',
 							},
 							{
-								label: __( 'Top right', 'ran-enhanced-cover' ),
+								label: __('Top right', 'ran-enhanced-cover'),
 								value: 'top right',
 							},
 							{
-								label: __( 'Top left', 'ran-enhanced-cover' ),
+								label: __('Top left', 'ran-enhanced-cover'),
 								value: 'top left',
 							},
 							{
@@ -1040,30 +1031,30 @@ function VideoBannerEdit( props ) {
 								value: 'bottom center',
 							},
 							{
-								label: __( 'Top center', 'ran-enhanced-cover' ),
+								label: __('Top center', 'ran-enhanced-cover'),
 								value: 'top center',
 							},
 						],
-						onChange( value ) {
-							setAttributes( { pauseControlPosition: value } );
+						onChange(value) {
+							setAttributes({ pauseControlPosition: value });
 						},
-					} ),
+					}),
 				attributes.pauseControl &&
-					el( InsetControl, {
+					el(InsetControl, {
 						attribute: 'pauseControlInsetBlock',
-						label: __( 'Block-axis inset', 'ran-enhanced-cover' ),
+						label: __('Block-axis inset', 'ran-enhanced-cover'),
 						setAttributes,
 						spacingSizes,
 						value: attributes.pauseControlInsetBlock,
-					} ),
+					}),
 				attributes.pauseControl &&
-					el( InsetControl, {
+					el(InsetControl, {
 						attribute: 'pauseControlInsetInline',
-						label: __( 'Inline-axis inset', 'ran-enhanced-cover' ),
+						label: __('Inline-axis inset', 'ran-enhanced-cover'),
 						setAttributes,
 						spacingSizes,
 						value: attributes.pauseControlInsetInline,
-					} )
+					})
 			)
 		),
 		el(
@@ -1079,12 +1070,12 @@ function VideoBannerEdit( props ) {
 							'vh' !== attributes.minHeightUnit
 						);
 					},
-					label: __( 'Minimum height', 'ran-enhanced-cover' ),
+					label: __('Minimum height', 'ran-enhanced-cover'),
 					onDeselect() {
-						setAttributes( {
+						setAttributes({
 							minHeight: undefined,
 							minHeightUnit: undefined,
-						} );
+						});
 					},
 					resetAllFilter() {
 						return {
@@ -1095,20 +1086,20 @@ function VideoBannerEdit( props ) {
 					isShownByDefault: true,
 					panelId: props.clientId,
 				},
-				el( UnitControl, {
+				el(UnitControl, {
 					__next40pxDefaultSize: true,
-					label: __( 'Minimum height', 'ran-enhanced-cover' ),
+					label: __('Minimum height', 'ran-enhanced-cover'),
 					min: 0,
 					units: MIN_HEIGHT_UNITS,
-					value: minHeightValue( attributes ),
+					value: minHeightValue(attributes),
 					onChange: setMinimumHeight,
-				} )
+				})
 			)
 		),
 		el(
 			InspectorControls,
 			{ group: 'color' },
-			el( ColorGradientSettingsDropdown, {
+			el(ColorGradientSettingsDropdown, {
 				__experimentalIsRenderedInSidebar: true,
 				colors,
 				gradients: [],
@@ -1122,7 +1113,7 @@ function VideoBannerEdit( props ) {
 							attributes.customBackgroundColor
 						),
 						onColorChange: setBackgroundColor,
-						label: __( 'Background colour', 'ran-enhanced-cover' ),
+						label: __('Background colour', 'ran-enhanced-cover'),
 						isShownByDefault: true,
 						resetAllFilter() {
 							return {
@@ -1139,7 +1130,7 @@ function VideoBannerEdit( props ) {
 							attributes.customOverlayColor
 						),
 						onColorChange: setOverlayColor,
-						label: __( 'Colour wash', 'ran-enhanced-cover' ),
+						label: __('Colour wash', 'ran-enhanced-cover'),
 						isShownByDefault: true,
 						resetAllFilter() {
 							return {
@@ -1150,7 +1141,7 @@ function VideoBannerEdit( props ) {
 						clearable: true,
 					},
 				],
-			} ),
+			}),
 			el(
 				ToolsPanelItem,
 				{
@@ -1158,9 +1149,9 @@ function VideoBannerEdit( props ) {
 					hasValue() {
 						return 70 !== attributes.overlayOpacity;
 					},
-					label: __( 'Wash opacity', 'ran-enhanced-cover' ),
+					label: __('Wash opacity', 'ran-enhanced-cover'),
 					onDeselect() {
-						setAttributes( { overlayOpacity: 70 } );
+						setAttributes({ overlayOpacity: 70 });
 					},
 					resetAllFilter() {
 						return { overlayOpacity: 70 };
@@ -1168,15 +1159,15 @@ function VideoBannerEdit( props ) {
 					isShownByDefault: true,
 					panelId: props.clientId,
 				},
-				el( RangeControl, {
-					label: __( 'Wash opacity', 'ran-enhanced-cover' ),
+				el(RangeControl, {
+					label: __('Wash opacity', 'ran-enhanced-cover'),
 					value: attributes.overlayOpacity,
-					onChange( value ) {
-						setAttributes( { overlayOpacity: value || 0 } );
+					onChange(value) {
+						setAttributes({ overlayOpacity: value || 0 });
 					},
 					min: 0,
 					max: 100,
-				} )
+				})
 			)
 		),
 		hasVideo &&
@@ -1190,24 +1181,24 @@ function VideoBannerEdit( props ) {
 					playsInline: true,
 					ref: videoRef,
 					poster: attributes.posterUrl,
-					style: mediaPositionStyle( attributes ),
+					style: mediaPositionStyle(attributes),
 				},
-				sources.map( function ( source, index ) {
-					return el( 'source', {
+				sources.map(function (source, index) {
+					return el('source', {
 						key: source.url + index,
 						src: source.url,
-					} );
-				} )
+					});
+				})
 			),
-		! hasVideo &&
+		!hasVideo &&
 			attributes.posterUrl &&
-			el( 'img', {
+			el('img', {
 				className: 'ran-video-cover__media',
 				src: attributes.posterUrl,
 				alt: '',
-				style: mediaPositionStyle( attributes ),
-			} ),
-		! hasMedia &&
+				style: mediaPositionStyle(attributes),
+			}),
+		!hasMedia &&
 			el(
 				'div',
 				{
@@ -1216,20 +1207,20 @@ function VideoBannerEdit( props ) {
 						: 'ran-video-cover__placeholder',
 				},
 				showGenericPreview
-					? el( 'span', { 'aria-hidden': true } )
+					? el('span', { 'aria-hidden': true })
 					: __(
 							'Select a video and poster image.',
 							'ran-enhanced-cover'
-					  )
+						)
 			),
-		el( 'span', {
+		el('span', {
 			className: 'ran-video-cover__wash',
 			'aria-hidden': true,
-		} ),
+		}),
 		el(
 			'div',
 			{ className: 'ran-video-cover__content' },
-			el( InnerBlocks, { template: TEMPLATE } )
+			el(InnerBlocks, { template: TEMPLATE })
 		),
 		attributes.pauseControl &&
 			hasVideo &&
@@ -1242,17 +1233,17 @@ function VideoBannerEdit( props ) {
 					onClick: toggleEditorVideo,
 				},
 				isEditorPaused
-					? __( 'Play', 'ran-enhanced-cover' )
-					: __( 'Pause', 'ran-enhanced-cover' )
+					? __('Play', 'ran-enhanced-cover')
+					: __('Pause', 'ran-enhanced-cover')
 			)
 	);
 }
 
-registerBlockType( 'ran/enhanced-cover', {
+registerBlockType('ran/enhanced-cover', {
 	edit: VideoBannerEdit,
 	icon: ICON,
 
 	save() {
-		return el( InnerBlocks.Content );
+		return el(InnerBlocks.Content);
 	},
-} );
+});

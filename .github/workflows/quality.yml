@@ -15,6 +15,13 @@ permissions:
     contents: read
 
 jobs:
+    baseline:
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: RocketsAreNostalgic/.github/.github/workflows/quality-wordpress-plugin.yml@72a90b5826db37d1e94cdcdcf3374ccf58c0aa7d # accepted quality-v1 provider
+        with:
+            php-version: '8.3'
+            pnpm-version: '11.5.2'
+
     quality:
         name: Quality and release artifact
         runs-on: blacksmith-2vcpu-ubuntu-2404
@@ -206,3 +213,29 @@ jobs:
             - uses: wordpress/plugin-check-action@98a1788320d0add90df2d8183934ecccbc4e05d2 # v1
               with:
                   build-dir: ./plugin-check-build/ran-enhanced-cover
+
+    quality-gate:
+        name: quality
+        if: ${{ github.event_name == 'pull_request' && always() }}
+        needs:
+            - baseline
+            - quality
+            - wordpress-integration
+            - plugin-check
+        runs-on: ubuntu-latest
+        steps:
+            - name: Require all ordinary quality lanes
+              env:
+                  BASELINE_RESULT: ${{ needs.baseline.result }}
+                  SOURCE_RESULT: ${{ needs.quality.result }}
+                  WORDPRESS_RESULT: ${{ needs.wordpress-integration.result }}
+                  PLUGIN_CHECK_RESULT: ${{ needs.plugin-check.result }}
+              run: |
+                  printf 'baseline=%s\nsource=%s\nwordpress=%s\nplugin-check=%s\n' \
+                    "$BASELINE_RESULT" "$SOURCE_RESULT" "$WORDPRESS_RESULT" "$PLUGIN_CHECK_RESULT"
+                  if [ "$BASELINE_RESULT" != success ] \
+                    || [ "$SOURCE_RESULT" != success ] \
+                    || [ "$WORDPRESS_RESULT" != success ] \
+                    || [ "$PLUGIN_CHECK_RESULT" != success ]; then
+                      exit 1
+                  fi

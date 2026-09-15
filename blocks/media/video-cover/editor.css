@@ -17,7 +17,8 @@
 }
 
 .ran-video-cover__placeholder.is-preview {
-	background: linear-gradient(135deg, rgb(0 0 0 / 0.38), rgb(0 0 0 / 0.08)),
+	background:
+		linear-gradient(135deg, rgb(0 0 0 / 0.38), rgb(0 0 0 / 0.08)),
 		repeating-linear-gradient(
 			135deg,
 			rgb(255 255 255 / 0.12) 0,

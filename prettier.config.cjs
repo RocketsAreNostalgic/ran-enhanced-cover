@@ -1,9 +1,11 @@
-const wordpressConfig = require( '@wordpress/prettier-config' );
+'use strict';
+
+const ranPrettier = require('@rocketsarenostalgic/quality-config/prettier');
 
 module.exports = {
-	...wordpressConfig,
+	...ranPrettier,
 	overrides: [
-		...wordpressConfig.overrides,
+		...(ranPrettier.overrides || []),
 		{
 			// Release Please's JSON updater emits this metadata array multiline.
 			files: 'blocks/media/video-cover/block.json',
