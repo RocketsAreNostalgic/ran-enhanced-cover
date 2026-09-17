@@ -63,12 +63,13 @@ jobs:
                   composer lint
                   composer phpcs
                   grep -Fq "github.event_name == 'pull_request'" .github/workflows/quality.yml
-                  grep -Fq "github.event.workflow_run.path == '.github/workflows/quality.yml'" .github/workflows/release-please.yml
+                  grep -Fq "github.event.workflow_run.path == '.github/workflows/quality.yml'" .github/workflows/release-publisher.yml
+                  test ! -e .github/workflows/release-please.yml
                   node --input-type=module <<'NODE'
                   import assert from 'node:assert/strict';
                   import { readFileSync } from 'node:fs';
 
-                  const workflow = readFileSync('.github/workflows/release-please.yml', 'utf8');
+                  const workflow = readFileSync('.github/workflows/release-publisher.yml', 'utf8');
                   const match = workflow.match(/\n    package-release:\n[\s\S]*?\n    deploy-wordpress-org:\n/);
                   assert.ok(match, 'package-release job block is missing');
                   assert.match(
@@ -79,13 +80,13 @@ jobs:
                   NODE
                   # These single-quoted patterns are literal workflow contracts.
                   # shellcheck disable=SC2016
-                  grep -Fq 'git log -1 --format=%H "$RAN_QUALITY_COMMIT" -- .release-please-manifest.json' .github/workflows/release-please.yml
+                  grep -Fq 'git log -1 --format=%H "$RAN_QUALITY_COMMIT" -- .release-please-manifest.json' .github/workflows/release-publisher.yml
                   # shellcheck disable=SC2016
-                  grep -Fq 'git rev-parse "${RAN_QUALITY_COMMIT}^{tree}"' .github/workflows/release-please.yml
-                  grep -Fq 'vars.RAN_IMMUTABLE_RELEASES_ENABLED' .github/workflows/release-please.yml
+                  grep -Fq 'git rev-parse "${RAN_QUALITY_COMMIT}^{tree}"' .github/workflows/release-publisher.yml
+                  grep -Fq 'vars.RAN_IMMUTABLE_RELEASES_ENABLED' .github/workflows/release-publisher.yml
                   # shellcheck disable=SC2016
-                  grep -Fq 'test "$immutable" = true' .github/workflows/release-please.yml
-                  grep -Fq '.immutable == true' .github/workflows/release-please.yml
+                  grep -Fq 'test "$immutable" = true' .github/workflows/release-publisher.yml
+                  grep -Fq '.immutable == true' .github/workflows/release-publisher.yml
 
             - name: Build and verify the canonical release assets once
               id: release
