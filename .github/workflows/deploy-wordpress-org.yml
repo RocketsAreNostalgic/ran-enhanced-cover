@@ -1,95 +1,95 @@
 name: WordPress.org Deployment
 
 on:
-  release:
-    types: [published]
+    release:
+        types: [published]
 
 permissions: {}
 
 jobs:
-  contract:
-    name: Read downstream deployment contract
-    runs-on: blacksmith-2vcpu-ubuntu-2404
-    permissions:
-      contents: read
-    outputs:
-      enabled: ${{ steps.contract.outputs.enabled }}
-      tag: ${{ steps.identity.outputs.tag }}
-    steps:
-      - name: Check out exact published tag
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-          ref: ${{ github.event.release.tag_name }}
+    contract:
+        name: Read downstream deployment contract
+        runs-on: blacksmith-2vcpu-ubuntu-2404
+        permissions:
+            contents: read
+        outputs:
+            enabled: ${{ steps.contract.outputs.enabled }}
+            tag: ${{ steps.identity.outputs.tag }}
+        steps:
+            - name: Check out exact published tag
+                uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+                with:
+                    fetch-depth: 0
+                    persist-credentials: false
+                    ref: ${{ github.event.release.tag_name }}
 
-      - name: Verify immutable GitHub release identity
-        id: identity
+            - name: Verify immutable GitHub release identity
+                id: identity
+                env:
+                    GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                    RAN_RELEASE_ID: ${{ github.event.release.id }}
+                    RAN_RELEASE_TAG: ${{ github.event.release.tag_name }}
+                shell: bash
+                run: |
+                    set -euo pipefail
+                    [[ "$RAN_RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]
+                    commit="$(git rev-parse HEAD)"
+                    test "$(git rev-parse "${RAN_RELEASE_TAG}^{commit}")" = "$commit"
+                    release_json="$(gh api "repos/${GITHUB_REPOSITORY}/releases/${RAN_RELEASE_ID}")"
+                    jq -e             --arg commit "$commit"             --arg tag "$RAN_RELEASE_TAG"             '.tag_name == $tag and .target_commitish == $commit and .draft == false and .immutable == true'             <<< "$release_json" >/dev/null
+                    printf 'tag=%s\n' "$RAN_RELEASE_TAG" >> "$GITHUB_OUTPUT"
+
+            - name: Read committed deployment contract
+                id: contract
+                shell: bash
+                run: |
+                    set -euo pipefail
+                    jq -e '.enabled | type == "boolean"' wordpress-org/deployment.json >/dev/null
+                    enabled="$(jq -r '.enabled' wordpress-org/deployment.json)"
+                    printf 'enabled=%s\n' "$enabled" >> "$GITHUB_OUTPUT"
+
+    deploy:
+        name: Deploy exact GitHub release to WordPress.org
+        needs: contract
+        if: ${{ needs.contract.outputs.enabled == 'true' }}
+        runs-on: blacksmith-2vcpu-ubuntu-2404
+        permissions:
+            contents: read
+        environment: wordpress-org
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RAN_RELEASE_ID: ${{ github.event.release.id }}
-          RAN_RELEASE_TAG: ${{ github.event.release.tag_name }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          [[ "$RAN_RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]
-          commit="$(git rev-parse HEAD)"
-          test "$(git rev-parse "${RAN_RELEASE_TAG}^{commit}")" = "$commit"
-          release_json="$(gh api "repos/${GITHUB_REPOSITORY}/releases/${RAN_RELEASE_ID}")"
-          jq -e             --arg commit "$commit"             --arg tag "$RAN_RELEASE_TAG"             '.tag_name == $tag and .target_commitish == $commit and .draft == false and .immutable == true'             <<< "$release_json" >/dev/null
-          printf 'tag=%s\n' "$RAN_RELEASE_TAG" >> "$GITHUB_OUTPUT"
+            TAG_NAME: ${{ needs.contract.outputs.tag }}
+            WORDPRESS_ORG_USERNAME: ${{ secrets.WORDPRESS_ORG_USERNAME }}
+            WORDPRESS_ORG_PASSWORD: ${{ secrets.WORDPRESS_ORG_PASSWORD }}
+        steps:
+            - name: Check out exact published tag
+                uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+                with:
+                    fetch-depth: 0
+                    persist-credentials: false
+                    ref: ${{ env.TAG_NAME }}
 
-      - name: Read committed deployment contract
-        id: contract
-        shell: bash
-        run: |
-          set -euo pipefail
-          jq -e '.enabled | type == "boolean"' wordpress-org/deployment.json >/dev/null
-          enabled="$(jq -r '.enabled' wordpress-org/deployment.json)"
-          printf 'enabled=%s\n' "$enabled" >> "$GITHUB_OUTPUT"
+            - name: Set up PHP
+                uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+                with:
+                    php-version: '8.3'
+                    extensions: zip
+                    coverage: none
 
-  deploy:
-    name: Deploy exact GitHub release to WordPress.org
-    needs: contract
-    if: ${{ needs.contract.outputs.enabled == 'true' }}
-    runs-on: blacksmith-2vcpu-ubuntu-2404
-    permissions:
-      contents: read
-    environment: wordpress-org
-    env:
-      TAG_NAME: ${{ needs.contract.outputs.tag }}
-      WORDPRESS_ORG_USERNAME: ${{ secrets.WORDPRESS_ORG_USERNAME }}
-      WORDPRESS_ORG_PASSWORD: ${{ secrets.WORDPRESS_ORG_PASSWORD }}
-    steps:
-      - name: Check out exact published tag
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-          ref: ${{ env.TAG_NAME }}
+            - name: Download exact immutable GitHub release assets
+                env:
+                    GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                shell: bash
+                run: |
+                    set -euo pipefail
+                    version="${TAG_NAME#v}"
+                    mkdir -p dist
+                    gh release download "$TAG_NAME"             --pattern "ran-enhanced-cover-${version}.zip"             --dir dist             --repo "$GITHUB_REPOSITORY"
+                    gh release download "$TAG_NAME"             --pattern "ran-enhanced-cover-${version}.zip.sha256"             --dir dist             --repo "$GITHUB_REPOSITORY"
+                    test "$(find dist -maxdepth 1 -type f | wc -l)" -eq 2
 
-      - name: Set up PHP
-        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
-        with:
-          php-version: '8.3'
-          extensions: zip
-          coverage: none
-
-      - name: Download exact immutable GitHub release assets
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          version="${TAG_NAME#v}"
-          mkdir -p dist
-          gh release download "$TAG_NAME"             --pattern "ran-enhanced-cover-${version}.zip"             --dir dist             --repo "$GITHUB_REPOSITORY"
-          gh release download "$TAG_NAME"             --pattern "ran-enhanced-cover-${version}.zip.sha256"             --dir dist             --repo "$GITHUB_REPOSITORY"
-          test "$(find dist -maxdepth 1 -type f | wc -l)" -eq 2
-
-      - name: Deploy verified immutable release to protected SVN
-        shell: bash
-        run: |
-          set -euo pipefail
-          version="${TAG_NAME#v}"
-          bash scripts/deploy-wordpress-org.sh             "dist/ran-enhanced-cover-${version}.zip"             "dist/ran-enhanced-cover-${version}.zip.sha256"             "$TAG_NAME"
+            - name: Deploy verified immutable release to protected SVN
+                shell: bash
+                run: |
+                    set -euo pipefail
+                    version="${TAG_NAME#v}"
+                    bash scripts/deploy-wordpress-org.sh             "dist/ran-enhanced-cover-${version}.zip"             "dist/ran-enhanced-cover-${version}.zip.sha256"             "$TAG_NAME"
