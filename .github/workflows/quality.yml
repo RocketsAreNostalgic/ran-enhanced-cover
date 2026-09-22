@@ -287,7 +287,7 @@ jobs:
 
     quality-gate:
         name: quality
-        if: ${{ github.event_name == 'pull_request' && always() }}
+        if: ${{ (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && always() }}
         needs:
             - baseline
             - quality
