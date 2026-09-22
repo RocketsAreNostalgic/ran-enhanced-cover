@@ -25,15 +25,23 @@ jobs:
     quality:
         name: Quality and release artifact
         runs-on: blacksmith-2vcpu-ubuntu-2404
+        env:
+            RAN_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
         outputs:
             artifact-name: ${{ steps.release.outputs.artifact-name }}
             matrix: ${{ steps.release.outputs.matrix }}
+            source-sha: ${{ steps.release.outputs.source-sha }}
             version: ${{ steps.release.outputs.version }}
         steps:
             - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
               with:
                   fetch-depth: 0
                   persist-credentials: false
+                  ref: ${{ env.RAN_SOURCE_SHA }}
+
+            - name: Verify exact source checkout
+              shell: bash
+              run: test "$(git rev-parse HEAD)" = "$RAN_SOURCE_SHA"
 
             - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
               with:
@@ -107,7 +115,7 @@ jobs:
                   bash scripts/create-release-assets.sh "v${version}"
 
                   source_commit="$(git rev-parse HEAD)"
-                  test "$source_commit" = "$GITHUB_SHA"
+                  test "$source_commit" = "$RAN_SOURCE_SHA"
                   archive="dist/ran-enhanced-cover-${version}.zip"
                   checksum="${archive}.sha256"
                   archive_sha256="$(sha256sum "$archive" | awk '{ print $1 }')"
@@ -115,7 +123,7 @@ jobs:
                   test "$(< "$checksum")" = "$(printf '%s  %s' "$archive_sha256" "$(basename "$archive")")"
                   jq -n \
                       --arg repository "$GITHUB_REPOSITORY" \
-                      --arg quality_commit "$GITHUB_SHA" \
+                      --arg quality_commit "$source_commit" \
                       --arg source_commit "$source_commit" \
                       --arg tag "v${version}" \
                       --arg archive_name "$(basename "$archive")" \
@@ -156,6 +164,7 @@ jobs:
                   {
                       printf 'artifact-name=ran-enhanced-cover-release-%s-%s\n' "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT"
                       printf 'matrix=%s\n' "$matrix"
+                      printf 'source-sha=%s\n' "$source_commit"
                       printf 'version=%s\n' "$version"
                   } >> "$GITHUB_OUTPUT"
 
@@ -194,6 +203,11 @@ jobs:
             - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
               with:
                   persist-credentials: false
+                  ref: ${{ needs.quality.outputs.source-sha }}
+
+            - name: Verify exact source checkout
+              shell: bash
+              run: test "$(git rev-parse HEAD)" = '${{ needs.quality.outputs.source-sha }}'
 
             - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
               with:
@@ -216,7 +230,7 @@ jobs:
                   set -euo pipefail
                   archive="dist/ran-enhanced-cover-${{ needs.quality.outputs.version }}.zip"
                   manifest="dist/ran-enhanced-cover-${{ needs.quality.outputs.version }}.manifest.json"
-                  test "$(jq -er '.commit' "$manifest")" = "$GITHUB_SHA"
+                  test "$(jq -er '.commit' "$manifest")" = '${{ needs.quality.outputs.source-sha }}'
                   test "$(jq -er '.version' "$manifest")" = '${{ needs.quality.outputs.version }}'
                   (cd dist && sha256sum --check --strict "$(basename "$archive").sha256")
                   php scripts/verify-release.php "$archive"
@@ -250,6 +264,11 @@ jobs:
             - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
               with:
                   persist-credentials: false
+                  ref: ${{ needs.quality.outputs.source-sha }}
+
+            - name: Verify exact source checkout
+              shell: bash
+              run: test "$(git rev-parse HEAD)" = '${{ needs.quality.outputs.source-sha }}'
 
             - name: Download the canonical release assets
               uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
