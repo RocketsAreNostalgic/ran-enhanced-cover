@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.3](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/compare/v1.3.2...v1.3.3) (2026-09-22)
+
+
+### Bug Fixes
+
+* **ci:** enforce terminal quality for dispatched candidates ([#26](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/issues/26)) ([e6b2217](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/commit/e6b2217a716293f911bf448636a26ebabe6bcd99))
+* **release:** migrate Enhanced Cover to Profile B ([#25](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/issues/25)) ([5f9f8ad](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/commit/5f9f8ad5abc780ed68ee60f9308963c04fe68943))
+
 ## [1.3.2](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/compare/v1.3.1...v1.3.2) (2026-09-17)
 
 
