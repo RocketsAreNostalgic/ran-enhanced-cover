@@ -45,9 +45,13 @@ submission.
         and excludes development-only files.
 -   [ ] Submit the reviewed ZIP manually and wait for WordPress.org approval and
         the assigned slug before configuring the protected deployment contract.
--   [ ] Follow `wordpress-org/DEPLOYMENT.md` for the first reviewer-approved
-        deployment, then verify SVN `trunk`, the matching version tag, `/assets`,
-        the directory page, and the installation/update path.
+-   [ ] Follow `wordpress-org/DEPLOYMENT.md` after reviewer approval: record the
+        assigned slug, configure the protected environment, enable the
+        source-controlled deployment contract, and use
+        `syncListingAssets: true` only for a reviewed listing-artwork sync on a
+        subsequent qualified immutable release. Then verify SVN `trunk`, the
+        matching version tag, `/assets` when synchronized, the directory page,
+        and the installation/update path.
 
 ## Translation readiness
 
