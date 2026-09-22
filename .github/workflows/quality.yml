@@ -60,8 +60,16 @@ jobs:
               run: |
                   pnpm check
                   pnpm check:generated
-                  composer lint:syntax
-                  composer standards
+                  composer check
+                  fake_bin="$(mktemp -d)"
+                  printf '#!/usr/bin/env sh\nexit 42\n' > "$fake_bin/find"
+                  chmod +x "$fake_bin/find"
+                  if PATH="$fake_bin:$PATH" composer lint:syntax; then
+                      echo '::error::PHP syntax discovery failure was incorrectly accepted.'
+                      rm -rf "$fake_bin"
+                      exit 1
+                  fi
+                  rm -rf "$fake_bin"
                   jq -e '.draft == true and .["force-tag-creation"] == true and .["skip-github-release"] != true' release-please-config.json >/dev/null
                   grep -Fq 'release-profile-b.yml@aa88eb65d67f26ef7c73a87ba8b43f7eb7f2c0c2' .github/workflows/release-please.yml
                   grep -Fq 'artifact-prefix: ran-enhanced-cover-release' .github/workflows/release-please.yml
