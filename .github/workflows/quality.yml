@@ -74,9 +74,11 @@ jobs:
                   grep -Fq 'release-profile-b.yml@aa88eb65d67f26ef7c73a87ba8b43f7eb7f2c0c2' .github/workflows/release-please.yml
                   grep -Fq 'artifact-prefix: ran-enhanced-cover-release' .github/workflows/release-please.yml
                   test ! -e .github/workflows/release-publisher.yml
-                  grep -Fq 'types: [published]' .github/workflows/deploy-wordpress-org.yml
+                  grep -Fq 'workflows: [Release Please]' .github/workflows/deploy-wordpress-org.yml
+                  grep -Fq "github.event.workflow_run.path == '.github/workflows/release-please.yml'" .github/workflows/deploy-wordpress-org.yml
                   grep -Fq 'environment: wordpress-org' .github/workflows/deploy-wordpress-org.yml
                   grep -Fq '.immutable == true' .github/workflows/deploy-wordpress-org.yml
+                  grep -Fq '.target_commitish == $commit' .github/workflows/deploy-wordpress-org.yml
                   if grep -Fq 'workflow_dispatch:' .github/workflows/deploy-wordpress-org.yml; then
                       echo '::error::WordPress.org deployment must not regain a manual bypass lane.'
                       exit 1
