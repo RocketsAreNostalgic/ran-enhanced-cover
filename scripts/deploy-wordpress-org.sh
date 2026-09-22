@@ -20,7 +20,8 @@ for argument in "$@"; do
 	esac
 done
 
-ENABLED="$(jq -er '.enabled | select(type == "boolean")' "${CONFIG_PATH}")"
+jq -e '.enabled | type == "boolean"' "${CONFIG_PATH}" >/dev/null
+ENABLED="$(jq -r '.enabled' "${CONFIG_PATH}")"
 if [[ "${ENABLED}" != true ]]; then
 	echo "Routine WordPress.org deployment is disabled in ${CONFIG_PATH}." >&2
 	exit 1
