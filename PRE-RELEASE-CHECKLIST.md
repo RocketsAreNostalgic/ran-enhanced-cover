@@ -25,8 +25,8 @@ submission.
         pnpm check
         pnpm build
         pnpm check:build
-        composer lint
-        composer phpcs
+        composer lint:syntax
+        composer standards
         pnpm pot
         pnpm release
         pnpm release:verify
@@ -45,9 +45,13 @@ submission.
         and excludes development-only files.
 -   [ ] Submit the reviewed ZIP manually and wait for WordPress.org approval and
         the assigned slug before configuring the protected deployment contract.
--   [ ] Follow `wordpress-org/DEPLOYMENT.md` for the first reviewer-approved
-        deployment, then verify SVN `trunk`, the matching version tag, `/assets`,
-        the directory page, and the installation/update path.
+-   [ ] Follow `wordpress-org/DEPLOYMENT.md` after reviewer approval: record the
+        assigned slug, configure the protected environment, enable the
+        source-controlled deployment contract, and use
+        `syncListingAssets: true` only for a reviewed listing-artwork sync on a
+        subsequent qualified immutable release. Then verify SVN `trunk`, the
+        matching version tag, `/assets` when synchronized, the directory page,
+        and the installation/update path.
 
 ## Translation readiness
 
@@ -56,7 +60,7 @@ submission.
         domain. Block metadata strings in `block.json` are covered by its
         `textdomain` value and the POT extraction command.
 -   [ ] Run the WordPress i18n coding-standard sniff:
-        `composer run phpcs -- --sniffs=WordPress.WP.I18n`.
+        `composer run standards -- --sniffs=WordPress.WP.I18n`.
 -   [ ] Regenerate `languages/ran-enhanced-cover.pot` with `pnpm pot` after all
         final user-facing copy changes.
 -   [ ] Confirm the POT file has no stale source references and is committed with

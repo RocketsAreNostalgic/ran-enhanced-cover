@@ -7,7 +7,7 @@ renderer. Install a matching WordPress test environment, then point
 ```sh
 export WP_TESTS_DIR=/tmp/wordpress-tests-lib
 composer install
-composer test
+composer test:integration
 ```
 
 The test library must contain `includes/functions.php` and a WordPress test
