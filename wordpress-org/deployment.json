@@ -7,5 +7,6 @@
 	"buildCommand": "php scripts/build-release.php --output \"$ARCHIVE_PATH\"",
 	"verifyCommand": "php scripts/verify-release.php \"$ARCHIVE_PATH\"",
 	"archivePath": "dist/ran-enhanced-cover-{version}.zip",
-	"listingAssetsDirectory": "wordpress-org/assets"
+	"listingAssetsDirectory": "wordpress-org/assets",
+	"syncListingAssets": false
 }
