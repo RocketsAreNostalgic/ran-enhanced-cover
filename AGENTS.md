@@ -48,11 +48,10 @@ Install from the tracked locks; never use a setup script that deletes them.
 
 ```sh
 composer install --no-interaction
+composer check
 pnpm install --frozen-lockfile
 pnpm check
-pnpm lint:php
 pnpm check:generated
-pnpm test:php
 pnpm release:verify
 pnpm release:plugin-check
 ```
@@ -77,9 +76,10 @@ This repository uses the RAN `wordpress-plugin` quality profile.
   generated/vendor exclusions, CommonJS/Node globals, WordPress external
   module declarations, and product-specific exceptions including
   `@wordpress/no-unsafe-wp-apis` and the block metadata Prettier override.
-- `composer check` is the deterministic PHPCS source-quality contract for the
-  shared baseline. PHP syntax linting and WordPress integration PHPUnit remain
-  repository-owned gates.
+- `composer check` is the host-independent PHP source-quality aggregate:
+  `lint:syntax` plus `standards`. `standards:fix` is the matching PHPCBF
+  fixer. WordPress/database PHPUnit remains the required
+  `test:integration` specialist gate.
 - `pnpm check` remains the deterministic package-level quality contract.
 - Canonical release-archive creation and verification, generated block/POT
   drift, the WordPress compatibility matrix, fresh-ZIP install/activation,
@@ -108,9 +108,12 @@ release version. The normal PHP strategy does not update those
 WordPress-specific sources automatically; configure and test explicit
 extra-file updates.
 
-The quality workflow and release scripts derive archive names from the plugin
-metadata and verify the resulting archive. Keep packaging or WordPress.org
-deployment separate from Release Please.
+The Quality workflow builds and verifies the exact runtime ZIP/checksum and
+emits the Profile B promotion manifest. The repository release caller delegates
+generic Release Please lifecycle and exact-asset promotion to the pinned shared
+Profile B workflow. WordPress.org publication is a separate downstream
+`release.published` deployment of the already-immutable GitHub release and
+must not block or mutate the canonical GitHub release.
 
 Treat the existing initial-release preparation commit as the bootstrap
 boundary, preserve version `1.0.0` in the initial manifest, and review the
