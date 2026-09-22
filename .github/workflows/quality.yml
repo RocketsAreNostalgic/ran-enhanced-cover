@@ -87,6 +87,8 @@ jobs:
                   grep -Fq 'environment: wordpress-org' .github/workflows/deploy-wordpress-org.yml
                   grep -Fq '.immutable == true' .github/workflows/deploy-wordpress-org.yml
                   grep -Fq '.target_commitish == $commit' .github/workflows/deploy-wordpress-org.yml
+                  jq -e '(.enabled | type == "boolean") and (.syncListingAssets | type == "boolean")' wordpress-org/deployment.json >/dev/null
+                  grep -Fq 'SYNC_LISTING_ASSETS' .github/workflows/deploy-wordpress-org.yml
                   if grep -Fq 'workflow_dispatch:' .github/workflows/deploy-wordpress-org.yml; then
                       echo '::error::WordPress.org deployment must not regain a manual bypass lane.'
                       exit 1
