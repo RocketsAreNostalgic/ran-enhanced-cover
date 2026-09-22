@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.4](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/compare/v1.3.3...v1.3.4) (2026-09-22)
+
+
+### Bug Fixes
+
+* **release:** pin validated Profile B draft promotion ([#28](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/issues/28)) ([e167b25](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/commit/e167b257c247a25a534a35a284edf9f7666efda1))
+
 ## [1.3.3](https://github.com/RocketsAreNostalgic/ran-enhanced-cover/compare/v1.3.2...v1.3.3) (2026-09-22)
 
 
