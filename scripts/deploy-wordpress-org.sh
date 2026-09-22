@@ -52,7 +52,10 @@ WORK_DIRECTORY="$(mktemp -d)"
 cleanup() {
 	rm -rf "${WORK_DIRECTORY}"
 }
-trap cleanup EXIT HUP INT TERM
+trap cleanup EXIT
+trap 'exit 129' HUP
+trap 'exit 130' INT
+trap 'exit 143' TERM
 
 unzip -q "${ARCHIVE_PATH}" -d "${WORK_DIRECTORY}/release"
 if [[ ! -f "${WORK_DIRECTORY}/release/${PACKAGE_SLUG}/${MAIN_PLUGIN_FILE}" ]]; then
