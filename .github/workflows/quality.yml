@@ -81,6 +81,10 @@ jobs:
                       echo '::error::WordPress.org deployment must not regain a manual bypass lane.'
                       exit 1
                   fi
+                  if grep -R -Fq -- '--allow-disabled' .github/workflows scripts/deploy-wordpress-org.sh; then
+                      echo '::error::Disabled WordPress.org deployment must not be bypassable.'
+                      exit 1
+                  fi
                   grep -Fq 'ran-profile-b-promotion.json' .github/workflows/quality.yml
 
             - name: Build and verify the canonical release assets once
