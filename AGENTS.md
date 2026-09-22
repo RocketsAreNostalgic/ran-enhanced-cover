@@ -111,9 +111,9 @@ extra-file updates.
 The Quality workflow builds and verifies the exact runtime ZIP/checksum and
 emits the Profile B promotion manifest. The repository release caller delegates
 generic Release Please lifecycle and exact-asset promotion to the pinned shared
-Profile B workflow. WordPress.org publication is a separate downstream
-`release.published` deployment of the already-immutable GitHub release and
-must not block or mutate the canonical GitHub release.
+Profile B workflow. WordPress.org publication is a separate downstream observer of the successful
+Profile B caller. It binds the exact main SHA to the already-immutable GitHub
+release before deployment and must not block or mutate the canonical GitHub release.
 
 Treat the existing initial-release preparation commit as the bootstrap
 boundary, preserve version `1.0.0` in the initial manifest, and review the
