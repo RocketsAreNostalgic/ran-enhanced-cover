@@ -44,7 +44,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          enabled="$(jq -er '.enabled | select(type == "boolean")' wordpress-org/deployment.json)"
+          jq -e '.enabled | type == "boolean"' wordpress-org/deployment.json >/dev/null
+          enabled="$(jq -r '.enabled' wordpress-org/deployment.json)"
           printf 'enabled=%s\n' "$enabled" >> "$GITHUB_OUTPUT"
 
   deploy:
