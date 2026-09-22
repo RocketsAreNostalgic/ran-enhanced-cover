@@ -26,6 +26,7 @@ jobs:
         outputs:
             deploy-required: ${{ steps.release.outputs.deploy-required }}
             enabled: ${{ steps.contract.outputs.enabled }}
+            sync-assets: ${{ steps.contract.outputs.sync-assets }}
             tag: ${{ steps.release.outputs.tag }}
         steps:
             - name: Check out exact admitted main revision
@@ -73,9 +74,10 @@ jobs:
               shell: bash
               run: |
                   set -euo pipefail
-                  jq -e '.enabled | type == "boolean"' wordpress-org/deployment.json >/dev/null
+                  jq -e '(.enabled | type == "boolean") and (.syncListingAssets | type == "boolean")' wordpress-org/deployment.json >/dev/null
                   enabled="$(jq -r '.enabled' wordpress-org/deployment.json)"
-                  printf 'enabled=%s\n' "$enabled" >> "$GITHUB_OUTPUT"
+                  sync_assets="$(jq -r '.syncListingAssets' wordpress-org/deployment.json)"
+                  printf 'enabled=%s\nsync-assets=%s\n' "$enabled" "$sync_assets" >> "$GITHUB_OUTPUT"
 
     deploy:
         name: Deploy exact GitHub release to WordPress.org
@@ -92,6 +94,7 @@ jobs:
         env:
             ADMITTED_SHA: ${{ github.event.workflow_run.head_sha }}
             TAG_NAME: ${{ needs.contract.outputs.tag }}
+            SYNC_LISTING_ASSETS: ${{ needs.contract.outputs.sync-assets }}
             WORDPRESS_ORG_USERNAME: ${{ secrets.WORDPRESS_ORG_USERNAME }}
             WORDPRESS_ORG_PASSWORD: ${{ secrets.WORDPRESS_ORG_PASSWORD }}
         steps:
@@ -149,7 +152,10 @@ jobs:
               run: |
                   set -euo pipefail
                   version="${TAG_NAME#v}"
+                  options=()
+                  [[ "$SYNC_LISTING_ASSETS" == true ]] && options+=(--sync-assets)
                   bash scripts/deploy-wordpress-org.sh \
                       "dist/ran-enhanced-cover-${version}.zip" \
                       "dist/ran-enhanced-cover-${version}.zip.sha256" \
-                      "$TAG_NAME"
+                      "$TAG_NAME" \
+                      "${options[@]}"
