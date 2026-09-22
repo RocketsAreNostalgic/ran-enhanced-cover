@@ -13,7 +13,7 @@ if ( ! $_tests_dir ) {
 }
 
 if ( ! file_exists( $_tests_dir . '/includes/functions.php' ) ) {
-	echo 'Missing WordPress test library. Set WP_TESTS_DIR before running composer test.' . PHP_EOL;
+	echo 'Missing WordPress test library. Set WP_TESTS_DIR before running composer test:integration.' . PHP_EOL;
 	exit( 1 );
 }
 
