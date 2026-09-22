@@ -25,8 +25,8 @@ submission.
         pnpm check
         pnpm build
         pnpm check:build
-        composer lint
-        composer phpcs
+        composer lint:syntax
+        composer standards
         pnpm pot
         pnpm release
         pnpm release:verify
@@ -56,7 +56,7 @@ submission.
         domain. Block metadata strings in `block.json` are covered by its
         `textdomain` value and the POT extraction command.
 -   [ ] Run the WordPress i18n coding-standard sniff:
-        `composer run phpcs -- --sniffs=WordPress.WP.I18n`.
+        `composer run standards -- --sniffs=WordPress.WP.I18n`.
 -   [ ] Regenerate `languages/ran-enhanced-cover.pot` with `pnpm pot` after all
         final user-facing copy changes.
 -   [ ] Confirm the POT file has no stale source references and is committed with
