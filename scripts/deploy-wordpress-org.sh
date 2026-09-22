@@ -75,7 +75,7 @@ done < <(svn status "${WORK_DIRECTORY}/svn/trunk" | sed -n 's/^!.......//p')
 svn add --force "${WORK_DIRECTORY}/svn/trunk" --parents
 
 if [[ "${SYNC_ASSETS}" == true ]]; then
-	rsync -a --delete --exclude='README.md' --exclude='drafts/' --exclude='.svn' 		"${PLUGIN_ROOT}/${ASSETS_DIRECTORY}/" "${WORK_DIRECTORY}/svn/assets/"
+	rsync -a --delete --exclude='README.md' --exclude='drafts/' --exclude='.svn' "${PLUGIN_ROOT}/${ASSETS_DIRECTORY}/" "${WORK_DIRECTORY}/svn/assets/"
 	svn add --force "${WORK_DIRECTORY}/svn/assets" --parents
 fi
 
