@@ -89,15 +89,15 @@ pnpm check
 pnpm build
 pnpm check:build
 composer install
-composer lint
-composer phpcs
+composer lint:syntax
+composer standards
 pnpm pot
 pnpm release
 pnpm release:verify
 pnpm release:plugin-check
 ```
 
-`composer test` runs WordPress integration tests when `WP_TESTS_DIR` points to
+`composer test:integration` runs WordPress integration tests when `WP_TESTS_DIR` points to
 an installed WordPress test library. See `tests/README.md` for setup details.
 `pnpm release:plugin-check` runs the official WordPress Plugin Check command
 against the generated ZIP after Plugin Check has been installed in the target
