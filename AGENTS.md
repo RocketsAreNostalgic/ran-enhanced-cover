@@ -49,6 +49,7 @@ Install from the tracked locks; never use a setup script that deletes them.
 ```sh
 composer install --no-interaction
 composer check
+composer test:integration
 pnpm install --frozen-lockfile
 pnpm check
 pnpm check:generated
