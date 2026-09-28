@@ -11,6 +11,8 @@
  * @package RAN_Video_Cover
  */
 
+// phpcs:disable WordPress.WP.AlternativeFunctions -- Standalone CLI process; output is terminal text and native local filesystem operations do not require WordPress.
+
 $plugin_root = dirname( __DIR__ );
 $plugin_file = file_get_contents( $plugin_root . '/ran-enhanced-cover.php' );
 $pot_path    = $plugin_root . '/languages/ran-enhanced-cover.pot';
@@ -61,7 +63,7 @@ if ( false === $header_end ) {
 	exit( 1 );
 }
 
-$pot_file = substr_replace( $pot_file, "# x-release-please-start-version\n", $header_start, 0 );
+$pot_file    = substr_replace( $pot_file, "# x-release-please-start-version\n", $header_start, 0 );
 $header_end += strlen( "# x-release-please-start-version\n" );
 $pot_file    = substr_replace( $pot_file, "\n# x-release-please-end", $header_end, 0 );
 

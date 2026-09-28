@@ -19,13 +19,13 @@ The level-5 probe identifies four numeric-to-esc_attr calls in each render copy.
 They currently rely on WordPress's scalar string conversion. Resolving this typing
 boundary and any level increase require separately reviewed behavior evidence;
 this initial level-4 gate is not represented as level 5 or UI acceptance.
-`composer check` now runs syntax, standards and analysis.
+`composer check` runs syntax, standards, `test:quality` and analysis.
 
 ## Coverage and remaining acceptance
 
 PHPCS/PHPCBF share the same configuration and source/template/test roots. Runtime
-metadata and generated copies retain syntax/generated checks; standalone scripts
-retain syntax and analysis with a documented PHPCS exclusion. The Blocks.php
+metadata and generated copies retain syntax/generated checks; maintained scripts
+now also use PHPCS/PHPCBF with narrow standalone CLI exceptions. The Blocks.php
 filename exception preserves the established autoload/metadata identity.
 There is no PHP-CS-Fixer dependency or parallel PHP formatter to remove.
 
@@ -33,3 +33,26 @@ PHPUnit requires WordPress/database and remains `test:integration`; generated
 block/POT checks, deterministic archive verification, fresh ZIP installation and
 Plugin Check remain required in native CI. Syntax discovery/failure controls,
 formatter evidence and final CI/review/merge acceptance remain tracked in #30.
+
+## Final standards and syntax scope
+
+The syntax runner now includes generated runtime PHP and rejects empty selection.
+Ordinary `test:quality` uses actual-parser fixtures for malformed source in runtime,
+source/generated blocks, scripts and tests, safe filenames, dependency pruning,
+partial discovery failure and PHP process failures. Config-driven standards tests
+prove all authored PHP roots reject formatting defects and that fixes are stable.
+The checks use explicit exceptions rather than Python's removable assertions and
+remain active under Python optimization. Python 3 is an ordinary-test prerequisite.
+
+The blanket scripts exclusion is removed. Packaging exception messages target a
+terminal, not HTML; native local filesystem operations run without WordPress.
+Only these concrete host assumptions are exempted in the relevant CLI files.
+PHPCBF's alignment changes preserve executable tokens. Existing WordPress/database,
+generated build/POT, reproducible archive/install and Plugin Check gates remain
+required. Native final-head/main and review evidence is recorded in #30.
+
+Maintained `tests/wp-tests-config.php.template` is explicitly included in syntax
+and PHP-tokenized PHPCS/PHPCBF selection. Actual-command regressions introduce
+malformed PHP and formatting defects in this template, and snapshot repeatability
+includes its bytes. Its `$table_prefix` assignment has one narrow exception because
+WordPress requires that configuration global; other template checks remain active.

@@ -7,6 +7,8 @@
  * @package RAN_Video_Cover
  */
 
+// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Standalone CLI process; output is terminal text and native local filesystem operations do not require WordPress.
+
 declare(strict_types = 1);
 
 // phpcs:disable WordPress.WP.AlternativeFunctions -- This standalone CLI tool runs without WordPress or WP_Filesystem.
@@ -169,10 +171,10 @@ function ran_enhanced_cover_release_file_contents( string $root, string $file ):
  * @throws RuntimeException When version sources differ.
  */
 function ran_enhanced_cover_release_validate_versions( string $root, string $version ): void {
-	$plugin_file = file_get_contents( $root . '/ran-enhanced-cover.php' );
-	$package     = file_get_contents( $root . '/package.json' );
-	$pot         = file_get_contents( $root . '/languages/ran-enhanced-cover.pot' );
-	$readme      = file_get_contents( $root . '/readme.txt' );
+	$plugin_file  = file_get_contents( $root . '/ran-enhanced-cover.php' );
+	$package      = file_get_contents( $root . '/package.json' );
+	$pot          = file_get_contents( $root . '/languages/ran-enhanced-cover.pot' );
+	$readme       = file_get_contents( $root . '/readme.txt' );
 	$source_block = file_get_contents( $root . '/blocks/media/video-cover/block.json' );
 	$build_block  = file_get_contents( $root . '/build/blocks/media/video-cover/block.json' );
 
@@ -301,7 +303,7 @@ function ran_enhanced_cover_release_validate_archive( string $archive_path, arra
 	$source_block = $archive->getFromName( RAN_ENHANCED_COVER_RELEASE_SLUG . '/blocks/media/video-cover/block.json' );
 	$build_block  = $archive->getFromName( RAN_ENHANCED_COVER_RELEASE_SLUG . '/build/blocks/media/video-cover/block.json' );
 	$archive->close();
-	$expected_readme = ran_enhanced_cover_release_file_contents( dirname( __DIR__ ), 'readme.txt' );
+	$expected_readme         = ran_enhanced_cover_release_file_contents( dirname( __DIR__ ), 'readme.txt' );
 	$readme_metadata_pattern = '/^Stable tag:[\t ]*' . preg_quote( $version, '/' ) . '[\t ]*\RLicense:[\t ]*[^\r\n]+\RLicense URI:[\t ]*https?:\/\/[^\s]+[\t ]*$/mi';
 	$release_marker_pattern  = '/^[\t ]*<!-- x-release-please-(?:start-version|end) -->[\t ]*$/m';
 
@@ -332,9 +334,9 @@ function ran_enhanced_cover_release_validate_archive( string $archive_path, arra
  * @return int Process exit status.
  */
 function ran_enhanced_cover_release_main( array $arguments ): int {
-	$root       = dirname( __DIR__ );
-	$arguments  = array_slice( $arguments, 1 );
-	$check_only = in_array( '--check', $arguments, true );
+	$root        = dirname( __DIR__ );
+	$arguments   = array_slice( $arguments, 1 );
+	$check_only  = in_array( '--check', $arguments, true );
 	$output_path = null;
 
 	try {

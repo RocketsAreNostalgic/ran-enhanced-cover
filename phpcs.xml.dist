@@ -4,7 +4,7 @@
 
 	<arg name="basepath" value="."/>
 	<arg name="colors"/>
-	<arg name="extensions" value="php"/>
+	<arg name="extensions" value="php,template/php"/>
 	<arg value="ps"/>
 
 	<!-- Repository support policy remains local. -->
@@ -20,8 +20,6 @@
 	<exclude-pattern>*/build/*</exclude-pattern>
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
-	<!-- CLI packaging and one-off migration tools are linted, not WordPress-runtime code. -->
-	<exclude-pattern>*/scripts/*</exclude-pattern>
 	<exclude-pattern>*/blocks/media/video-cover/*.asset.php</exclude-pattern>
 
 	<!-- Shared RAN WordPress/WPCS/PHPCompatibility ancestry. -->
