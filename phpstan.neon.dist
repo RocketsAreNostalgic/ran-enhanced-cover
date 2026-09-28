@@ -1,0 +1,14 @@
+parameters:
+    level: 4
+    phpVersion: 80000
+    paths:
+        - ran-enhanced-cover.php
+        - includes
+        - blocks
+        - build
+        - scripts
+    scanFiles:
+        - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
+    bootstrapFiles:
+        - tests/phpstan/bootstrap.php
+    tmpDir: vendor/.cache/phpstan
