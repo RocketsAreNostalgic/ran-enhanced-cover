@@ -9,6 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/** @var array<string, mixed> $attributes Block attributes supplied by WordPress. */
+/** @var string $content Inner block content supplied by WordPress. */
+
 $defaults   = array(
 	'videoUrl'                => '',
 	'videoSources'            => array(),
