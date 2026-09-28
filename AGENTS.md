@@ -78,8 +78,9 @@ This repository uses the RAN `wordpress-plugin` quality profile.
   module declarations, and product-specific exceptions including
   `@wordpress/no-unsafe-wp-apis` and the block metadata Prettier override.
 - `composer check` is the host-independent PHP source-quality aggregate:
-  `lint:syntax`, `standards` and `analyze`. `standards:fix` is the matching PHPCBF
-  fixer. WordPress/database PHPUnit remains the required
+  `lint:syntax`, `standards`, `test:quality` and `analyze`. `standards:fix` is the matching PHPCBF
+  fixer. Python 3 is required for the ordinary quality controls.
+  WordPress/database PHPUnit remains the required
   `test:integration` specialist gate.
 - `pnpm check` remains the deterministic package-level quality contract.
 - Canonical release-archive creation and verification, generated block/POT
