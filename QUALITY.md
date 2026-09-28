@@ -19,7 +19,7 @@ The level-5 probe identifies four numeric-to-esc_attr calls in each render copy.
 They currently rely on WordPress's scalar string conversion. Resolving this typing
 boundary and any level increase require separately reviewed behavior evidence;
 this initial level-4 gate is not represented as level 5 or UI acceptance.
-`composer check` now runs syntax, standards and analysis.
+`composer check` runs syntax, standards, `test:quality` and analysis.
 
 ## Coverage and remaining acceptance
 
@@ -50,3 +50,9 @@ Only these concrete host assumptions are exempted in the relevant CLI files.
 PHPCBF's alignment changes preserve executable tokens. Existing WordPress/database,
 generated build/POT, reproducible archive/install and Plugin Check gates remain
 required. Native final-head/main and review evidence is recorded in #30.
+
+Maintained `tests/wp-tests-config.php.template` is explicitly included in syntax
+and PHP-tokenized PHPCS/PHPCBF selection. Actual-command regressions introduce
+malformed PHP and formatting defects in this template, and snapshot repeatability
+includes its bytes. Its `$table_prefix` assignment has one narrow exception because
+WordPress requires that configuration global; other template checks remain active.

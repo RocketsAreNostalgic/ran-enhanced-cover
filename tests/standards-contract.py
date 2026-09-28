@@ -27,7 +27,7 @@ with tempfile.TemporaryDirectory(prefix="cover-standards-") as directory:
 
     def snapshot():
         return {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest()
-                for p in root.rglob("*.php")}
+                for p in root.rglob("*") if p.is_file() and (p.suffix == ".php" or p.name.endswith(".php.template"))}
 
     result = run()
     require(result.returncode == 0, result.stdout + result.stderr)
@@ -38,7 +38,7 @@ with tempfile.TemporaryDirectory(prefix="cover-standards-") as directory:
         require(snapshot() == clean, "Quality contract failed")
 
     # All three selected roots must reject and fix ordinary formatting errors.
-    for relative in ("ran-enhanced-cover.php", "includes/Blocks.php", "tests/phpstan/bootstrap.php", "scripts/prepare-pot-for-release.php", "blocks/media/video-cover/render.php"):
+    for relative in ("ran-enhanced-cover.php", "includes/Blocks.php", "tests/wp-tests-config.php.template", "tests/phpstan/bootstrap.php", "scripts/prepare-pot-for-release.php", "blocks/media/video-cover/render.php"):
         path = root / relative
         original = path.read_bytes()
         try:
