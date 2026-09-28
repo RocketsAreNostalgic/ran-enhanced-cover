@@ -39,12 +39,12 @@ msgstr ""
 msgid "https://github.com/RocketsAreNostalgic/"
 msgstr ""
 
-#: blocks/media/video-cover/render.php:286
+#: blocks/media/video-cover/render.php:289
 #: blocks/media/video-cover/index.js:1236
 msgid "Play"
 msgstr ""
 
-#: blocks/media/video-cover/render.php:287
+#: blocks/media/video-cover/render.php:290
 #: blocks/media/video-cover/index.js:1237
 msgid "Pause"
 msgstr ""
