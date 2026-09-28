@@ -30,9 +30,14 @@
 		"check": [
 			"@lint:syntax",
 			"@standards",
+			"@test:quality",
 			"@analyze"
 		],
-		"analyze": "@php vendor/bin/phpstan analyse --configuration=phpstan.neon.dist --no-progress --memory-limit=512M"
+		"analyze": "@php vendor/bin/phpstan analyse --configuration=phpstan.neon.dist --no-progress --memory-limit=512M",
+		"test:quality": [
+			"bash tests/php-syntax-contract.sh",
+			"python3 tests/standards-contract.py"
+		]
 	},
 	"config": {
 		"allow-plugins": {

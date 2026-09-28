@@ -7,6 +7,8 @@
  * @package RAN_Video_Cover
  */
 
+// phpcs:disable WordPress.WP.AlternativeFunctions -- Standalone CLI process; output is terminal text and native local filesystem operations do not require WordPress.
+
 declare(strict_types = 1);
 
 if ( PHP_SAPI !== 'cli' ) {

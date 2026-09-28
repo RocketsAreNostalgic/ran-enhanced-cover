@@ -12,12 +12,16 @@ trap 'exit 130' INT
 trap 'exit 143' TERM
 
 if ! find . \
-	-path './build' -prune -o \
 	-path './node_modules' -prune -o \
 	-path './vendor' -prune -o \
 	-path './.git' -prune -o \
 	-type f -name '*.php' -print0 > "${FILE_LIST}"; then
 	echo "Unable to discover PHP files for syntax linting." >&2
+	exit 1
+fi
+
+if [[ ! -s "${FILE_LIST}" ]]; then
+	echo "No PHP source files found." >&2
 	exit 1
 fi
 
