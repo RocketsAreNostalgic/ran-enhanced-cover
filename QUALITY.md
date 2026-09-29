@@ -44,6 +44,12 @@ prove all authored PHP roots reject formatting defects and that fixes are stable
 The checks use explicit exceptions rather than Python's removable assertions and
 remain active under Python optimization. Python 3 is an ordinary-test prerequisite.
 
+The native Quality job checks PHP entries in the finished release ZIP against
+direct PHPStan roots. A disposable ZIP with an uncovered root PHP file proves
+that later packaging changes fail until analysis is updated. Imported or
+excluded PHPStan paths require review. This leaves the level-4 floor, archive
+bytes and installed behavior unchanged.
+
 The blanket scripts exclusion is removed. Packaging exception messages target a
 terminal, not HTML; native local filesystem operations run without WordPress.
 Only these concrete host assumptions are exempted in the relevant CLI files.
