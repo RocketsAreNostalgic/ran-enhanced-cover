@@ -1,6 +1,9 @@
+packages:
+    - tools/wordpress-build
 allowBuilds:
     '@parcel/watcher': true
     core-js: true
     core-js-pure: true
     fs-ext-extra-prebuilt: false
     unrs-resolver: true
+strictPeerDependencies: true
