@@ -39,6 +39,7 @@ buttons as nested content.
 
 ## Development
 
+Use Node.js 24.21.0 (the shared Node 24 minimum) and pnpm 11.5.2.
 Run commands from this plugin directory:
 
 ```sh
@@ -48,6 +49,14 @@ pnpm build
 pnpm format:check
 pnpm check
 ```
+
+The root lint commands use the shared WordPress baseline. The private
+`tools/wordpress-build` workspace retains the published WordPress Scripts 30.27.0 builder
+and its compatible peers separately, so build dependencies do not select the
+repository lint versions. Build and start still run from this plugin directory
+with the upstream webpack configuration and the existing frontend view entry.
+Package JSON lint includes both workspace manifests. No development tooling is
+shipped in the runtime archive.
 
 Source files live in `blocks/`. Rebuild `build/blocks/` after block changes and
 commit the generated runtime assets with their source.

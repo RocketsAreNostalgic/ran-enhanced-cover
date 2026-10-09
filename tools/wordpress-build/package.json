@@ -1,0 +1,37 @@
+{
+	"name": "ran-enhanced-cover-build-tools",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Isolated existing WordPress build toolchain; repository lint runs at the root.",
+	"author": "bnjmnrsh",
+	"license": "GPL-2.0-or-later",
+	"keywords": [
+		"wordpress",
+		"blocks",
+		"gutenberg",
+		"video",
+		"cover",
+		"accessibility"
+	],
+	"homepage": "https://github.com/RocketsAreNostalgic/ran-enhanced-cover",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/RocketsAreNostalgic/ran-enhanced-cover.git"
+	},
+	"bugs": {
+		"url": "https://github.com/RocketsAreNostalgic/ran-enhanced-cover"
+	},
+	"engines": {
+		"node": ">=24.21.0 <25"
+	},
+	"devDependencies": {
+		"@types/node": "20.19.9",
+		"@wordpress/env": "10.39.0",
+		"@wordpress/scripts": "30.27.0",
+		"@wordpress/stylelint-config": "23.42.0",
+		"eslint": "8.57.1",
+		"stylelint": "16.26.1",
+		"stylelint-scss": "6.14.0",
+		"typescript": "6.0.3"
+	}
+}

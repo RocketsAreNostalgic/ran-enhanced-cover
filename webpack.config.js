@@ -1,5 +1,5 @@
 const path = require('path');
-const defaultConfig = require('@wordpress/scripts/config/webpack.config');
+const defaultConfig = require('./tools/wordpress-build/node_modules/@wordpress/scripts/config/webpack.config');
 
 const addViewScriptEntry = (config) => ({
 	...config,
