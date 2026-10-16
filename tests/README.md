@@ -19,10 +19,12 @@ bounded WordPress 7.1.3 / PHP 8.5 lane. The upper WordPress target is explicit s
 the PHPUnit library and fresh ZIP installation use the same released version,
 rather than combining the latest stable core with the development test library.
 
-The archive is built once and shared by both installed lanes. Source, generated
-assets and static analysis retain their single PHP 8.3 tooling lane; adding a
-runtime target does not repeat those gates. PHP 8.1–8.4 are within the declared
-support range but are not established by these endpoint runs alone. Browser and
+The canonical archive is built once and shared by both installed lanes. Existing
+PHP 8.3 tooling jobs remain unchanged; replacing the runtime endpoint adds no
+frontend, static-analysis or build repetition. Ordinary PR and dispatch runs
+retain shared-baseline and specialist source checks; their existing overlapping
+work remains a separate CI-efficiency audit item. PHP 8.1–8.4 are within the
+declared support range but are not established by these endpoint runs alone. Browser and
 manual release acceptance remain separate checks.
 
 ## Browser fixtures
