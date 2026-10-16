@@ -13,7 +13,17 @@ composer test:integration
 The test library must contain `includes/functions.php` and a WordPress test
 database configured by the standard WordPress test bootstrap. The GitHub
 Actions workflow provisions the database and test library for WordPress 6.5 on
-PHP 8.0 and the current WordPress release on the current supported PHP.
+PHP 8.0 and WordPress 7.1.3 on PHP 8.5. Both ordinary source changes and main
+pushes exercise these endpoints; recognized Release Please candidates retain the
+bounded WordPress 7.1.3 / PHP 8.5 lane. The upper WordPress target is explicit so
+the PHPUnit library and fresh ZIP installation use the same released version,
+rather than combining the latest stable core with the development test library.
+
+The archive is built once and shared by both installed lanes. Source, generated
+assets and static analysis retain their single PHP 8.3 tooling lane; adding a
+runtime target does not repeat those gates. PHP 8.1–8.4 are within the declared
+support range but are not established by these endpoint runs alone. Browser and
+manual release acceptance remain separate checks.
 
 ## Browser fixtures
 
